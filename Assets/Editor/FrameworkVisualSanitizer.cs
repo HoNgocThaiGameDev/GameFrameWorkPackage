@@ -48,7 +48,7 @@ namespace NebulaSoft.EditorTools
             };
         }
 
-        [MenuItem("PicturePuzzle Framework/Replace Artwork With Color-Coded Placeholders")]
+        [MenuItem("Framework/Replace Skeleton")]
         public static void ApplyToProject()
         {
             Sprite whiteSprite = EnsureWhiteSprite();
