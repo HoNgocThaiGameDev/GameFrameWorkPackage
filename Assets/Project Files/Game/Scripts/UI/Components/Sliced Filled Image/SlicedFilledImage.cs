@@ -177,6 +177,10 @@ namespace NebulaSoft
         }
 
         int ILayoutElement.layoutPriority { get { return 0; } }
+#if UNITY_6000_6_OR_NEWER
+        float ILayoutElement.maxWidth => -1;
+        float ILayoutElement.maxHeight => -1;
+#endif
         float ILayoutElement.minWidth { get { return 0; } }
         float ILayoutElement.minHeight { get { return 0; } }
         float ILayoutElement.flexibleWidth { get { return -1; } }

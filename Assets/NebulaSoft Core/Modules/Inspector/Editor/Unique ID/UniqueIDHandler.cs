@@ -3,6 +3,12 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 
+#if UNITY_6000_6_OR_NEWER
+using OwnerObjectId = UnityEngine.EntityId;
+#else
+using OwnerObjectId = System.Int32;
+#endif
+
 namespace NebulaSoft
 {
     [InitializeOnLoad]
@@ -56,17 +62,17 @@ namespace NebulaSoft
         public class IDCase
         {
             public string PropertyPath;
-            public int InstanceID;
+            public OwnerObjectId InstanceID;
             public string ID;
 
-            public IDCase(string propertyPath, int instanceID, string id)
+            public IDCase(string propertyPath, OwnerObjectId instanceID, string id)
             {
                 PropertyPath = propertyPath;
                 InstanceID = instanceID;
                 ID = id;
             }
 
-            public bool RequireReset(string propertyPath, int instanceID)
+            public bool RequireReset(string propertyPath, OwnerObjectId instanceID)
             {
                 if(propertyPath.Contains(".Array."))
                 {

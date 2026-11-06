@@ -1,0 +1,294 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using VoxelBusters.AdsKit.Adapters;
+using VoxelBusters.CoreLibrary;
+using VoxelBusters.CoreLibrary.NativePlugins.DemoKit;
+
+namespace VoxelBusters.AdsKit.Demo
+{
+	public class AdsKitDemo : DemoActionPanelBase<AdsKitDemoAction, AdsKitDemoActionType>, IAdLifecycleEventListener
+    {
+        #region Fields
+
+        [SerializeField]
+        private     InputField      m_placementIdField;
+
+        #endregion
+
+        #region Base class methods
+
+        protected override void Start() 
+        {
+            base.Start();
+        }
+
+        protected override void OnActionSelectInternal(AdsKitDemoAction selectedAction)
+        {
+            switch (selectedAction.ActionType)
+            {
+                case AdsKitDemoActionType.RegisterListener:
+                    Log("Register listener.");
+                    RegisterListener();
+                    break;
+                    
+                case AdsKitDemoActionType.UnregisterListener:
+                    Log("Unregister listener.");
+                    UnregisterListener();
+                    break;
+
+                case AdsKitDemoActionType.ConsentFormProviderAvailable:
+                    Log("Checking if any consent form provider available.");
+                    CheckIfConsentFormProviderIsAvailable();
+                    break;
+
+                case AdsKitDemoActionType.Initialise:
+                    Log("Init with consent form provider.");
+                    var consentFormProvider = GetConsentFormProvider();
+                    //consentFormProvider.IsAgeRestrictedUser = false; //Enable if you want to set this property.
+                    InitAdsManager(consentFormProvider);
+                    break;
+
+                case AdsKitDemoActionType.LoadAd:
+                    if (!AssertPropertyIsValid("placementId", m_placementIdField.text)) return;
+
+                    Log("Initiating LoadAd request.");
+                    LoadAd(m_placementIdField.text);
+                    break;
+
+                case AdsKitDemoActionType.ShowAd:
+                    if (!AssertPropertyIsValid("placementId", m_placementIdField.text)) return;
+
+                    Log("Initiating ShowAd request.");
+                    ShowAd(m_placementIdField.text);
+                    break;
+
+                case AdsKitDemoActionType.HideAd:
+                    if (!AssertPropertyIsValid("placementId", m_placementIdField.text)) return;
+
+                    Log("Initiating HideAd request.");
+                    HideAd(m_placementIdField.text);
+                    break;
+
+                case AdsKitDemoActionType.AdPlacementState:
+                    if (!AssertPropertyIsValid("placementId", m_placementIdField.text)) return;
+
+                    AdPlacementState state = AdsManager.GetAdPlacementState(placement: m_placementIdField.text);
+                    Log("Ad placement state: " + state);
+                    break;
+
+                case AdsKitDemoActionType.ShowAdMobAdDebugger:
+                    AdsManager.AdMob.LaunchAdDebugger((bool isSuccess, Error error) =>
+                    {
+                        if (isSuccess)
+                        {
+                            Log("AdMob ad debugger launched successfully.");
+                        }
+                        else
+                        {
+                            Log("Failed to launch AdMob ad debugger. Error: " + error);
+                            Log("If you haven't added the test device id in Ads Kit Settings -> Test Device Ids yet, look for the test device id in the debug logs with text like - `Use RequestConfiguration.Builder().setTestDeviceIds` and add the test device id in the Ads Kit Settings. This is usually the ANDROID_ID on Android and IDFA on iOS" );
+                        }
+                    });
+                    break;
+                case AdsKitDemoActionType.ShowAppLovinAdDebugger:
+                    AdsManager.AppLovin.LaunchAdDebugger((bool isSuccess, Error error) =>
+                    {
+                        if (isSuccess)
+                        {
+                            Log("AppLovin ad debugger launched successfully.");
+                        }
+                        else
+                        {
+                            Log("Failed to launch AppLovin ad debugger. Error: " + error);
+                        }
+                    });
+                    break;
+
+                case AdsKitDemoActionType.ShowLevelPlayAdDebugger:
+                    AdsManager.LevelPlay.LaunchAdDebugger((bool isSuccess, Error error) =>
+                    {
+                        if (isSuccess)
+                        {
+                            Log("LevelPlay ad debugger launched successfully.");
+                        }
+                        else
+                        {
+                            Log("Failed to launch LevelPlay ad debugger. Error: " + error);
+                        }
+                    });
+                    break;
+                    
+            }
+        }
+
+        private void CheckIfConsentFormProviderIsAvailable()
+        {
+            var consentFormProvider = AdServices.GetConsentFormProvider();
+            if (consentFormProvider == null)
+            {
+                Log("No consent form providers available. Create a class which implements IConsentFormProvider interface or enable AdMob ad network for Google's UMP consent provider.");
+            }
+            else
+            {
+                Log("IConsentFormProvider implementation exists. You can initilise AdsKit with this consent form provider." + consentFormProvider);
+            }
+        }
+
+        #endregion
+
+        #region Example methods
+
+        private void RegisterListener()
+        {
+            AdsManager.RegisterListener(this);
+        }
+
+        private void UnregisterListener()
+        {
+            AdsManager.UnregisterListener(this);
+        }
+
+        private void InitAdsManager(IConsentFormProvider consentFormProvider)
+        {
+            if(AdsManager.IsInitialisedOrWillChange)
+            {
+                Log("Initialisation is in progress or already initialised.");
+                return;
+            }
+            var operation = AdsManager.Initialise(consentFormProvider);
+            operation.OnComplete += (op) =>
+            {
+                if (op.Error == null)
+                {
+                    Log("Initialise complete. You can start loading or showing the ads from now.");
+                }
+                else
+                {
+                    Log("Failed initialising Ads Kit with: " + op.Error);
+                }
+            };
+        }
+        
+        private void LoadAd(string placement)
+        {
+            AdsManager.LoadAd(placement);
+        }
+
+        private void ShowAd(string placement)
+        {
+            var operation = AdsManager.ShowAd(placement);
+            operation.OnAdReward += ((AdContent content, AdReward reward) result) =>
+            {
+                //Note that OnAdReward can be called way before ad presentation finishes. So if you want to load an ad, don't do it in OnAdReward callback. Instead do in OnAdFinish callback.
+                Debug.Log($"Ad reward received: {result.reward}");
+            };
+        }
+
+        private void HideAd(string placement)
+        {
+            AdsManager.HideAd(placement);
+        }
+
+        #endregion
+
+        #region Utility methods
+
+        private IConsentFormProvider GetConsentFormProvider()
+        {
+            var consentFormProvider = AdServices.GetConsentFormProvider();
+
+            if(consentFormProvider == null)
+            {
+                Log("There are no IConsentFormProvider implementations available. For a default plugin's implementation, enable Ad Mob network or implement a custom IConsentFormProvider on your own");
+            }
+
+            return consentFormProvider;
+        }
+
+        #endregion
+
+        #region IAdLifecycleEventListener implementation
+
+        public void OnInitialisationComplete(InitialiseResult result)
+        {
+            Log("AdsKit is initialised successfully.");
+        }
+
+        public void OnInitialisationFail(Error error)
+        {
+            Log($"AdsKit failed to initialise with error {error}.");
+        }
+
+        public void OnLoadAdComplete(string placementId, LoadAdResult result)
+        {
+            Log($"AdsKit has successfully loaded ad for placementId: {placementId}.");
+        }
+
+        public void OnLoadAdFail(string placementId, Error error)
+        {
+            Log($"AdsKit has failed to load ad for placementId: {placementId} with error: {error}.");
+        }
+
+        public void OnShowAdStart(string placementId)
+        {
+            Log($"AdsKit has started showing ad for placementId: {placementId}.");
+        }
+
+        public void OnShowAdClick(string placementId)
+        {
+            Log($"AdsKit has recognised click on ad for placementId: {placementId}.");
+        }
+
+        public void OnShowAdComplete(string placementId, ShowAdResult result)
+        {
+            Log($"AdsKit has completed showing ad for placementId: {placementId} with result: {result}.");
+        }
+
+        public void OnShowAdFail(string placementId, Error error)
+        {
+            Log($"AdsKit has failed to show ad for placementId: {placementId} with Error: {error}.");
+        }
+
+        public void OnAdImpressionRecorded(string placementId)
+        {
+            Log($"AdsKit has recorded impression for ad for placementId: {placementId}.");
+        }
+
+        public void OnAdPaid(string placementId, AdTransaction transaction)
+        {
+            Log($"AdsKit has recorded pay for ad: {placementId} with transaction: {transaction}.");
+        }
+
+        public void OnAdReward(string placementId, AdReward reward)
+        {
+            if (reward.IsRewardAmountAvailable())
+            {
+                Log($"AdsKit has recorded reward for ad: {placementId} with reward info: {reward}.");
+            }
+            else //Some adnetworks won't support passing reward amounts in the callbacks. For those handle with a fallback value.
+            {
+                Log($"AdsKit has recorded reward for ad: {placementId} with reward unknown reward amount. Reward the user with a fallback value");
+            }
+        }
+
+        #endregion
+
+        #region IEventHandler implementation
+
+        public int CallbackOrder => 1;
+
+        #endregion
+
+        #region Utility methods
+
+        private void OnDestroy()
+        {
+            UnregisterListener();
+        }
+
+        #endregion
+    }
+}

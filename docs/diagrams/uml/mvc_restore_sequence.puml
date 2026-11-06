@@ -1,0 +1,55 @@
+@startuml
+!include style.iuml
+autonumber
+participant CurrencyController as cc
+participant SaveController as save
+participant GlobalSave as gs
+participant Currency as cur
+participant "coinsPanel\n: CurrencyUIPanelSimple" as panel
+ref over cc,gs
+Init: SaveInitModule gọi SaveController.Init() và load save.
+Tiếp theo CurrencyInitModule.CreateComponent()
+gọi CurrencyController.Init(database).
+end ref
+-> cc : Init(database)
+activate cc
+loop chuẩn bị config: mỗi Currency
+ cc -> cur : Init()
+end
+note over cc,save : Đọc remote config trước khi chọn default amount.
+loop bind save: mỗi Currency
+ cc -> save : GetSaveObject<Currency.Save>\n("currency:" + type)
+ activate save
+ save -> gs : GetSaveObject<T>(hash)
+ activate gs
+ note over gs
+Container tồn tại: Restore<T>() một lần khi cần.
+Chưa có: tạo new T() và cache trong container.
+ end note
+ gs --> save : live Currency.Save
+ deactivate gs
+ save --> cc : cùng reference của model
+ deactivate save
+ opt save.Amount == -1
+  note over cc,cur : Gán default / remote override cho save.Amount.
+ end
+ cc -> cur : SetSave(save)
+end
+[<-- cc : Init() return
+deactivate cc
+... Menu tạo các component UI ...
+-> panel : Init()
+activate panel
+panel -> cc : GetCurrency(currencyType)
+cc --> panel : Currency đã bind save
+panel -> cur : đọc Icon / AmountFormatted
+cur --> panel : dữ liệu hiển thị
+panel -> panel : Redraw(); Activate()
+panel -> cur : subscribe OnCurrencyChanged\n[nếu updateOnChange]
+deactivate panel
+note over panel
+Init() có guard isInitialized.
+Caller: Awake() hoặc UIMainMenu.Init().
+UI không Load() lại file khi redraw.
+end note
+@enduml

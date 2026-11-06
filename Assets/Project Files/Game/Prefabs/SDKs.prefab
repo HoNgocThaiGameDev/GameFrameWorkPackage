@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5442334640524763641}
   - component: {fileID: 7873277644156613026}
   - component: {fileID: 2694274837645137151}
+  - component: {fileID: 1366051588367911851}
   m_Layer: 0
   m_Name: SDKs
   m_TagString: Untagged
@@ -90,3 +91,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings: {fileID: 11400000, guid: 529dbf8f89ab6f247ab843aef1ec6f59, type: 2}
+--- !u!114 &1366051588367911851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2651676344474471201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a3c1239d55dcad49b926c3206346797, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::NebulaSoft.AdsGameBridge

@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37e64e32fb2cd4151be3655efff4145f, type: 3}
+  m_Name: AdsKitSettings
+  m_EditorClassIdentifier: VoxelBusters.AdsKit::VoxelBusters.AdsKit.AdsKitSettings
+  m_isEnabled: 1
+  m_forceTestMode: 1
+  m_autoLoadRetryDelay: 15
+  m_userTrackingUsageDescription: This identifier will be used by advertising networks
+    to deliver personalized ads based on your interests.
+  m_autoInitOnStart: 0
+  m_loadAdMode: 1
+  m_networkSettingsArray:
+  - m_networkId: AdMob
+    m_isEnabled: 1
+    m_runtimeApiKey: ca-app-pub-3940256099942544~3347511713
+    m_runtimeApiKeyOverrides:
+      m_ios: ca-app-pub-3940256099942544~1458002511
+      m_tvos: 
+      m_android: ca-app-pub-3940256099942544~3347511713
+    m_runtimeApiSecret: 
+    m_runtimeApiSecretOverrides:
+      m_ios: 
+      m_tvos: 
+      m_android: 
+    m_debugApiKey: ca-app-pub-3940256099942544~3347511713
+    m_debugApiSecret: 
+    m_data: 
+    m_adMetaArray:
+    - m_placement: menu_banner
+      m_adUnitIds:
+        m_ios: ca-app-pub-3940256099942544/2435281174
+        m_tvos: 
+        m_android: ca-app-pub-3940256099942544/9214589741
+      m_testAdUnitIds:
+        m_ios: ca-app-pub-3940256099942544/2435281174
+        m_tvos: 
+        m_android: ca-app-pub-3940256099942544/9214589741
+    - m_placement: level_transition
+      m_adUnitIds:
+        m_ios: ca-app-pub-3940256099942544/4411468910
+        m_tvos: 
+        m_android: ca-app-pub-3940256099942544/1033173712
+      m_testAdUnitIds:
+        m_ios: ca-app-pub-3940256099942544/4411468910
+        m_tvos: 
+        m_android: ca-app-pub-3940256099942544/1033173712
+    - m_placement: rewarded
+      m_adUnitIds:
+        m_ios: ca-app-pub-3940256099942544/1712485313
+        m_tvos: 
+        m_android: ca-app-pub-3940256099942544/5224354917
+      m_testAdUnitIds:
+        m_ios: ca-app-pub-3940256099942544/1712485313
+        m_tvos: 
+        m_android: ca-app-pub-3940256099942544/5224354917
+  - m_networkId: AppLovin
+    m_isEnabled: 0
+    m_runtimeApiKey: 
+    m_runtimeApiKeyOverrides:
+      m_ios: 
+      m_tvos: 
+      m_android: 
+    m_runtimeApiSecret: 
+    m_runtimeApiSecretOverrides:
+      m_ios: 
+      m_tvos: 
+      m_android: 
+    m_debugApiKey: 
+    m_debugApiSecret: 
+    m_data: 
+    m_adMetaArray: []
+  - m_networkId: LevelPlay
+    m_isEnabled: 0
+    m_runtimeApiKey: 
+    m_runtimeApiKeyOverrides:
+      m_ios: 
+      m_tvos: 
+      m_android: 
+    m_runtimeApiSecret: 
+    m_runtimeApiSecretOverrides:
+      m_ios: 
+      m_tvos: 
+      m_android: 
+    m_debugApiKey: 
+    m_debugApiSecret: 
+    m_data: 
+    m_adMetaArray: []
+  m_networkPreferenceMeta:
+    m_banner:
+    - AdMob
+    m_interstitial:
+    - AdMob
+    m_rewardedInterstitial: []
+    m_video: []
+    m_rewardedVideo:
+    - AdMob
+    m_augmentedReality: []
+    m_playable: []
+    m_iapPromo: []
+  m_placementMetaArray:
+  - m_name: menu_banner
+    m_adType: 1
+    m_autoLoad: 0
+    m_optionsObject: {fileID: 11400000, guid: 1fb57cbe83c83cd4c825b301c6e41def, type: 2}
+  - m_name: level_transition
+    m_adType: 2
+    m_autoLoad: 0
+    m_optionsObject: {fileID: 0}
+  - m_name: rewarded
+    m_adType: 4
+    m_autoLoad: 0
+    m_optionsObject: {fileID: 0}
+  m_adContentDefaultSettings:
+    m_banner: {fileID: 11400000, guid: 1fb57cbe83c83cd4c825b301c6e41def, type: 2}
+  m_testDevices:
+    m_iosIds: []
+    m_androidIds: []
+  m_errorLogList: []

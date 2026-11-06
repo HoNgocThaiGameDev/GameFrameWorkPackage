@@ -5,13 +5,13 @@ using UnityEngine;
 namespace NebulaSoft
 {
     [StaticUnload]
-    public static class AnalyticsController
+    public static partial class AnalyticsController
     {
         public static event AnalyticsEventCallback EventFired;
 
         public static void OnCurrencySource(string source, Dictionary<CurrencyType, int> currenciesDelta)
         {
-            AnalyticsCurrencyData analyticsCurrencyData = new AnalyticsCurrencyData();
+            CurrencyEvent analyticsCurrencyData = new CurrencyEvent();
             analyticsCurrencyData.Source = source;
             analyticsCurrencyData.CurrenciesDelta = currenciesDelta;
 
@@ -20,7 +20,7 @@ namespace NebulaSoft
 
         public static void OnCurrencySink(string sink, Dictionary<CurrencyType, int> currenciesDelta)
         {
-            AnalyticsCurrencyData analyticsCurrencyData = new AnalyticsCurrencyData();
+            CurrencyEvent analyticsCurrencyData = new CurrencyEvent();
             analyticsCurrencyData.Source = sink;
             analyticsCurrencyData.CurrenciesDelta = currenciesDelta;
 
@@ -29,7 +29,7 @@ namespace NebulaSoft
 
         public static void OnIAPClicked(IAPItem item)
         {
-            AnalyticsIAPData analyticsData = new AnalyticsIAPData();
+            PurchaseEvent analyticsData = new PurchaseEvent();
             analyticsData.Item = item;
 
             TrackEvent(AnalyticsEventType.IAPClicked, analyticsData);
@@ -37,7 +37,7 @@ namespace NebulaSoft
 
         public static void OnRVClicked(string source)
         {
-            AnalyticsRVData analyticsData = new AnalyticsRVData();
+            RewardedAdEvent analyticsData = new RewardedAdEvent();
             analyticsData.Source = source;
 
             TrackEvent(AnalyticsEventType.RVClicked, analyticsData);
@@ -45,21 +45,21 @@ namespace NebulaSoft
 
         public static void OnInterstitialDisplayed(string source)
         {
-            AnalyticsIntData analyticsData = new AnalyticsIntData();
+            InterstitialEvent analyticsData = new InterstitialEvent();
             analyticsData.Source = source;
 
             TrackEvent(AnalyticsEventType.InterstitialDisplayed, analyticsData);
         }
 
 #if MODULE_IAP
-        public static void OnIAPPurchased(AnalyticsIAPData analyticsIAPData)
+        public static void OnIAPPurchased(PurchaseEvent analyticsIAPData)
         {
             TrackEvent(AnalyticsEventType.IAPPurchased, analyticsIAPData);
         }
 
         public static void OnIAPFailed(IAPItem item, NebulaSoft.PurchaseFailureReason failureReason)
         {
-            AnalyticsIAPFailData analyticsData = new AnalyticsIAPFailData();
+            PurchaseFailEvent analyticsData = new PurchaseFailEvent();
             analyticsData.Item = item;
             analyticsData.FailureReason = failureReason;
 
@@ -69,16 +69,21 @@ namespace NebulaSoft
 
         public static void TrackEvent(AnalyticsEventType analyticsEventType, IAnalyticsEventData eventData = null)
         {
+            AnalyticsLegacyBridge.Track(analyticsEventType, eventData, Events);
 #if DEBUG_LOGS
             Debug.Log(string.Format("[Analytics]: Event <b>\"{0}\"</b> fired.", analyticsEventType));
 
 #endif
 
-            EventFired?.Invoke(analyticsEventType, eventData);
+            if (EventFired != null)
+                foreach (AnalyticsEventCallback callback in EventFired.GetInvocationList())
+                    try { callback(analyticsEventType, eventData); }
+                    catch (Exception exception) { Debug.LogException(exception); }
         }
 
         private static void UnloadStatic()
         {
+            Shutdown();
             EventFired = null;
         }
 

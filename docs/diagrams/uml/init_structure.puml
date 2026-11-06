@@ -1,0 +1,43 @@
+@startuml
+!include style.iuml
+top to bottom direction
+class GameLoading {
+ - initializer : Initializer
+ - loadingGraphics : LoadingGraphics
+ - useManualControl : bool
+ - checkNetworkConnection : bool
+ - Awake()
+}
+class Initializer {
+ - initSettings : ProjectInitSettings
+ - sdkInitializer : SDKInitializer
+ - systemMessage : SystemMessage
+ - globalMusicSource : MusicSource
+ - eventSystem : EventSystem
+ + Init()
+ + InitModules()
+ + InitSDKs()
+}
+class LoadingGraphics {
+ + Init(GameLoading)
+ + SetLoadingState(...)
+ + OnLoadingFinished()
+}
+class ProjectInitSettings {
+ - modules : InitModule[]
+ + Init(Initializer)
+}
+class SDKInitializer {
+ + Init()
+ - OnTasksCompleted()
+}
+GameLoading --> Initializer : initializer
+GameLoading --> LoadingGraphics : loadingGraphics
+Initializer --> ProjectInitSettings : initSettings
+Initializer --> SDKInitializer : sdkInitializer
+note bottom of Initializer
+Serialized reference tới component / asset.
+Không phải kế thừa hoặc parent-child GameObject.
+Hierarchy Unity được mô tả riêng trong bảng.
+end note
+@enduml

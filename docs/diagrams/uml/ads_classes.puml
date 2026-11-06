@@ -1,0 +1,29 @@
+@startuml
+!include style.iuml
+top to bottom direction
+hide empty members
+class "Game presenter" as game <<ví dụ>>
+interface IAdsService <<interface>>
+class AdsService {
+ - provider : IAdsProvider
+ + InitializeAsync(...)
+ + ShowAsync(...)
+ + Tick()
+}
+interface IAdsProvider <<interface>>
+class AdsKitProvider {
+ + InitializeAsync(...)
+ + Load(...)
+ + Show(...)
+}
+class "VoxelBusters AdsManager" as sdk <<vendor>>
+game -down-> IAdsService : dependency truyền vào
+AdsService -up..|> IAdsService
+AdsService -down-> IAdsProvider : provider reference
+AdsKitProvider -up..|> IAdsProvider
+AdsKitProvider -down..> sdk : API / callback adapter
+note right of AdsService
+Contracts / Runtime không tham chiếu SDK.
+Realization: nét đứt + tam giác rỗng.
+end note
+@enduml

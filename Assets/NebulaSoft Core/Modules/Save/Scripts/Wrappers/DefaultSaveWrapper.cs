@@ -9,7 +9,7 @@
 
         public override void Save(GlobalSave globalSave, string fileName)
         {
-            Serializer.Serialize(globalSave, fileName);
+            Serializer.SerializeChecked(globalSave, fileName);
         }
 
         public override void Delete(string fileName)

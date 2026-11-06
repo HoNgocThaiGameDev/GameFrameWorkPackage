@@ -453,6 +453,7 @@ MonoBehaviour:
       m_Calls: []
   showPopup: 0
   productKey: 3
+  productKeyId: coins_medium
   purchaseButton: {fileID: 3456183989049511585}
   references:
     version: 2

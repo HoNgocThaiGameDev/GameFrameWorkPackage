@@ -515,7 +515,8 @@ namespace NebulaSoft
 
         public static TweenCase WaitForPopupsClose(SimpleCallback callback)
         {
-            if (uiController.popupWindows.IsNullOrEmpty())
+            UIController owner = uiController;
+            if (owner == null || owner.popupWindows.IsNullOrEmpty())
             {
                 callback?.Invoke();
 
@@ -524,8 +525,16 @@ namespace NebulaSoft
 
             return Tween.DoWaitForCondition(waitTween =>
             {
-                if (uiController.pausePopups.Count == 0)
+                if (owner == null || uiController != owner)
+                {
+                    waitTween.Kill();
+                    return;
+                }
+                if (owner.popupWindows.IsNullOrEmpty())
+                {
+                    waitTween.Kill();
                     callback?.Invoke();
+                }
             }, unscaledTime: true);
         }
 

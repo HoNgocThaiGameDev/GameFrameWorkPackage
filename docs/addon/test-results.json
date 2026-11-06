@@ -1,0 +1,63 @@
+{
+  "project": "GameFrameWorkPackage",
+  "runDate": "2026-10-11",
+  "testGroups": [
+    "CoinSafeProgressTests",
+    "QuestRotationTests",
+    "NebulaSoft.Tests.FrameworkSceneSmokeTests"
+  ],
+  "scope": "Addon organization and deletion of non-core root Editor tools",
+  "results": {
+    "job_id": "99cedac568fb4a99807e803e3760f509",
+    "status": "failed",
+    "mode": "EditMode",
+    "started_unix_ms": 1791714065034,
+    "finished_unix_ms": 1791714072754,
+    "last_update_unix_ms": 1791714072754,
+    "progress": {
+      "completed": 21,
+      "total": 21,
+      "current_test_full_name": null,
+      "current_test_started_unix_ms": 1791714072664,
+      "last_finished_test_full_name": "QuestRotationTests.QuestElement_BindsQuestRewardPopupPrefab",
+      "last_finished_unix_ms": 1791714072668,
+      "stuck_suspected": false,
+      "editor_is_focused": false,
+      "blocked_reason": null,
+      "failures_so_far": [
+        {
+          "full_name": "QuestRotationTests.BuiltInRotation_HasFourSlotsAndTotalsOneHundredThirtyPoints(Daily)",
+          "message": "  Expected: property Count equal to 4\r\n  But was:  6\r\n"
+        },
+        {
+          "full_name": "QuestRotationTests.BuiltInRotation_HasFourSlotsAndTotalsOneHundredThirtyPoints(Weekly)",
+          "message": "  Expected: property Count equal to 4\r\n  But was:  5\r\n"
+        },
+        {
+          "full_name": "QuestRotationTests.QuestDatabase_IncludesDailyOnlineTimeQuestWithRandomPowerUpReward",
+          "message": "  Expected: RandomPowerUp\r\n  But was:  Currency\r\n"
+        },
+        {
+          "full_name": "QuestRotationTests.QuestElement_BindsQuestRewardPopupPrefab",
+          "message": "  Expected string length 40 but was 32. Strings differ at index 7.\r\n  Expected: \"Assets/Addon/UI/Sprites/Quest/Go_btn.png\"\r\n  But was:  \"Assets/Framework/WhiteSprite.png\"\r\n  ------------------^\r\n"
+        }
+      ],
+      "failures_capped": false
+    },
+    "error": null,
+    "result": null
+  },
+  "baselineQuestFailures": {
+    "evidence": [
+      "Quest Database.asset matches Git HEAD byte for byte.",
+      "Retained QuestElement prefab matches pre-cleanup bytes and GUID.",
+      "QuestRotationTests assertions unchanged; only three prefab paths updated."
+    ],
+    "details": [
+      "Daily rotation test expects 4 slots; database has 6.",
+      "Weekly rotation test expects 4 slots; database has 5.",
+      "Online quest reward test expects RandomPowerUp; database uses Currency.",
+      "QuestElement Go button test expects Go_btn.png; existing prefab uses Framework/WhiteSprite.png."
+    ]
+  }
+}

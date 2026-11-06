@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <NoWarn>CS0649;CS0067;CS0169;CS0414</NoWarn>
+  </PropertyGroup>
+  <!-- Compile the originals. No copied implementations and no changes under Assets. -->
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Ads/Contracts/*.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Ads/Runtime/*.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Analytics/Runtime/*.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Audio/Scripts/AudioSourceCase.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Save/Scripts/GlobalSave.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Save/Scripts/SavedDataContainer.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Save/Scripts/ISaveObject.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Currency/Scripts/Currency.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Currency/Scripts/CurrencyController.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Currency/Scripts/MD_CurrencyType.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Reward/Scripts/Reward.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Reward/Scripts/RewardsSet.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Reward/Scripts/IRewardPreview.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/IAPManager.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/IAPIntegration.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/IAPItem.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/MD_ProductKeyType.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/ProductType.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/PurchaseFailureReason.cs" />
+    <Compile Include="../../Assets/NebulaSoft Core/Modules/Initializer/Scripts/Remote Config/RemoteConfigController.cs" />
+    <Compile Include="../../Assets/Project Files/Game/Scripts/Daily Reward/DailyRewardService.cs" />
+    <Compile Include="../../Assets/Project Files/Game/Scripts/Daily Reward/DailyRewardModels.cs" />
+    <Compile Include="../../Assets/Project Files/Game/Scripts/Daily Reward/DailyRewardDatabase.cs" />
+    <Compile Include="../../Assets/Project Files/Game/Scripts/Daily Reward/DailyRewardSave.cs" />
+  </ItemGroup>
+</Project>

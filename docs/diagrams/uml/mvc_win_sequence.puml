@@ -1,0 +1,63 @@
+@startuml
+!include style.iuml
+autonumber
+participant GameController as gc
+participant ActiveSession as session
+participant WinStreakProgress as streak
+participant SaveController as save
+participant UIController as ui
+note over session,save
+ActiveSession.Current tạo lazy nếu chưa có:
+GetSaveObject<LevelSave>() -> giữ live levelSave.
+end note
+-> gc : GameComplete()\ngame mới xác nhận đã thắng
+activate gc
+alt isGameFinished
+ [<-- gc : return
+else ván chưa kết thúc
+ gc -> gc : finished = true;\nactivated = false
+ gc -> session : OnLevelCompleted()
+ activate session
+ session -> session : levelSave: reset random\n/ last index
+ session -> streak : RegisterWin()
+ activate streak
+ streak -> save : GetSaveObject<T>(key)\nT = WinStreakSave\nkey = "Win Streak"
+ save --> streak : live WinStreakSave
+ streak -> streak : save.Current++
+ streak -> save : MarkAsSaveIsRequired()
+ note over streak : Changed được phát cho subscriber,\nví dụ WinStreakText.Refresh().
+ streak --> session
+ deactivate streak
+ opt FirstTimeCompletedLevel
+  session -> session : CompletedLevelIndex =\nRealLevelIndex
+ end
+ session --> gc
+ deactivate session
+ ref over gc,save : QuestService.ReportProgress(CompleteLevels)
+ [<-- gc : return
+end
+deactivate gc
+... Game mới kết thúc animation kết quả ...
+-> gc : ShowCompleteUI()
+activate gc
+gc -> ui : ShowPage<UIComplete>()
+activate ui
+ref over gc,ui
+UIComplete: PlayShowAnimation() -> OnPageOpened(this) -> EnableCanvas().
+Chi tiết routing page: UML-09.
+end ref
+ui --> gc
+deactivate ui
+deactivate gc
+... Người chơi nhấn NEXT ...
+-> gc : NEXT Button.onClick\ncallback đã bind
+activate gc
+gc -> gc : LoadScene(\nGameConsts.SCENE_GAME)
+deactivate gc
+note over gc,ui
+Callback NEXT hiện chỉ reload Game, không tăng level.
+UIComplete.Init() bind GameController.OnCompleteRewardRecieved().
+GameComplete() không tự ShowCompleteUI(), không tự Save().
+Việc persist đến từ SaveController: explicit / pause / quit / autosave.
+end note
+@enduml

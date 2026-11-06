@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d57f52f279aa9b40b638c45d3d873a2, type: 3}
+  m_Name: AdsKitProvider
+  m_EditorClassIdentifier: Assembly-CSharp::NebulaSoft.AdsKitProviderConfig
+  mappings:
+  - placement: {fileID: 11400000, guid: 1b9314e7f0f9dd74db15f8cb735870fd, type: 2}
+    sdkPlacement: menu_banner
+  - placement: {fileID: 11400000, guid: 7ad25150581a56e4baa6bc329c4a28ee, type: 2}
+    sdkPlacement: level_transition
+  - placement: {fileID: 11400000, guid: dad108f50559a0e4280b328a52f8ddf2, type: 2}
+    sdkPlacement: rewarded
+  consentProvider: {fileID: 11400000, guid: 3cbe334b6ad137a478f4889758c9dc95, type: 2}

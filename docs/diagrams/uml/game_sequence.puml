@@ -1,0 +1,62 @@
+@startuml
+!include style.iuml
+autonumber
+participant "GameController" as gc
+participant "UIController" as ui
+participant "ActiveSession" as session
+participant "QuestService" as quest
+participant "UIComplete" as win
+-> gc : Unity: Awake()
+activate gc
+gc -> gc : reset activated / finished
+gc -> ui : GetComponent trên cùng GO\nInit(); InitPages()
+activate ui
+ui --> gc
+deactivate ui
+gc -> gc : AdsManager.EnableBanner()
+deactivate gc
+-> gc : Unity: Start()
+activate gc
+gc -> ui : ShowPage<UIGame>()
+gc -> gc : Overlay.Hide(0f)
+deactivate gc
+note over gc,quest
+Board / input / timer do game mới chuẩn bị.
+Các lời gọi bên dưới đến từ game flow đã tích hợp.
+end note
+-> gc : ActivateGame()
+activate gc
+gc -> gc : isGameActivated = true
+deactivate gc
+-> gc : GameComplete()
+activate gc
+alt isGameFinished == true
+ [<-- gc : return; không ghi completion lần hai
+else lượt chưa kết thúc
+ gc -> gc : finished = true; activated = false
+ gc -> session : Current.OnLevelCompleted()
+ activate session
+ session --> gc
+ deactivate session
+ gc -> quest : ReportProgress(CompleteLevels)
+ activate quest
+ quest --> gc
+ deactivate quest
+end
+deactivate gc
+note over gc : GameComplete() không tự hiện UIComplete.
+-> gc : ShowCompleteUI()\nsau animation kết quả của game
+activate gc
+gc -> ui : ShowPage<UIComplete>()
+activate ui
+ui -> win : PlayShowAnimation()
+activate win
+win -> ui : OnPageOpened(this)
+win --> ui
+deactivate win
+ui -> win : EnableCanvas()
+ui --> gc
+deactivate ui
+deactivate gc
+note over gc,win : Nhấn Next hiện gọi OnCompleteRewardRecieved()\nvà reload Game. Tăng level là policy game mới.
+@enduml

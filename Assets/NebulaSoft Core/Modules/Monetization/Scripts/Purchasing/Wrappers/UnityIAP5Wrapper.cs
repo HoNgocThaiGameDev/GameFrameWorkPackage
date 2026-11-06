@@ -92,7 +92,7 @@ namespace NebulaSoft
             }
             catch (System.Exception exception)
             {
-                Debug.LogError($"[IAP Manager]: Initialization failed with exception: {exception}");
+                IAPManager.OnInitializationFailed(exception.Message);
             }
 #else
             await Task.Run(() => Debug.Log("[IAP Manager]: Define MODULE_IAP is disabled!"));
@@ -102,6 +102,11 @@ namespace NebulaSoft
 #if MODULE_IAP && UNITY_IAP_NEW
         private void OnPurchaseDeferred(DeferredOrder order)
         {
+            // Approval can arrive in a later session; the store retains the order.
+            if (!OwnsActivePurchase(order)) return;
+            ClearPurchaseInProgress();
+            SystemMessage.ChangeLoadingMessage("Waiting for payment approval..");
+            SystemMessage.HideLoadingPanel();
             foreach (CartItem cartItem in order.CartOrdered.Items())
             {
                 Product product = cartItem.Product;
@@ -144,6 +149,7 @@ namespace NebulaSoft
 #if MODULE_IAP && UNITY_IAP_NEW
         private void OnPurchaseFailed(FailedOrder order)
         {
+            bool ownsActivePurchase = OwnsActivePurchase(order);
             foreach (CartItem cartItem in order.CartOrdered.Items())
             {
                 Product product = cartItem.Product;
@@ -166,15 +172,15 @@ namespace NebulaSoft
                 {
                     QueuePurchaseAttempt(item, GetAttemptStatus(order.FailureReason.ToString()), order.FailureReason.ToString());
 
-                    int callbackIndex = purchaseCallbacks.FindIndex(x => x.ProductKeyType == item.ProductKeyType);
+                    int callbackIndex = purchaseCallbacks.FindIndex(x => x.ProductKeyType == item.Key);
                     if (callbackIndex != -1)
                         purchaseCallbacks.RemoveAt(callbackIndex);
 
                     NebulaSoft.PurchaseFailureReason purchaseFailureReason = (NebulaSoft.PurchaseFailureReason)order.FailureReason;
 
-                    AnalyticsController.OnIAPFailed(item, purchaseFailureReason);
+                    IAPManager.Safely(() => AnalyticsController.OnIAPFailed(item, purchaseFailureReason));
 
-                    IAPManager.OnPurchaseFailed(item.ProductKeyType, purchaseFailureReason);
+                    IAPManager.OnPurchaseFailed(item.Key, purchaseFailureReason);
                 }
                 else
                 {
@@ -187,9 +193,12 @@ namespace NebulaSoft
                           + $"Purchase Failure Details: {order.Details}");
             }
 
-            ClearPurchaseInProgress();
-            SystemMessage.ChangeLoadingMessage("Payment failed!");
-            SystemMessage.HideLoadingPanel();
+            if (ownsActivePurchase)
+            {
+                ClearPurchaseInProgress();
+                SystemMessage.ChangeLoadingMessage("Payment failed!");
+                SystemMessage.HideLoadingPanel();
+            }
         }
 
         private bool IsPurchaseValid(Order order)
@@ -237,19 +246,43 @@ namespace NebulaSoft
 
         private void OnPurchasePending(PendingOrder order)
         {
+            bool ownsActivePurchase = OwnsActivePurchase(order);
             if (!IsPurchaseValid(order))
             {
-                QueueActivePurchaseAttempt("failed", "local_validation_failed");
-                ClearPurchaseInProgress();
+                if (ownsActivePurchase)
+                {
+                    IAPManager.OnPurchaseFailed(activePurchaseItem.Key, NebulaSoft.PurchaseFailureReason.SignatureInvalid);
+                    QueueActivePurchaseAttempt("failed", "local_validation_failed");
+                    ClearPurchaseInProgress();
+                    SystemMessage.ChangeLoadingMessage("Purchase validation failed. Please reconnect and try again.");
+                    SystemMessage.HideLoadingPanel();
+                }
                 Debug.LogWarning("[IAP Manager]: Local receipt validation failed. The order remains pending for a later retry.");
-                SystemMessage.ChangeLoadingMessage("Purchase validation failed. Please reconnect and try again.");
-                SystemMessage.HideLoadingPanel();
                 return;
             }
 
             // Reward locally before acknowledgement. A persisted transaction hash
             // prevents confirmation retries from granting the same order again.
-            FulfillLocalPurchase(order);
+            try
+            {
+                string hash = IAPIntegration.GetTransactionIdHash(order.Info.TransactionID);
+                if (IAPManager.IsIAPTransactionFulfilled(hash)) SaveController.SaveChecked();
+                else if (!FulfillLocalPurchase(order))
+                {
+                    throw new InvalidOperationException("Product or transaction is missing. Order remains pending.");
+                }
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning("[IAP]: Fulfillment failed; order remains pending: " + exception.Message);
+                if (ownsActivePurchase)
+                {
+                    IAPManager.OnPurchaseFailed(activePurchaseItem.Key, NebulaSoft.PurchaseFailureReason.Unknown);
+                    ClearPurchaseInProgress();
+                    SystemMessage.HideLoadingPanel();
+                }
+                return;
+            }
 
             try
             {
@@ -262,46 +295,38 @@ namespace NebulaSoft
                 Debug.LogWarning("[Firebase IAP] Transaction logging was deferred: " + exception.Message);
             }
 
-            ClearPurchaseInProgress();
-            m_StoreController.ConfirmPurchase(order);
+            try { m_StoreController.ConfirmPurchase(order); }
+            catch (Exception exception)
+            {
+                // Rewards are already durable; redelivery only retries acknowledgement.
+                Debug.LogWarning("[IAP]: Store confirmation remains pending: " + exception.Message);
+                if (OwnsActivePurchase(order))
+                {
+                    ClearPurchaseInProgress();
+                    SystemMessage.HideLoadingPanel();
+                }
+            }
         }
 
-        private void FulfillLocalPurchase(Order order)
+        private bool FulfillLocalPurchase(Order order)
         {
-            string transactionHash = FirebaseIAPTransactionLogger.GetTransactionIdHash(order.Info.TransactionID);
-            if (!string.IsNullOrWhiteSpace(transactionHash) && IAPManager.IsIAPTransactionFulfilled(transactionHash))
+            string hash = IAPIntegration.GetTransactionIdHash(order.Info.TransactionID);
+            if (string.IsNullOrWhiteSpace(hash)) return false;
+            // Validate the whole cart before applying any reward.
+            var entries = order.CartOrdered.Items().ToList();
+            if (entries.Count == 0 || entries.Any(entry => entry.Product == null || IAPManager.GetIAPItem(entry.Product.definition.id) == null))
+                return false;
+            foreach (var entry in entries)
             {
-                if (Monetization.VerboseLogging)
-                    Debug.Log("[IAPManager]: The local reward for this transaction was already granted.");
-
-                return;
+                var product = entry.Product;
+                var item = IAPManager.GetIAPItem(product.definition.id);
+                if (!IAPManager.TryFulfillPurchase(item, hash + ":" + product.definition.id)) return false;
+                IAPManager.Safely(() => InvokePurchaseAnalyticsCallback(item, product, order.Info.Receipt));
             }
-
-            foreach (CartItem cartItem in order.CartOrdered.Items())
-            {
-                Product product = cartItem.Product;
-                if (product is null)
-                {
-                    Debug.Log("[IAPManager]: Could not find product in order.");
-                    continue;
-                }
-
-                if (Monetization.VerboseLogging)
-                    Debug.Log($"[IAPManager]: Purchasing - {product.definition.id} is completed!");
-
-                IAPItem item = IAPManager.GetIAPItem(product.definition.id);
-                if (item == null)
-                {
-                    Debug.LogWarning($"[IAPManager]: Product - {product.definition.id} can't be found!");
-                    continue;
-                }
-
-                InvokePurchaseAnalyticsCallback(item, product, order.Info.Receipt);
-                IAPManager.OnPurchaseCompleted(item);
-            }
-
-            if (!string.IsNullOrWhiteSpace(transactionHash))
-                IAPManager.MarkIAPTransactionFulfilled(transactionHash);
+            // Keep recognizing transaction hashes written by earlier framework versions.
+            IAPManager.MarkIAPTransactionFulfilled(hash);
+            SaveController.SaveChecked();
+            return true;
         }
 
         private void QueueGooglePlayTransactionLogs(PendingOrder order)
@@ -316,7 +341,7 @@ namespace NebulaSoft
                     continue;
 
                 IAPItem item = IAPManager.GetIAPItem(product.definition.id);
-                FirebaseIAPTransactionLogger.QueueGooglePlayPurchase(
+                IAPIntegration.QueueGooglePlayPurchase(
                     product.definition.id,
                     item != null ? item.ProductType.ToString() : "Unknown",
                     order.Info.TransactionID,
@@ -336,7 +361,7 @@ namespace NebulaSoft
                     continue;
 
                 IAPItem item = IAPManager.GetIAPItem(product.definition.id);
-                FirebaseIAPTransactionLogger.QueueGooglePlayPurchase(
+                IAPIntegration.QueueGooglePlayPurchase(
                     product.definition.id,
                     item != null ? item.ProductType.ToString() : "Unknown",
                     order.Info.TransactionID,
@@ -354,47 +379,38 @@ namespace NebulaSoft
 
         private void OnPurchasesFetched(Orders orders)
         {
-            HashSet<string> ownedProductIds = new HashSet<string>();
             int restoredCount = 0;
-
-            if (orders != null)
+            try
             {
-                foreach (ConfirmedOrder confirmedOrder in orders.ConfirmedOrders)
-                {
-                    QueueGooglePlayTransactionLogs(confirmedOrder);
-
-                    foreach (CartItem item in confirmedOrder.CartOrdered.Items())
+                var ownedProductIds = new HashSet<string>();
+                if (orders != null)
+                    foreach (ConfirmedOrder order in orders.ConfirmedOrders)
                     {
-                        string productId = item.Product.definition.id;
-
-                        ownedProductIds.Add(productId);
+                        IAPManager.Safely(() => QueueGooglePlayTransactionLogs(order));
+                        foreach (CartItem entry in order.CartOrdered.Items())
+                            if (entry.Product != null) ownedProductIds.Add(entry.Product.definition.id);
                     }
+
+                foreach (string productId in ownedProductIds)
+                {
+                    var item = IAPManager.GetIAPItem(productId);
+                    if (!CanRestoreEntitlement(item)) continue;
+                    item.OnProductRestored();
+                    restoredCount++;
                 }
-            }
-
-            foreach (string productId in ownedProductIds)
-            {
-                IAPItem iapItem = IAPManager.GetIAPItem(productId);
-                if (iapItem == null)
-                    continue;
-
-                if (!CanRestoreEntitlement(iapItem))
-                    continue;
-
-                iapItem.OnProductRestored();
-                restoredCount++;
-            }
-
-            restoredEntitlementCount = restoredCount;
-
-            SaveController.MarkAsSaveIsRequired();
-            IAPManager.OnPurchasesRestored();
-            FirebaseIAPTransactionLogger.TryFlushPendingTransactions();
-
+                restoredEntitlementCount = restoredCount;
+                SaveController.SaveChecked();
+                IAPManager.OnPurchasesRestored();
+                IAPManager.Safely(IAPIntegration.TryFlushPendingTransactions);
 #if UNITY_ANDROID
-            if (IAPManager.IsRestoreInProgress)
-                CompleteRestore(true, restoredCount, string.Empty);
+                if (IAPManager.IsRestoreInProgress) CompleteRestore(true, restoredCount, string.Empty);
 #endif
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning("[IAP]: Restore failed: " + exception.Message);
+                if (IAPManager.IsRestoreInProgress) CompleteRestore(false, restoredCount, exception.Message);
+            }
         }
 
         private static bool CanRestoreEntitlement(IAPItem item)
@@ -402,8 +418,7 @@ namespace NebulaSoft
             if (item == null || item.ProductType == ProductType.Consumable)
                 return false;
 
-            return item.ProductKeyType == ProductKeyType.NoAds
-                || item.ProductKeyType == ProductKeyType.StarterPack;
+            return item.ProductType == ProductType.NonConsumable;
         }
 
         private void OnPurchaseConfirmed(Order order)
@@ -424,6 +439,7 @@ namespace NebulaSoft
 
         private void OnPurchaseConfirmed(ConfirmedOrder order)
         {
+            if (!OwnsActivePurchase(order)) return;
             ClearPurchaseInProgress();
             SystemMessage.ChangeLoadingMessage("Payment complete!");
             SystemMessage.HideLoadingPanel();
@@ -432,7 +448,7 @@ namespace NebulaSoft
 
         private void InvokePurchaseAnalyticsCallback(IAPItem item, Product product, string receipt)
         {
-            int callbackIndex = purchaseCallbacks.FindIndex(x => x.ProductKeyType == item.ProductKeyType);
+            int callbackIndex = purchaseCallbacks.FindIndex(x => x.ProductKeyType == item.Key);
             if (callbackIndex == -1)
                 return;
 
@@ -440,7 +456,7 @@ namespace NebulaSoft
 
             Debug.Log("[IAPManager]: IAP Analytics Callback");
 
-            callback.Callback?.Invoke(new AnalyticsIAPData()
+            callback.Callback?.Invoke(new PurchaseEvent()
             {
                 Item = item,
 
@@ -474,6 +490,7 @@ namespace NebulaSoft
                           + $"Confirmation Failure Details: {order.Details}");
             }
 
+            if (!OwnsActivePurchase(order)) return;
             ClearPurchaseInProgress();
             // The reward was granted locally before acknowledgement. Unity IAP
             // will deliver the pending order again if Google Play needs a retry.
@@ -487,6 +504,7 @@ namespace NebulaSoft
             if (Monetization.VerboseLogging)
                 Debug.Log($"Store disconnected details: {description.message}");
 
+            IAPManager.OnInitializationFailed(description.message);
             if (IAPManager.IsRestoreInProgress)
             {
                 CompleteRestore(false, restoredEntitlementCount, description.message);
@@ -507,11 +525,11 @@ namespace NebulaSoft
             if (CURRENT_STORE != StoreType.GooglePlay || item == null || string.IsNullOrWhiteSpace(item.ID))
                 return;
 
-            FirebaseIAPTransactionLogger.QueueGooglePlayPurchaseAttempt(
+            IAPManager.Safely(() => IAPIntegration.QueueGooglePlayPurchaseAttempt(
                 item.ID,
                 item.ProductType.ToString(),
                 status,
-                failureReason);
+                failureReason));
         }
 
         private void QueueActivePurchaseAttempt(string status, string failureReason)
@@ -523,6 +541,13 @@ namespace NebulaSoft
         {
             isPurchaseInProgress = false;
             activePurchaseItem = null;
+            IAPManager.FinishPurchase();
+        }
+
+        private bool OwnsActivePurchase(Order order)
+        {
+            if (activePurchaseItem == null || order == null) return false;
+            return order.CartOrdered.Items().Any(entry => entry.Product?.definition?.id == activePurchaseItem.ID);
         }
 
         private static string GetAttemptStatus(string failureReason)
@@ -545,8 +570,7 @@ namespace NebulaSoft
 
         private void OnProductsFetchedFailed(ProductFetchFailed failure)
         {
-            if (Monetization.VerboseLogging)
-                Debug.Log($"Products fetch failed for {failure.FailedFetchProducts.Count} products: {failure.FailureReason}");
+            IAPManager.OnInitializationFailed(failure.FailureReason.ToString());
         }
 #endif
 
@@ -615,10 +639,10 @@ namespace NebulaSoft
         /// Initiates the purchase of a product.
         /// </summary>
         /// <param name="productKeyType">The key type of the product to purchase.</param>
-        public override void BuyProduct(ProductKeyType productKeyType)
+        public override void BuyProduct(string productKeyType)
         {
 #if MODULE_IAP && UNITY_IAP_NEW
-            FirebaseIAPTransactionLogger.TryFlushPendingTransactions();
+            IAPIntegration.TryFlushPendingTransactions();
 
             if (!IAPManager.IsInitialized)
             {
@@ -629,10 +653,10 @@ namespace NebulaSoft
             SystemMessage.ShowLoadingPanel();
             SystemMessage.ChangeLoadingMessage("Payment in progress..");
 
-            IAPItem item = IAPManager.GetIAPItem(productKeyType);
-            if (item != null)
+            IAPItem item = IAPManager.GetIAPItemByKey(productKeyType);
+            if (item != null && m_StoreController.GetProductById(item.ID) != null)
             {
-                AnalyticsController.OnIAPClicked(item); 
+                IAPManager.Safely(() => AnalyticsController.OnIAPClicked(item));
                 
                 for (int i = purchaseCallbacks.Count - 1; i >= 0; i--)
                 {
@@ -656,6 +680,7 @@ namespace NebulaSoft
                 catch (Exception exception)
                 {
                     QueueActivePurchaseAttempt("failed", "purchase_start_failed");
+                    IAPManager.OnPurchaseFailed(item.Key, NebulaSoft.PurchaseFailureReason.Unknown);
                     ClearPurchaseInProgress();
                     Debug.LogWarning("[IAP Manager]: Could not start purchase: " + exception.Message);
                     SystemMessage.ChangeLoadingMessage("Payment could not start. Please reconnect and try again.");
@@ -664,6 +689,8 @@ namespace NebulaSoft
             }
             else
             {
+                IAPManager.OnPurchaseFailed(productKeyType, NebulaSoft.PurchaseFailureReason.ProductUnavailable);
+                ClearPurchaseInProgress();
                 SystemMessage.ChangeLoadingMessage("This product is unavailable.");
                 SystemMessage.HideLoadingPanel();
             }
@@ -677,13 +704,13 @@ namespace NebulaSoft
         /// </summary>
         /// <param name="productKeyType">The key type of the product.</param>
         /// <returns>The product data.</returns>
-        public override ProductData GetProductData(ProductKeyType productKeyType)
+        public override ProductData GetProductData(string productKeyType)
         {
             if (!IAPManager.IsInitialized)
                 return null;
 
 #if MODULE_IAP && UNITY_IAP_NEW
-            IAPItem item = IAPManager.GetIAPItem(productKeyType);
+            IAPItem item = IAPManager.GetIAPItemByKey(productKeyType);
             if (item != null)
             {
                 Product product = m_StoreController.GetProductById(item.ID);
@@ -700,10 +727,10 @@ namespace NebulaSoft
         /// </summary>
         /// <param name="productKeyType">The key type of the product.</param>
         /// <returns>True if the product is subscribed, otherwise false.</returns>
-        public override bool IsSubscribed(ProductKeyType productKeyType)
+        public override bool IsSubscribed(string productKeyType)
         {
 #if MODULE_IAP && UNITY_IAP_NEW
-            IAPItem item = IAPManager.GetIAPItem(productKeyType);
+            IAPItem item = IAPManager.GetIAPItemByKey(productKeyType);
             if (item != null)
             {
                 return entitlementsService.IsSubscriptionActive(item.ID);
@@ -747,6 +774,23 @@ namespace NebulaSoft
             appleStoreExtendedService.SetAppAccountToken(fraudDetectionData.AccountToken);
         }
 #endif
+
+        public override void Dispose()
+        {
+#if MODULE_IAP && UNITY_IAP_NEW
+            if (m_StoreController == null) return;
+            entitlementsService?.Dispose();
+            m_StoreController.OnPurchasePending -= OnPurchasePending;
+            m_StoreController.OnPurchaseConfirmed -= OnPurchaseConfirmed;
+            m_StoreController.OnPurchaseFailed -= OnPurchaseFailed;
+            m_StoreController.OnStoreDisconnected -= OnStoreDisconnected;
+            m_StoreController.OnProductsFetchFailed -= OnProductsFetchedFailed;
+            m_StoreController.OnProductsFetched -= OnProductsFetched;
+            m_StoreController.OnPurchasesFetched -= OnPurchasesFetched;
+            m_StoreController.OnPurchasesFetchFailed -= OnPurchasesFetchFailed;
+            m_StoreController.OnPurchaseDeferred -= OnPurchaseDeferred;
+#endif
+        }
 
         private static StoreType GetCurrentStore()
         {
@@ -829,6 +873,13 @@ namespace NebulaSoft
                 this.store.OnCheckEntitlement += OnCheckEntitlement;
 
                 this.store.ProcessPendingOrdersOnPurchasesFetched(true);
+            }
+
+            public void Dispose()
+            {
+                store.OnPurchasesFetched -= OnPurchasesFetched;
+                store.OnPurchaseConfirmed -= OnPurchaseConfirmed;
+                store.OnCheckEntitlement -= OnCheckEntitlement;
             }
 
             public void RefreshAll() => store?.FetchPurchases();
@@ -1042,16 +1093,16 @@ namespace NebulaSoft
 
         private class PurchaseCallback
         {
-            public ProductKeyType ProductKeyType { get; private set; }
+            public string ProductKeyType { get; private set; }
             public PurchaseCallbackDelegate Callback { get; private set; }
 
-            public PurchaseCallback(ProductKeyType productKeyType, PurchaseCallbackDelegate callback)
+            public PurchaseCallback(string productKeyType, PurchaseCallbackDelegate callback)
             {
                 ProductKeyType = productKeyType;
                 Callback = callback;
             }
 
-            public delegate void PurchaseCallbackDelegate(AnalyticsIAPData analyticsIAPData);
+            public delegate void PurchaseCallbackDelegate(PurchaseEvent analyticsIAPData);
         }
 #endif
     }

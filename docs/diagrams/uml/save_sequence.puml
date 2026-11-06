@@ -1,0 +1,41 @@
+@startuml
+!include style.iuml
+autonumber
+participant "Feature controller" as feature
+participant "SaveObject / GlobalSave" as model
+participant "SaveController" as save
+participant "SaveWriteCoordinator\n/ save wrapper" as io
+feature -> model : mutate state trên main thread
+feature -> save : MarkAsSaveIsRequired()
+activate save
+save -> save : isSaveRequired = true; saveRevision++
+save --> feature
+deactivate save
+-> save : Save(forceSave, useThreads: false)\nđường ghi đồng bộ
+activate save
+alt không dirty và !forceSave
+ [<-- save : không ghi
+else cần ghi
+ save -> model : Flush(true); CreateSnapshot()
+ activate model
+ model --> save : snapshot tách khỏi live model
+ deactivate model
+ save -> io : serialize / ghi snapshot tuần tự
+ activate io
+ note over save,io
+Sơ đồ này vẽ useThreads = false.
+Mặc định useThreads = true: nếu wrapper.UseThreads(),
+Execute xếp hàng worker và Save() trả về trước khi ghi xong.
+API Save() không trả awaitable receipt.
+ end note
+ io --> save : ghi hoàn tất hoặc exception
+ deactivate io
+ alt thành công; revision và globalSave còn khớp
+  save -> save : dirty = false
+ else state đổi hoặc ghi thất bại
+  note over save : Không xóa dirty của state mới.\nGiữ yêu cầu persist tiếp theo.
+ end
+ [<-- save : Save() return
+end
+deactivate save
+@enduml

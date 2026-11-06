@@ -272,6 +272,7 @@ namespace NebulaSoft
 
             entry.Claimed = true;
             SaveController.MarkAsSaveIsRequired();
+            AnalyticsController.Events.RewardClaimed("quest", definition.Id);
 
             QuestClaimed?.Invoke(definition);
             QuestChanged?.Invoke(definition);
@@ -365,6 +366,7 @@ namespace NebulaSoft
                 PeriodKey = milestone.GetPeriodKey(utcNow)
             });
             SaveController.MarkAsSaveIsRequired();
+            AnalyticsController.Events.RewardClaimed("quest_milestone", milestone.Id);
 
             DataChanged?.Invoke();
             return true;

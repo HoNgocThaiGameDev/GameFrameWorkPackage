@@ -1,0 +1,37 @@
+@startuml
+!include style.iuml
+autonumber
+participant "Initializer" as init
+participant "ProjectInitSettings" as settings
+participant "module\n: InitModule" as module
+participant "MusicSource" as music
+-> init : InitModules()
+activate init
+init -> settings : Init(this)
+activate settings
+loop modules[] theo thứ tự asset
+ alt module != null
+  settings -> module : CreateComponent()
+  activate module
+  note over module : Concrete implementation\nkhởi tạo service.
+  module --> settings
+  deactivate module
+ end
+end
+settings --> init
+deactivate settings
+init -> init : StaticModules.InitStaticModules()
+opt initializer == this && globalMusicSource != null
+ init -> music : Init()
+ activate music
+ music --> init
+ deactivate music
+ init -> music : Activate()
+end
+deactivate init
+note over init,music
+InitModule là ScriptableObject, không có Awake.
+CreateComponent() là contract thực tế.
+Settings giữ reference modules[].
+end note
+@enduml

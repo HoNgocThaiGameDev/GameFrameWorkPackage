@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace NebulaSoft
@@ -14,9 +14,15 @@ namespace NebulaSoft
         {
             if (!string.IsNullOrEmpty(config))
             {
-                configData = ParseJsonLikeString(config);
-
-                Debug.Log("[Remote Config] Remote config initialized successfully.");
+                try
+                {
+                    configData = ParseJsonLikeString(config);
+                    Debug.Log("[Remote Config] Remote config initialized successfully.");
+                }
+                catch (JsonException exception)
+                {
+                    Debug.LogWarning("[Remote Config] Invalid JSON; keeping the last valid configuration. " + exception.Message);
+                }
             }
             else
             {
@@ -53,15 +59,9 @@ namespace NebulaSoft
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
-            string pattern = @"""(?<key>[^""]+)""\s*:\s*(\{(?<value>(?>[^{}]+|\{(?<open>)|\}(?<-open>))*(?(open)(?!)))\})";
-            MatchCollection matches = Regex.Matches(input, pattern, RegexOptions.Singleline);
-
-            foreach (Match match in matches)
+            foreach (var property in JObject.Parse(input).Properties())
             {
-                string key = match.Groups["key"].Value;
-                string value = match.Groups["value"].Value;
-
-                result[key] = "{" + value + "}";
+                result[property.Name] = property.Value.ToString(Formatting.None);
             }
 
             return result;

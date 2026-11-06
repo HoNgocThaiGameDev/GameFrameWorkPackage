@@ -52,29 +52,10 @@ namespace NebulaSoft
             logOpenButton.onClick.AddListener(() => OnLogOpenButtonClicked());
             logCloseButton.onClick.AddListener(() => OnLogCloseButtonClicked());
 
-            if(AdsManager.IsModuleActive(AdProvider.LevelPlay))
-            {
-                levelPlayObject.SetActive(true);
-
-                levelPlayTestSuiteButton.onClick.AddListener(() => OnLevelPlayTestSuiteButtonClicked());
-            }
-            else
-            {
-                levelPlayObject.SetActive(false);
-            }
+            // Network diagnostics belong to the selected provider's SDK tooling.
+            levelPlayObject.SetActive(false);
 
             Application.logMessageReceived += Log;
-        }
-
-        private void OnLevelPlayTestSuiteButtonClicked()
-        {
-#if MODULE_LEVELPLAY
-            AdProviderHandler levelPlayProvider = AdsManager.GetAdProvider(AdProvider.LevelPlay);
-            if(levelPlayProvider != null)
-            {
-                ((LevelPlayHandler)levelPlayProvider).OpenTestSuite();
-            }
-#endif
         }
 
         private void OnDestroy()

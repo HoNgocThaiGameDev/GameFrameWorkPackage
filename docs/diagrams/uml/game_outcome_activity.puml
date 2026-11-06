@@ -1,0 +1,36 @@
+@startuml
+!include style.iuml
+start
+:Rule của game thông báo outcome;
+if (Kết quả?) then (win)
+ :GameController.GameComplete();
+ :Game flow grant reward một lần\nvà chạy animation kết quả;
+ :GameController.ShowCompleteUI();
+ :Người chơi nhấn Next;
+ :Game flow chọn / lưu level tiếp;
+ :Reload scene Game;
+else (fail)
+ :GameController.GameOver(allowRevive);
+ if (Có thể revive\ntheo policy / ads config?) then (có)
+  if (Rewarded thành công?) then (có)
+   :Game flow phục hồi board / timer;
+   :GameController.Revive(extraSeconds);
+   :Quay lại vòng chơi;
+  else (không / skip)
+   :Final failure UI / life policy;
+   :Chọn Retry hoặc Menu;
+  endif
+ else (không)
+  :Final failure UI / life policy;
+  :Chọn Retry hoặc Menu;
+ endif
+endif
+stop
+note right
+Activity đề xuất cho game đã gắn board.
+Game flow, reward, tăng level và phục hồi
+board/timer là phần game mới cần làm.
+Final node kết thúc xử lý outcome,
+không có nghĩa là đóng ứng dụng.
+end note
+@enduml

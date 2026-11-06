@@ -1,0 +1,7 @@
+{
+    "name": "NebulaSoft.Ads.Contracts",
+    "rootNamespace": "NebulaSoft.Ads",
+    "references": [],
+    "autoReferenced": true,
+    "noEngineReferences": true
+}

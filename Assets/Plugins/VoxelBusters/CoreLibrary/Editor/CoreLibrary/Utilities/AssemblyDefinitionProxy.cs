@@ -31,21 +31,25 @@ namespace VoxelBusters.CoreLibrary.Editor
 
         public void IncludeAllPlatforms()
         {
-            m_data.ExcludePlatforms = new string[0];
-            m_data.IncludePlatforms = new string[0];
+            m_data.excludePlatforms = new string[0];
+            m_data.includePlatforms = new string[0];
         }
 
         public void ExcludeAllPlatforms()
         {
             AssemblyDefinitionPlatform[] platforms = CompilationPipeline.GetAssemblyDefinitionPlatforms();
-            m_data.ExcludePlatforms = platforms.Select(platform => platform.Name).ToArray();
-            m_data.IncludePlatforms = new string[0];
+            #if UNITY_6_0_OR_NEWER
+            m_data.excludePlatforms = platforms.Where(platform => !platform.HasSubtarget).Select(platform => platform.Name).ToArray();
+            #else
+            m_data.excludePlatforms = platforms.Select(platform => platform.Name).ToArray();
+            #endif
+            m_data.includePlatforms = new string[0];
         }
 
 
         public void Save()
         {
-            IOServices.CreateFile(IOServices.CombinePath(m_directoryPath, $"{m_data.Name}.asmdef"), m_data.ToJson());
+            IOServices.CreateFile(IOServices.CombinePath(m_directoryPath, $"{m_data.name}.asmdef"), m_data.ToJson());
         }
 
     }

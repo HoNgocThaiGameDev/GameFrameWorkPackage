@@ -13,18 +13,16 @@ namespace NebulaSoft.EditorTools
     internal static class QuestPrefabBuilder
     {
         private const string QuestSpriteFolder = "Assets/Addon/UI/Sprites/Quest/";
-        private const string ElementPrefabPath = "Assets/Addon/UI/Prefabs/Elements/QuestElement.prefab";
-        private const string PanelPrefabPath = "Assets/Addon/UI/Prefabs/Pages/Panel_quest.prefab";
+        private const string ElementPrefabPath = "Assets/Addon/UI/Prefabs/Quests/QuestElement.prefab";
+        private const string PanelPrefabPath = "Assets/Addon/UI/Prefabs/Quests/Panel_quest.prefab";
         private const string NavigationPrefabPath = "Assets/Addon/UI/Prefabs/Shared/LeaderboardBottomNavigation.prefab";
 
         private static TMP_FontAsset font;
 
-        [MenuItem("Tools/Picture Puzzle/Quest/Rebuild Quest UI")]
         public static void BuildAll()
         {
             EnsureFolder("Assets/Addon/UI/Prefabs");
-            EnsureFolder("Assets/Addon/UI/Prefabs/Elements");
-            EnsureFolder("Assets/Addon/UI/Prefabs/Pages");
+            EnsureFolder("Assets/Addon/UI/Prefabs/Quests");
 
             font = FindUIFont();
             QuestElementView elementPrefab = BuildQuestElement();
@@ -68,7 +66,7 @@ namespace NebulaSoft.EditorTools
             SetRect(rewardAmount.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.32f), new Vector2(8f, 2f), new Vector2(-8f, -4f));
 
             TextMeshProUGUI information = CreateText("Information Text", root.transform, "Complete 3 level(s)", 27f, TextAlignmentOptions.Left, Color.white);
-            information.enableWordWrapping = true;
+            information.textWrappingMode = TextWrappingModes.Normal;
             SetRect(information.rectTransform, new Vector2(0f, 0.48f), new Vector2(0.56f, 0.92f), new Vector2(174f, -2f), Vector2.zero);
 
             Slider slider = CreateProgressSlider(root.transform, out TextMeshProUGUI progressText);
@@ -335,7 +333,7 @@ namespace NebulaSoft.EditorTools
             label.fontSize = fontSize;
             label.alignment = alignment;
             label.color = color;
-            label.enableWordWrapping = false;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
             label.raycastTarget = false;
             return label;
         }

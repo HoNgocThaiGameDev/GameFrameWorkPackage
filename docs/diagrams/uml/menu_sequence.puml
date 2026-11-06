@@ -1,0 +1,53 @@
+@startuml
+!include style.iuml
+autonumber
+participant "MenuController" as mc
+participant "UIController" as ui
+participant "UIMainMenu" as home
+participant "StaticMapPanel" as map
+participant "SceneManager" as scene
+-> mc : Unity: Awake()
+activate mc
+mc -> ui : Init()
+activate ui
+ui -> ui : Quét UIPage con trực tiếp\nCacheComponents; pagesLink
+ui --> mc
+deactivate ui
+mc -> ui : InitPages()
+activate ui
+ui -> home : PreparePage(); Init()
+activate home
+home -> map : Init()
+activate map
+map -> map : Play Button.onClick\n+= OnPlayButtonClicked
+map --> home
+deactivate map
+home --> ui
+deactivate home
+note over ui : Cũng PreparePage / Init các UIPage khác.
+ui --> mc
+deactivate ui
+deactivate mc
+-> mc : Unity: Start()
+activate mc
+mc -> ui : ShowPage<UIMainMenu>()
+activate ui
+ui -> home : PlayShowAnimation()
+activate home
+home -> ui : OnPageOpened(this)
+home --> ui
+deactivate home
+ui -> home : EnableCanvas()
+ui --> mc
+deactivate ui
+mc -> mc : PreloadLeaderboardsAsync()\nAdsManager.EnableBanner()\nOverlay.Hide(0.3f)
+deactivate mc
+-> mc : Play Button.onClick\nOnPlayButtonClicked()
+activate mc
+mc -> mc : LoadGame()
+opt SceneUtils.DoesSceneExist("Game")
+ mc -> scene : LoadScene("Game")
+ note over mc,scene : Single scene: Menu bị unload.\nInitializer/service vẫn sống.
+end
+deactivate mc
+@enduml

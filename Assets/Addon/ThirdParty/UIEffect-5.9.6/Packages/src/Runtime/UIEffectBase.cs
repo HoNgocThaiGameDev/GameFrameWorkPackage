@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 using Coffee.UIEffectInternal;
 using UnityEngine;
@@ -35,7 +35,12 @@ namespace Coffee.UIEffects
 
         public Material effectMaterial => _material;
         public Graphic graphic => _graphic ? _graphic : _graphic = GetComponent<Graphic>();
+#if UNITY_6000_6_OR_NEWER
+        public virtual uint effectId => unchecked((uint)materialEffectEntityId.GetHashCode());
+        internal virtual EntityId materialEffectEntityId => GetEntityId();
+#else
         public virtual uint effectId => (uint)GetInstanceID();
+#endif
         public virtual float actualSamplingScale => 1;
         public virtual bool canModifyShape => true;
 
@@ -160,8 +165,17 @@ namespace Coffee.UIEffects
 
             Profiler.BeginSample("(UIE)[UIEffect] GetModifiedMaterial");
             var samplingScaleId = (uint)(Mathf.InverseLerp(0.01f, 100, actualSamplingScale) * uint.MaxValue);
+#if UNITY_6000_6_OR_NEWER
+            var materialId = EntityId.ToULong(baseMaterial.GetEntityId());
+            var effectEntityId = EntityId.ToULong(materialEffectEntityId);
+            var rootId = transitionRoot ? EntityId.ToULong(transitionRoot.GetEntityId()) : 0UL;
+            var hash = new Hash128((uint)materialId, (uint)(materialId >> 32), (uint)effectEntityId, (uint)(effectEntityId >> 32));
+            hash.Append(ref samplingScaleId);
+            hash.Append(ref rootId);
+#else
             var rootId = (uint)(transitionRoot ? transitionRoot.GetInstanceID() : 0);
             var hash = new Hash128((uint)baseMaterial.GetInstanceID(), effectId, samplingScaleId, rootId);
+#endif
             if (!MaterialRepository.Valid(hash, _material))
             {
                 Profiler.BeginSample("(UIE)[UIEffect] GetModifiedMaterial > Get or create material");

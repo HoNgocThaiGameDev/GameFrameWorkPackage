@@ -39,12 +39,6 @@ namespace NebulaSoft
 
         private void OnPurchased()
         {
-            if (LeaderboardBottomNavigationController.IsNoConnectionActive())
-            {
-                LeaderboardBottomNavigationController.TryShowNoConnectionPopup();
-                return;
-            }
-
             AdsManager.ShowRewardBasedVideo((reward) =>
             {
                 if (reward)

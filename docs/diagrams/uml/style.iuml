@@ -1,0 +1,40 @@
+' UML notation with an Astah-like restrained visual style.
+skinparam backgroundColor white
+skinparam defaultFontName Arial
+skinparam defaultFontSize 16
+skinparam shadowing false
+set namespaceSeparator none
+hide circle
+skinparam classAttributeIconSize 0
+skinparam roundcorner 0
+skinparam ArrowColor #222222
+skinparam ArrowThickness 1
+skinparam PackageBorderColor #444444
+skinparam PackageBackgroundColor #FFFFFF
+skinparam ClassBorderColor #222222
+skinparam ClassBackgroundColor #FFFBE7
+skinparam ObjectBorderColor #222222
+skinparam ObjectBackgroundColor #FFFBE7
+skinparam NoteBackgroundColor #FFFFE6
+skinparam NoteBorderColor #777777
+skinparam NoteFontSize 14
+skinparam ClassAttributeFontSize 15
+skinparam ClassFontSize 17
+skinparam ObjectFontSize 17
+skinparam SequenceParticipantBackgroundColor #FFFBE7
+skinparam SequenceParticipantBorderColor #222222
+skinparam SequenceLifeLineBorderColor #555555
+skinparam SequenceLifeLineBackgroundColor white
+skinparam SequenceGroupBackgroundColor white
+skinparam SequenceGroupBorderColor #444444
+skinparam SequenceMessageAlign left
+skinparam SequenceArrowColor #222222
+skinparam SequenceBoxBackgroundColor #FFFBE7
+skinparam SequenceReferenceBackgroundColor #F6F6F6
+skinparam StateBackgroundColor #FFFBE7
+skinparam StateBorderColor #222222
+skinparam ActivityBackgroundColor #FFFBE7
+skinparam ActivityBorderColor #222222
+skinparam ActivityDiamondBackgroundColor white
+skinparam ActivityDiamondBorderColor #222222
+hide footbox

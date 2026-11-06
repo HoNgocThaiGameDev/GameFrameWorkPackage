@@ -1,0 +1,34 @@
+@startuml
+!include style.iuml
+left to right direction
+class "TitleGameFlow" as flow <<đề xuất>> {
+ - board : BoardModel
+ - view : BoardView
+ + StartLevel()
+ + Submit(command)
+ + NextLevel()
+ + RestoreAfterRevive()
+}
+class "BoardModel / Rule" as model <<game mới>>
+class "BoardView / Input" as view <<game mới>>
+class "LevelDatabase" as levels <<game mới>>
+class "GameController" as shell <<có sẵn>> {
+ {static} + ActivateGame()
+ {static} + GameComplete()
+ {static} + ShowCompleteUI()
+ {static} + GameOver(...)
+}
+class "UIGame" as hud <<có sẵn>>
+interface "IAdsService" as ads <<interface>>
+flow --> model : reference
+flow --> view : reference
+flow --> levels : reference
+flow ..> shell : gọi shell API
+flow ..> hud : bind / cập nhật HUD
+flow --> ads : dependency được truyền vào
+note bottom of flow
+Đây là thiết kế đề xuất để gắn game mới.
+TitleGameFlow / BoardModel / BoardView /
+LevelDatabase chưa tồn tại trong template.
+end note
+@enduml

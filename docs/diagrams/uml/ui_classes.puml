@@ -1,0 +1,52 @@
+@startuml
+!include style.iuml
+top to bottom direction
+hide empty members
+class MenuController {
+ - uiController : UIController
+ - Awake()
+ - Start()
+}
+class GameController {
+ - Awake()
+ - Start()
+ {static} + GameComplete()
+ {static} + ShowCompleteUI()
+}
+class UIController {
+ - pages : List<UIPage>
+ - pagesLink : Dictionary<Type, UIPage>
+ - cachedPages : CachedPages
+ + Init()
+ + InitPages()
+ {static} + ShowPage<T>()
+ {static} + HidePage<T>()
+}
+abstract class UIPage {
+ + CacheComponents()
+ + PreparePage()
+ {abstract} + Init()
+ {abstract} + PlayShowAnimation()
+ {abstract} + PlayHideAnimation()
+}
+class UIMainMenu
+class UIGame
+class UISettings
+interface IPopupWindow <<interface>>
+interface IPausePopup <<interface>>
+class CachedPages
+MenuController --> UIController : serialized reference
+GameController ..> UIController : GetComponent() / static API
+UIController "1" --> "0..*" UIPage : pages / pagesLink
+UIController --> CachedPages : cachedPages
+CachedPages ..> UIPage : instantiate prefab khi cần
+UIPage <|-- UIMainMenu
+UIPage <|-- UIGame
+UIPage <|-- UISettings
+UISettings ..|> IPopupWindow
+UISettings ..|> IPausePopup
+note bottom of UIController
+Static facade không có nghĩa là DontDestroyOnLoad.
+UIController hiện thuộc từng scene Menu / Game.
+end note
+@enduml

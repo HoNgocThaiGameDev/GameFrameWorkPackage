@@ -1,0 +1,25 @@
+@startuml
+!include style.iuml
+top to bottom direction
+state "Init\n(build index 0)" as Init
+state "Menu\n(build index 1)" as Menu
+state "Game\n(build index 2)" as Game
+[*] --> Init : App khởi chạy
+Init --> Menu : GameLoading\nLoadSceneAsync(1)
+Menu --> Game : MenuController.LoadGame()\nSceneManager.LoadScene("Game")
+Game --> Menu : GameController.LoadMenu()
+Game --> Game : Replay() hoặc\nOnCompleteRewardRecieved()
+note bottom of Init
+Initializer: DontDestroyOnLoad.
+Hai root loading chỉ giữ tạm.
+end note
+note bottom of Menu
+Awake/Start có thể chạy khi loading còn sống.
+UIController thuộc scene Menu.
+end note
+note bottom of Game
+UIController được tạo lại mỗi lượt.
+Next hiện chỉ reload Game;
+game mới tự đổi level index.
+end note
+@enduml

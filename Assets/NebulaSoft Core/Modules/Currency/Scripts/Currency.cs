@@ -46,7 +46,13 @@ namespace NebulaSoft
 
         public void InvokeChangeEvent(int difference)
         {
-            OnCurrencyChanged?.Invoke(this, difference);
+            if (OnCurrencyChanged == null) return;
+            foreach (CurrencyCallback callback in OnCurrencyChanged.GetInvocationList())
+            {
+                if (callback.Target is UnityEngine.Object target && target == null) continue;
+                try { callback(this, difference); }
+                catch (System.Exception exception) { Debug.LogException(exception); }
+            }
         }
 
         [System.Serializable]

@@ -2,7 +2,7 @@
 
 GameFrameWorkPackage is a reusable Unity mobile-game framework for casual, puzzle, idle, merge, tap/drag, and hyper-casual projects. Shared services live in `NebulaSoft Core`; each title adds its own gameplay rules, content, UI, and scenes under `Project Files` without changing the framework layer.
 
-This repository currently targets **Unity 6000.3.12f1** and package version **1.2.2**. Its enabled build scenes are:
+This repository currently targets **Unity 6000.6.8f1** and package version **1.3.0**. Its enabled build scenes are:
 
 1. `Assets/Project Files/Game/Scenes/Init.unity`
 2. `Assets/Project Files/Game/Scenes/Menu.unity`
@@ -10,9 +10,11 @@ This repository currently targets **Unity 6000.3.12f1** and package version **1.
 
 > The bundled reference game demonstrates one integration of the framework. Reuse the core services and add a focused game module for each new title; it is not necessary to retain the reference game's rules or content.
 
+The current template contains the application/UI shell and reusable services. Its `LevelData` is a lightweight session contract and its power-up bar is UI-only; a new game supplies its own board, input, level database and mechanics. See the Vietnamese [developer guide](docs/framework-developer-guide.md) and [PDF](output/pdf/GameFrameWorkPackage_Developer_Guide_MVC.pdf) for step-by-step onboarding, Astah-style UML diagrams, Init/Menu/Game hierarchies and flows, controller/UI/save interactions, model restoration, UI change events, module configuration and C# examples checked against the current source. Chapter 6 distinguishes scene controllers, UI routing, feature state and persistence; it also documents the current win/NEXT behavior and disabled periodic autosave.
+
 ## Quick start
 
-1. Clone the repository and open it in Unity Hub with Unity **6000.3.12f1**.
+1. Clone the repository and open it in Unity Hub with Unity **6000.6.8f1**.
 2. Let Unity resolve the dependencies declared in `Packages/manifest.json`.
 3. Open `Assets/Project Files/Game/Scenes/Init.unity` and press Play. `Init` is the bootstrap scene; do not start a normal play session from `Menu` or `Game` unless the initializer has already run.
 4. Use the EditMode tests in `Assets/Tests/Editor` from **Window → General → Test Runner** to validate the local setup.
@@ -23,6 +25,8 @@ Firebase, Facebook login, advertising, and in-app purchases are optional product
 
 Firebase-dependent code is conditionally compiled with `FIREBASE`; Facebook support is guarded by `FACEBOOK`. The monetization layer also uses feature symbols such as `MODULE_IAP`, `MODULE_ADMOB`, `MODULE_ADSKIT`, and `UNITY_IAP_NEW`. A feature should be enabled only after its package and platform setup are complete.
 
+The [Analytics module](docs/analytics-module.md) is registered in Project Init Settings with a Console provider for the template. It supplies casual/puzzle events, startup buffering, level-attempt tracking and Ads/IAP/UI integrations. Its optional Firebase adapter uses the separate `FIREBASE_ANALYTICS` symbol after importing the Analytics SDK; the core runs without Firebase.
+
 ## Project layout
 
 ```text
@@ -32,19 +36,18 @@ Firebase-dependent code is conditionally compiled with `FIREBASE`; Facebook supp
 │   ├── Project Files/          # Reference-game and future-title data, gameplay, UI, art, and scenes
 │   │   ├── Data/               # ScriptableObject databases and game configuration
 │   │   └── Game/
-│   │       ├── Scenes/         # Init, Menu, Game, and Level Editor scenes
+│   │       ├── Scenes/         # Init, Menu, Game
 │   │       ├── Scripts/        # Game-specific runtime and editor code
 │   │       ├── Prefabs/        # UI, blocks, effects, power-ups, environments
 │   │       └── Animations|Audio|Images|Models|Materials|Textures|Shaders/
-│   ├── Addon/                  # Add-on gameplay/UI content and third-party packages
-│   ├── Firebase|FacebookSDK|GoogleMobileAds|GooglePlayGames|LevelPlay/
-│   │                           # Provider SDKs and integration assets
+│   ├── Addon/                  # UI sample prefabs/art and ThirdParty/UIEffect-5.9.6
+│   ├── GoogleMobileAds/        # Installed AdMob SDK and settings
+│   ├── ExternalDependencyManager/ # Native dependency resolver
 │   ├── Plugins/                # Native and third-party plugins
 │   └── Tests/Editor/           # EditMode regression tests
 ├── Packages/                   # Unity Package Manager manifest and lock file
 ├── ProjectSettings/            # Unity project and build settings
-├── docs/images/                # README diagrams and screenshots
-└── tools/design/               # Local Figma bridge/export utilities
+└── docs/images/                # README diagrams and screenshots
 ```
 
 ### Ownership boundaries
@@ -120,21 +123,18 @@ To add a framework or game service, create a `ScriptableObject` derived from `In
 
 ### Menu-to-game runtime flow
 
-`MenuController` prepares menu UI and common controllers. When the player starts, it validates/locks a life and loads `Game.unity`. `GameController` initializes scene services and delegates level construction to `LevelController`. The level controller loads data, accepts input through `RaycastController`, coordinates movement and effects, and resolves success or failure.
+`MenuController` initializes menu pages, preloads the local leaderboard and loads `Game.unity` on Play. Its current Play callback does not validate/lock a life. `GameController` initializes game pages and exposes activation, complete, fail, revive and scene navigation hooks. The new game's controller must build its board, handle input/rules and call those hooks; the template has no runtime `LevelController` or `RaycastController`.
 
 ```mermaid
 flowchart LR
-    A[MenuController] -->|Play: validate and lock life| B[GameController]
-    B --> C[LevelController]
-    C --> D[Level data + LevelRepresentation]
-    D --> E[Input / RaycastController]
-    E --> F[Block movement, effects, interactables, power-ups]
-    F -->|All target images complete| G[Complete]
-    F -->|Timer or failure state| H[Game over / revive]
-    G --> I[Save progress, rewards, UI, leaderboard event, ads]
-    H --> J[UI, life handling, optional revive]
-    I --> A
-    J --> A
+    A[MenuController] -->|Play| B[GameController / UI shell]
+    B --> C[Title controller: level data, board, input, rules]
+    C -->|Win| D[GameComplete and ShowCompleteUI]
+    C -->|Fail| E[GameOver / title revive policy]
+    D --> F[Title grants rewards and persists / selects next level]
+    E --> G[Title restores board and timer / final failure]
+    F --> H[Reload Game or return Menu]
+    G --> H
 ```
 
 ## Reusable core modules
@@ -158,6 +158,14 @@ The core is organized under `Assets/NebulaSoft Core/Modules`. The table describe
 | **Skins** | Shared skin-selection extension point used by game data | `SkinController` and game-specific skin databases | The template's concrete level skins live under `Project Files/Data/Skins` |
 | **Inspector** | Custom inspector styles and editor presentation support | Core inspector assemblies/settings | Editor-only tooling; no runtime gameplay dependency |
 
+## IAP module
+
+IAP can be configured through **Project Init Settings → Monetization/IAP** with a standalone **IAP Settings** asset. Add products using stable string keys and select them on the existing **IAPRewardsHolder** prefab component; new products do not require editing an enum. See [IAP module setup and migration](docs/iap-module.md).
+
+## Ads module
+
+Configure **Project Init Settings → Monetization/Ads** using **AdsModuleSettings**, an **AdsCatalog**, placement assets and a provider configuration. Gameplay uses `IAdsService`; SDK translation, existing No Ads save state and game UI each have their own boundary. Ads Kit 2.3.0 with AdMob 11.0.0 is installed and configured with test IDs; Dummy remains available as another provider. See [Ads module setup and migration](docs/ads-module.md).
+
 ## Reference-game modules
 
 The current reference game is under `Assets/Project Files/Game/Scripts`. Its modules demonstrate how a title composes core services; a new game can replace or extend this layer without changing `NebulaSoft Core`.
@@ -165,18 +173,15 @@ The current reference game is under `Assets/Project Files/Game/Scripts`. Its mod
 | Group | Main types and assets | How it works |
 | --- | --- | --- |
 | **Game flow and session** | `GameInitModule`, `GameData`, `GameController`, `MenuController`, `ActiveSession`, `CameraController` | Loads global game settings, holds the selected/displayed level state, switches Menu/Game scenes, and orchestrates win, fail, revive, ads, and completion UI |
-| **Level System** | `LevelController`, `LevelDatabase`, `LevelData`, `LevelRepresentation`, `BlockMovementManager`, `LevelBlockBehavior` | Reads a level definition, spawns environment/blocks/interactables, maintains the movement grid, triggers the timer, and completes when all target images are collected |
-| **Level authoring** | `Data/Level System`, `Level Editor.unity`, editor windows/drawers | Stores level assets, block visuals, effects, figures, and interactable definitions; editor tooling creates and edits level content without changing runtime engine code |
-| **Effects and interactables** | `Level System/Effects`, `Interactable Objects` | Adds reusable obstacles and reactions such as chains, ropes, keys, ice, bombs, pinned/combined effects, and color-aware interactable objects |
-| **Input** | `RaycastController`, `InputController`, `IInputMode`, `DefaultClickMode` | Converts screen interaction into selectable/clickable game objects and forwards valid block actions to the level controller |
-| **Power Ups** | `PUController`, `PUDatabase`, `PUSettings`, `PUBehavior`, behavior subclasses | Initializes unlocked power-ups, manages purchase/use/UI state, and applies mechanics such as hammer, merge, freeze, and free movement |
-| **Lives** | `LivesSystem`, `LivesData`, `LivesSave`, `UIAddLivesPanel` | Persists the life count, restores lives over real time, supports infinite-life rewards, and locks a life before entering gameplay |
+| **Level/session contract** | `LevelData`, `LevelSave`, `ActiveSession`, `GameplayTimer`, `WinStreakProgress` | Preserves session/progress APIs and a timer. `LevelData` has no board schema; title code supplies its database, board, input and rules |
+| **Power-up presentation** | `PUUIController`, `PUUIBehavior`, `PUSave` | UI-only preview bar and save contract. Inventory grants, eligibility and board mechanics require a title implementation |
+| **Lives** | `LivesSystem`, `LivesData`, `LivesSave`, `UIAddLivesPanel` | Persists lives, restores them over time and supports infinite-life rewards. Title flow chooses lock/unlock and final-failure policy |
 | **Quest and Daily Reward** | `QuestService`/`QuestDatabase`; `DailyRewardService`/`DailyRewardDatabase` | Initializes data-driven progression rewards; daily rewards enforce one claim per UTC day and reset the sequence after missed days |
 | **Store and No Ads** | `UIStore`, store elements, `UINoAdsOffer`, IAP reward assets | Presents currencies/offers and integrates with the core monetization/reward systems |
-| **Remote Config** | `ProgressRemoteConfigData`, `LevelRemoteConfigData`, reward/revive data, `RemoteConfigController` | Reads initialized remote JSON by key and applies runtime overrides, including level hashes/duration and balance/config values |
+| **Remote Config** | Ads/reward/revive data, `RemoteConfigController` | Reads supplied remote JSON by key; `GameData` applies ads, revive and reward overrides. Fetching the payload is an integration responsibility |
 | **Firebase and profile** | Firebase handlers, profile UI, cloud sync, leaderboard, soft update | Optional cloud identity/progress, no-ads entitlement synchronization, leaderboards, and update checks; compiled safely out when `FIREBASE` is absent |
 | **Presentation and retention UI** | `UI`, `Settings`, `Tutorial`, `Feature Announcement`, `Level Map` | Renders pages/popups/HUD, settings, guided onboarding, unlock announcements, and level-map elements |
-| **Developer tooling** | `Dev Panel`, level editor code, `Assets/Tests/Editor` | Provides developer controls and EditMode coverage for selected framework/game regressions |
+| **Developer tooling** | `Dev Panel`, core editor tooling, `Assets/Tests/Editor` | Provides developer controls and EditMode coverage; board authoring belongs to the new title |
 
 ## Data, persistence, and configuration
 
@@ -192,9 +197,9 @@ ScriptableObject database / settings asset
     → UI / gameplay result
 ```
 
-Examples include level definitions through `LevelDatabase`, power-up definitions through `PUDatabase`, and retention/economy data through the lives, quest, daily-reward, reward, and currency databases. Keep designer-editable defaults in ScriptableObjects and player-specific state in save models.
+Examples include retention/economy data through lives, quest, daily-reward, reward and currency databases. New titles add their own level and power-up definitions. Keep designer-editable defaults in ScriptableObjects and player-specific state in save models.
 
-`RemoteConfigController` provides an optional runtime override layer. A feature asks for a typed key with `TryGetConfig<T>()`; when a valid payload is present, it overrides the local default for that run. For example, `GameData` reads progress, ads, revive, and reward settings, while `LevelController` may use a level-specific override. Remote values should therefore be validated and backwards-compatible with local content.
+`RemoteConfigController` provides an optional runtime override layer. A feature asks for a typed key with `TryGetConfig<T>()`; `GameData` reads ads, revive and reward overrides during initialization. Supply JSON before its consumers initialize, or implement a deliberate reapply step. Validate remote values and keep them compatible with local content.
 
 Firebase is not required for local play. With `FIREBASE` enabled, the Firebase module can authenticate a player, synchronize selected progress/profile data, maintain no-ads entitlement, preload/submit leaderboards, and check soft updates. Local save remains the base progression store.
 
@@ -203,9 +208,8 @@ Firebase is not required for local play. With `FIREBASE` enabled, the Firebase m
 | Concern | Main location | Use it to |
 | --- | --- | --- |
 | Startup modules | `Assets/Project Files/Data/Project Init Settings.asset` | Enable/configure `InitModule` instances and their initialization data |
-| Game-wide settings | `Assets/Project Files/Data/Game Data.asset` | Assign the level database and set gameplay defaults, rewards, revive, and ad thresholds |
-| Levels and visuals | `Assets/Project Files/Data/Level System/` | Maintain `Level Database.asset`, individual level assets, effects, environment, figures, and block visual data |
-| Power-ups | `Assets/Project Files/Data/Power Ups/` | Configure the power-up database and mechanic-specific settings |
+| Game-wide settings | `Assets/Project Files/Data/Game Data.asset` | Set reward, revive and ad threshold defaults |
+| Levels and power-ups for a new title | Title-owned data folders | Add a gameplay database/schema and mechanic configuration; the template contracts do not contain a board engine |
 | Progression | `Assets/Project Files/Data/Lives Data.asset`, `Data/Quest/`, `Data/Daily Reward/` | Configure lives, quests, and the seven-day daily-reward schedule |
 | Monetization and rewards | `Assets/Project Files/Data/Monetization Settings.asset`, `Data/Rewards/` | Configure monetization/reward definitions after provider setup |
 | Scenes and build | `ProjectSettings/EditorBuildSettings.asset` | Maintain scene order and enabled build scenes |
@@ -219,12 +223,12 @@ Use this pattern when building a new capability:
 2. **Add an `InitModule` only for a global service.** Derive from `InitModule`, initialize the service in `CreateComponent()`, then add/configure its asset through `Project Init Settings.asset`. Ensure dependencies such as Save are initialized before the feature needs them.
 3. **Keep scene behavior thin.** Scene controllers should assemble scene components and invoke services; reusable behavior should not depend on a particular puzzle scene.
 4. **Register UI and scene dependencies deliberately.** Add the necessary prefabs/pages/controllers to the owning scene and initialize them from the existing `UIController`/scene flow rather than relying on arbitrary global lookups.
-5. **Use extension points for common systems.** Implement reward, power-up, level-effect, or interactable data/behavior through the existing registries and databases instead of editing vendor or core framework source.
+5. **Use extension points for common systems.** Compose existing reward, save, UI and monetization APIs; add title-owned board/power-up contracts rather than editing vendor source or assuming a gameplay registry exists.
 6. **Add an EditMode test for deterministic logic.** Keep behavior-specific tests in `Assets/Tests/Editor` and test persistence, remote-data parsing, and edge cases separately from visual/manual QA.
 
 ## Tests and validation
 
-Current EditMode tests cover areas including coin-safe progress, Firebase progress/name registry behavior, network connection behavior, quest rotation, and Figma export/bridge tooling. Run them in Unity Test Runner after changing framework logic or configuration that affects those systems.
+Current EditMode tests cover areas including coin-safe progress, Firebase progress/name registry behavior, network connection behavior, quest rotation, and the IAP module. Run them in Unity Test Runner after changing framework logic or configuration that affects those systems.
 
 Before publishing changes, verify:
 

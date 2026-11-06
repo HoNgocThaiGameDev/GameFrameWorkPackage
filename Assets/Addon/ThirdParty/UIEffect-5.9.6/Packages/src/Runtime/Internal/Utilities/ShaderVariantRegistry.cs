@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -13,11 +13,26 @@ using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 using Object = UnityEngine.Object;
 #endif
 
+#if UNITY_6000_6_OR_NEWER
+using ObjectId = UnityEngine.EntityId;
+#else
+using ObjectId = System.Int32;
+#endif
+
 namespace Coffee.UIEffectInternal
 {
     [Serializable]
     public class ShaderVariantRegistry
     {
+        private static ObjectId GetObjectId(UnityEngine.Object value)
+        {
+#if UNITY_6000_6_OR_NEWER
+            return value.GetEntityId();
+#else
+            return value.GetInstanceID();
+#endif
+        }
+
         [Serializable]
         internal class StringPair : IEquatable<StringPair>
         {
@@ -45,7 +60,7 @@ namespace Coffee.UIEffectInternal
             }
         }
 
-        private Dictionary<int, string> _cachedOptionalShaders = new Dictionary<int, string>();
+        private Dictionary<ObjectId, string> _cachedOptionalShaders = new Dictionary<ObjectId, string>();
 
         [SerializeField]
         private List<StringPair> m_OptionalShaders = new List<StringPair>();
@@ -72,7 +87,7 @@ namespace Coffee.UIEffectInternal
             if (!shader) return null;
 
             // Already cached.
-            var id = shader.GetInstanceID();
+            var id = GetObjectId(shader);
             if (_cachedOptionalShaders.TryGetValue(id, out var optionalShaderName))
             {
                 return Shader.Find(optionalShaderName);

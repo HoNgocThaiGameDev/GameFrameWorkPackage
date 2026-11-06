@@ -1,0 +1,42 @@
+@startuml
+!include style.iuml
+top to bottom direction
+hide empty members
+together {
+ class MenuController <<scene controller>>
+ class GameController <<scene controller>>
+}
+package "UI: routing / view / binding" {
+ class UIController <<UI routing>>
+ abstract class UIPage <<view>>
+ class StaticMapPanel <<view binding>>
+ class UIComplete <<view binding>>
+}
+package "Session / model" {
+ class ActiveSession <<session facade>>
+ class LevelSave <<state>>
+}
+package "Persistence: core" {
+ class SaveController <<persistence service>>
+ class GlobalSave <<save container>>
+ class SavedDataContainer
+ interface ISaveObject <<interface>>
+}
+MenuController --> UIController : uiController
+GameController ..> UIController : Init / ShowPage
+StaticMapPanel ..> MenuController : PLAY callback
+UIComplete ..> GameController : NEXT callback
+UIController "1" --> "0..*" UIPage : pages / pagesLink
+UIPage <|-- UIComplete
+GameController ..> ActiveSession : Current.\nOnLevelCompleted()
+ActiveSession --> LevelSave : levelSave
+ActiveSession ..> SaveController : GetSaveObject<T>()
+SaveController --> GlobalSave : globalSave
+GlobalSave "1" --> "0..*" SavedDataContainer : saveObjectsList
+SavedDataContainer --> ISaveObject : saveObject
+LevelSave ..|> ISaveObject
+note bottom of SaveController
+Core Save không tham chiếu UIPage, GameController hoặc LevelSave.
+T được truyền từ feature; constraint là ISaveObject.
+end note
+@enduml

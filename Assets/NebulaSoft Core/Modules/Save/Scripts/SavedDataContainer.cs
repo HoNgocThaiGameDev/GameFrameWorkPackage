@@ -8,6 +8,9 @@ namespace NebulaSoft
         [SerializeField] int hash;
         public int Hash => hash;
 
+        [System.Runtime.Serialization.OptionalField, SerializeField] string key;
+        public string Key => key;
+
         [SerializeField] string json;
         public bool Restored { get; set; }
 
@@ -27,10 +30,25 @@ namespace NebulaSoft
             if (Restored) json = JsonUtility.ToJson(saveObject);
         }
 
+        public SavedDataContainer(string key, ISaveObject saveObject) : this(0, saveObject)
+        {
+            this.key = key;
+        }
+
+        internal void MigrateKey(string stableKey) => key = stableKey;
+
         public void Restore<T>() where T : ISaveObject
         {
             saveObject = JsonUtility.FromJson<T>(json);
             Restored = true;
+        }
+
+        internal SavedDataContainer CreateSnapshot()
+        {
+            SavedDataContainer snapshot = (SavedDataContainer)MemberwiseClone();
+            snapshot.saveObject = null;
+            snapshot.Restored = false;
+            return snapshot;
         }
     }
 }

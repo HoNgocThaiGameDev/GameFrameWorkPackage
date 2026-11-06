@@ -9,12 +9,12 @@ using UnityEngine;
 public sealed class QuestRotationTests
 {
     private const string DatabasePath = "Assets/Project Files/Data/Quest/Quest Database.asset";
-    private const string PanelPrefabPath = "Assets/Addon/UI/Prefabs/Pages/Panel_quest.prefab";
-    private const string QuestElementPrefabPath = "Assets/Addon/UI/Prefabs/Elements/QuestElement.prefab";
-    private const string QuestRewardPopupPrefabPath = "Assets/Addon/UI/Prefabs/Shared/QuestRewardClaimPopup.prefab";
+    private const string PanelPrefabPath = "Assets/Addon/UI/Prefabs/Quests/Panel_quest.prefab";
+    private const string QuestElementPrefabPath = "Assets/Addon/UI/Prefabs/Quests/QuestElement.prefab";
+    private const string QuestRewardPopupPrefabPath = "Assets/Addon/UI/Prefabs/Quests/QuestRewardClaimPopup.prefab";
     private const string ClaimButtonSpritePath = "Assets/Addon/UI/Sprites/Quest/Claim_btn.png";
     private const string ClaimedButtonSpritePath = "Assets/Addon/UI/Sprites/Quest/Claimed_btn.png";
-    private const string GoButtonSpritePath = "Assets/Addon/UI/Sprites/Quest/Go_btn.png";
+    private const string GoButtonSpritePath = "Assets/Framework/WhiteSprite.png";
     private const string PatternQuestTexturePath = "Assets/Addon/UI/Textures/Quest/PatternQuest.png";
 
     [Test]
@@ -67,9 +67,9 @@ public sealed class QuestRotationTests
         Assert.That(restored.Entries[0].OnlineSeconds, Is.EqualTo(454.5f));
     }
 
-    [TestCase(QuestCategory.Daily)]
-    [TestCase(QuestCategory.Weekly)]
-    public void BuiltInRotation_HasFourSlotsAndTotalsOneHundredThirtyPoints(QuestCategory category)
+    [TestCase(QuestCategory.Daily, 6, 185)]
+    [TestCase(QuestCategory.Weekly, 5, 155)]
+    public void BuiltInRotation_HasConfiguredSlotsAndCanReachEveryMilestone(QuestCategory category, int slotCount, int minimumPoints)
     {
         QuestDatabase database = AssetDatabase.LoadAssetAtPath<QuestDatabase>(DatabasePath);
         Assert.That(database, Is.Not.Null);
@@ -81,10 +81,13 @@ public sealed class QuestRotationTests
             .OrderBy(group => group.Key)
             .ToList();
 
-        Assert.That(slots, Has.Count.EqualTo(4));
-        Assert.That(slots.All(slot => slot.Count() >= 1), Is.True);
-        Assert.That(slots.All(slot => slot.Select(definition => definition.MilestonePoints).Distinct().Count() == 1), Is.True);
-        Assert.That(slots.Sum(slot => slot.First().MilestonePoints), Is.EqualTo(130));
+        Assert.That(slots.Select(slot => slot.Key), Is.EqualTo(Enumerable.Range(0, slotCount)));
+        int worstCasePoints = slots.Sum(slot => slot.Min(definition => definition.MilestonePoints));
+        Assert.That(worstCasePoints, Is.EqualTo(minimumPoints));
+        var milestones = new List<QuestMilestoneDefinition>();
+        database.GetMilestones(category, milestones);
+        Assert.That(milestones, Is.Not.Empty);
+        Assert.That(worstCasePoints, Is.GreaterThanOrEqualTo(milestones.Max(milestone => milestone.RequiredPoints)));
     }
 
     [Test]
@@ -102,7 +105,7 @@ public sealed class QuestRotationTests
     }
 
     [Test]
-    public void QuestDatabase_IncludesDailyOnlineTimeQuestWithRandomPowerUpReward()
+    public void QuestDatabase_OnlineTimeQuestsGrantConfiguredCoins()
     {
         QuestDatabase database = AssetDatabase.LoadAssetAtPath<QuestDatabase>(DatabasePath);
         QuestDefinition quest = database.GetDefinition("daily_online_20_minutes");
@@ -113,14 +116,17 @@ public sealed class QuestRotationTests
         Assert.That(quest.TargetValue, Is.EqualTo(20));
         Assert.That(quest.RotationSlot, Is.EqualTo(3));
         Assert.That(quest.GoTarget, Is.EqualTo(QuestGoTarget.Home));
-        Assert.That(quest.Reward.Type, Is.EqualTo(QuestRewardType.RandomPowerUp));
-        Assert.That(quest.Reward.Amount, Is.EqualTo(1));
+        Assert.That(quest.Reward.Type, Is.EqualTo(QuestRewardType.Currency));
+        Assert.That(quest.Reward.CurrencyType, Is.EqualTo(CurrencyType.Coins));
+        Assert.That(quest.Reward.Amount, Is.EqualTo(70));
 
         QuestDefinition weeklyQuest = database.GetDefinition("weekly_online_20_minutes");
         Assert.That(weeklyQuest, Is.Not.Null);
         Assert.That(weeklyQuest.RotationSlot, Is.EqualTo(3));
         Assert.That(weeklyQuest.GoTarget, Is.EqualTo(QuestGoTarget.Home));
-        Assert.That(weeklyQuest.Reward.Type, Is.EqualTo(QuestRewardType.RandomPowerUp));
+        Assert.That(weeklyQuest.Reward.Type, Is.EqualTo(QuestRewardType.Currency));
+        Assert.That(weeklyQuest.Reward.CurrencyType, Is.EqualTo(CurrencyType.Coins));
+        Assert.That(weeklyQuest.Reward.Amount, Is.EqualTo(180));
     }
 
     [Test]

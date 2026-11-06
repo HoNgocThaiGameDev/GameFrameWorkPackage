@@ -106,7 +106,7 @@ namespace NebulaSoft
             UIRewardsConfirmation.RewardPopupVisibilityChanged += OnStandalonePopupVisibilityChanged;
             UIProfilePopup.ProfilePopupVisibilityChanged += OnStandalonePopupVisibilityChanged;
             DailyRewardPopupView.PopupVisibilityChanged += OnStandalonePopupVisibilityChanged;
-            IAPManager.PurchaseCompleted += OnPurchaseCompleted;
+            IAPManager.ProductPurchaseCompleted += OnPurchaseCompleted;
             StartCoroutine(ShowWhenNavigationAllowed());
         }
 
@@ -119,7 +119,7 @@ namespace NebulaSoft
             UIRewardsConfirmation.RewardPopupVisibilityChanged -= OnStandalonePopupVisibilityChanged;
             UIProfilePopup.ProfilePopupVisibilityChanged -= OnStandalonePopupVisibilityChanged;
             DailyRewardPopupView.PopupVisibilityChanged -= OnStandalonePopupVisibilityChanged;
-            IAPManager.PurchaseCompleted -= OnPurchaseCompleted;
+            IAPManager.ProductPurchaseCompleted -= OnPurchaseCompleted;
 
             if (tabSwitchRoutine != null)
             {
@@ -867,7 +867,7 @@ namespace NebulaSoft
             RefreshBottomNavigationVisibility();
         }
 
-        private void OnPurchaseCompleted(ProductKeyType _)
+        private void OnPurchaseCompleted(string _)
         {
             RefreshHomeTabControls();
 

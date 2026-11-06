@@ -1,0 +1,32 @@
+@startuml
+!include style.iuml
+top to bottom direction
+hide empty members
+class GameController {
+ - Awake()
+ - Start()
+ {static} + GameComplete()
+ {static} + ShowCompleteUI()
+}
+class UIController {
+ - pages : List<UIPage>
+ - pagesLink : Dictionary<Type, UIPage>
+ + Init()
+ + InitPages()
+ {static} + ShowPage<T>()
+}
+abstract class UIPage
+class UIGame
+class UIComplete
+class UIGameOver
+GameController ..> UIController : GetComponent() / static API
+UIController "1" --> "0..*" UIPage : pages
+UIPage <|-- UIGame
+UIPage <|-- UIComplete
+UIPage <|-- UIGameOver
+note bottom of GameController
+GameController và UIController cùng trên UI Main Canvas.
+GetComponent không tạo instance UIController.
+UIGame / UIComplete / UIGameOver kế thừa UIPage.
+end note
+@enduml

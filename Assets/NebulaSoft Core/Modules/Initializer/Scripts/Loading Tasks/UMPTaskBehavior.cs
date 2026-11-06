@@ -65,17 +65,6 @@ namespace NebulaSoft
                 }
 
 #if MODULE_ADMOB
-                if (ConsentInformation.CanRequestAds())
-                {
-                    Debug.Log("[Loading]: UMP is already completed, ad can be loaded.");
-
-                    ConsentData.SetConsentGiven(true);
-
-                    CompleteTask(CompleteStatus.Completed);
-
-                    return;
-                }
-
                 ConsentRequestParameters requestParameters = GetRequestParameters();
 
                 ConsentInformation.Update(requestParameters, (FormError updateError) =>
@@ -155,7 +144,10 @@ namespace NebulaSoft
 #if MODULE_ADMOB
             private ConsentRequestParameters GetRequestParameters()
             {
-                ConsentRequestParameters requestParameters = new ConsentRequestParameters();
+                ConsentRequestParameters requestParameters = new ConsentRequestParameters
+                {
+                    TagForUnderAgeOfConsent = behavior.UMPTagForUnderAgeOfConsent
+                };
 
                 if (behavior.UMPDebugMode)
                 {

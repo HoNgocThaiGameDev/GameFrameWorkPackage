@@ -69,7 +69,7 @@ namespace NebulaSoft
             }
             catch (System.Exception exception)
             {
-                Debug.LogError($"[IAP Manager]: Initialization failed with exception: {exception}");
+                IAPManager.OnInitializationFailed(exception.Message);
             }
 #else
             await Task.Run(() => Debug.Log("[IAP Manager]: Define MODULE_IAP is disabled!"));
@@ -96,8 +96,7 @@ namespace NebulaSoft
         /// <param name="error">The reason for the failure.</param>
         public void OnInitializeFailed(InitializationFailureReason error)
         {
-            if (Monetization.VerboseLogging)
-                Debug.Log($"[IAPManager]: Module initialization failed with reason: {error}");
+            IAPManager.OnInitializationFailed(error.ToString());
         }
 
         /// <summary>
@@ -107,8 +106,7 @@ namespace NebulaSoft
         /// <param name="message">The failure message.</param>
         public void OnInitializeFailed(InitializationFailureReason error, string message)
         {
-            if (Monetization.VerboseLogging)
-                Debug.Log($"[IAPManager]: Module initialization failed with reason: {error}, message: {message}");
+            IAPManager.OnInitializationFailed(message);
         }
 
         /// <summary>
@@ -126,12 +124,12 @@ namespace NebulaSoft
             IAPItem item = IAPManager.GetIAPItem(product.definition.id);
             if (item != null)
             {
-                int callbackIndex = purchaseCallbacks.FindIndex(x => x.ProductKeyType == item.ProductKeyType);
+                int callbackIndex = purchaseCallbacks.FindIndex(x => x.ProductKeyType == item.Key);
                 if (callbackIndex != -1)
                 {
                     PurchaseCallback callback = purchaseCallbacks[callbackIndex];
 
-                    callback.Callback?.Invoke(new AnalyticsIAPData()
+                    IAPManager.Safely(() => callback.Callback?.Invoke(new PurchaseEvent()
                     {
                         Item = item,
 
@@ -139,19 +137,45 @@ namespace NebulaSoft
                         StoreSpecificId = product.definition.storeSpecificId,
                         IsoCurrencyCode = product.metadata.isoCurrencyCode,
                         LocalizedPrice = (float)product.metadata.localizedPrice,
-                    });
+                    }));
 
                     purchaseCallbacks.RemoveAt(callbackIndex);
                 }
 
-                IAPManager.OnPurchaseCompleted(item);
+                try
+                {
+                    if (IAPManager.IsRestoreInProgress && item.ProductType != ProductType.Consumable)
+                    {
+                        item.OnProductRestored();
+                        SaveController.SaveChecked();
+                        return PurchaseProcessingResult.Complete;
+                    }
+                    var hash = IAPIntegration.GetTransactionIdHash(product.transactionID);
+                    if (!IAPManager.TryFulfillPurchase(item, hash))
+                    {
+                        IAPManager.FinishPurchase();
+                        SystemMessage.HideLoadingPanel();
+                        return PurchaseProcessingResult.Pending;
+                    }
+                }
+                catch (System.Exception exception)
+                {
+                    Debug.LogWarning("[IAP]: Fulfillment remains pending: " + exception.Message);
+                    IAPManager.FinishPurchase();
+                    SystemMessage.HideLoadingPanel();
+                    return PurchaseProcessingResult.Pending;
+                }
             }
             else
             {
                 if (Monetization.VerboseLogging)
                     Debug.Log($"[IAPManager]: Product - {product.definition.id} can't be found!");
+                IAPManager.FinishPurchase();
+                SystemMessage.HideLoadingPanel();
+                return PurchaseProcessingResult.Pending;
             }
 
+            IAPManager.FinishPurchase();
             SystemMessage.ChangeLoadingMessage("Payment complete!");
             SystemMessage.HideLoadingPanel();
 
@@ -173,15 +197,15 @@ namespace NebulaSoft
             IAPItem item = IAPManager.GetIAPItem(product.definition.id);
             if (item != null)
             {
-                int callbackIndex = purchaseCallbacks.FindIndex(x => x.ProductKeyType == item.ProductKeyType);
+                int callbackIndex = purchaseCallbacks.FindIndex(x => x.ProductKeyType == item.Key);
                 if (callbackIndex != -1)
                     purchaseCallbacks.RemoveAt(callbackIndex);
 
                 NebulaSoft.PurchaseFailureReason purchaseFailureReason = (NebulaSoft.PurchaseFailureReason)failureReason;
 
-                AnalyticsController.OnIAPFailed(item, purchaseFailureReason);
+                IAPManager.Safely(() => AnalyticsController.OnIAPFailed(item, purchaseFailureReason));
 
-                IAPManager.OnPurchaseFailed(item.ProductKeyType, purchaseFailureReason);
+                IAPManager.OnPurchaseFailed(item.Key, purchaseFailureReason);
             }
             else
             {
@@ -189,6 +213,7 @@ namespace NebulaSoft
                     Debug.Log($"[IAPManager]: Product - {product.definition.id} can't be found!");
             }
 
+            IAPManager.FinishPurchase();
             SystemMessage.ChangeLoadingMessage("Payment failed!");
             SystemMessage.HideLoadingPanel();
         }
@@ -208,15 +233,15 @@ namespace NebulaSoft
             IAPItem item = IAPManager.GetIAPItem(product.definition.id);
             if (item != null)
             {
-                int callbackIndex = purchaseCallbacks.FindIndex(x => x.ProductKeyType == item.ProductKeyType);
+                int callbackIndex = purchaseCallbacks.FindIndex(x => x.ProductKeyType == item.Key);
                 if (callbackIndex != -1)
                     purchaseCallbacks.RemoveAt(callbackIndex);
 
                 NebulaSoft.PurchaseFailureReason purchaseFailureReason = (NebulaSoft.PurchaseFailureReason)failureDescription.reason;
 
-                AnalyticsController.OnIAPFailed(item, purchaseFailureReason);
+                IAPManager.Safely(() => AnalyticsController.OnIAPFailed(item, purchaseFailureReason));
 
-                IAPManager.OnPurchaseFailed(item.ProductKeyType, purchaseFailureReason);
+                IAPManager.OnPurchaseFailed(item.Key, purchaseFailureReason);
             }
             else
             {
@@ -224,6 +249,7 @@ namespace NebulaSoft
                     Debug.Log($"[IAPManager]: Product - {product.definition.id} can't be found!");
             }
 
+            IAPManager.FinishPurchase();
             SystemMessage.ChangeLoadingMessage("Payment failed!");
             SystemMessage.HideLoadingPanel();
         }
@@ -244,20 +270,24 @@ namespace NebulaSoft
             SystemMessage.ShowLoadingPanel();
             SystemMessage.ChangeLoadingMessage("Restoring purchased products..");
 
-#if UNITY_ANDROID
+#if UNITY_EDITOR
+            OnRestored(true, "");
+#elif UNITY_ANDROID
             Extensions.GetExtension<IGooglePlayStoreExtensions>().RestoreTransactions(OnRestored);
 #elif UNITY_IOS
             Extensions.GetExtension<IAppleExtensions>().RestoreTransactions(OnRestored);
+#else
+            OnRestored(false, "Restore is not supported on this platform.");
 #endif
-#endif
-
-#if UNITY_EDITOR
-            OnRestored(true, "");
+#else
+            OnRestored(false, "Unity Purchasing is not enabled.");
 #endif
         }
 
         private void OnRestored(bool result, string error)
         {
+            IAPManager.FinishRestorePurchases();
+            if (result) IAPManager.OnPurchasesRestored();
 #if MODULE_IAP && !UNITY_IAP_NEW
             Tween.DelayedCall(0.5f, () =>
             {
@@ -282,7 +312,7 @@ namespace NebulaSoft
         /// Initiates the purchase of a product.
         /// </summary>
         /// <param name="productKeyType">The key type of the product to purchase.</param>
-        public override void BuyProduct(ProductKeyType productKeyType)
+        public override void BuyProduct(string productKeyType)
         {
 #if MODULE_IAP && !UNITY_IAP_NEW
             if (!IAPManager.IsInitialized)
@@ -294,10 +324,10 @@ namespace NebulaSoft
             SystemMessage.ShowLoadingPanel();
             SystemMessage.ChangeLoadingMessage("Payment in progress..");
 
-            IAPItem item = IAPManager.GetIAPItem(productKeyType);
+            IAPItem item = IAPManager.GetIAPItemByKey(productKeyType);
             if (item != null)
             {
-                AnalyticsController.OnIAPClicked(item); 
+                IAPManager.Safely(() => AnalyticsController.OnIAPClicked(item));
                 
                 for (int i = purchaseCallbacks.Count - 1; i >= 0; i--)
                 {
@@ -314,6 +344,11 @@ namespace NebulaSoft
 
                 Controller.InitiatePurchase(item.ID);
             }
+            else
+            {
+                IAPManager.FinishPurchase();
+                SystemMessage.HideLoadingPanel();
+            }
 #else
             SystemMessage.ShowMessage("Network error.");
 #endif
@@ -324,16 +359,17 @@ namespace NebulaSoft
         /// </summary>
         /// <param name="productKeyType">The key type of the product.</param>
         /// <returns>The product data.</returns>
-        public override ProductData GetProductData(ProductKeyType productKeyType)
+        public override ProductData GetProductData(string productKeyType)
         {
             if (!IAPManager.IsInitialized)
                 return null;
 
 #if MODULE_IAP && !UNITY_IAP_NEW
-            IAPItem item = IAPManager.GetIAPItem(productKeyType);
+            IAPItem item = IAPManager.GetIAPItemByKey(productKeyType);
             if (item != null)
             {
-                return new ProductData(Controller.products.WithID(item.ID));
+                var product = Controller.products.WithID(item.ID);
+                return product != null ? new ProductData(product) : null;
             }
 #endif
 
@@ -345,10 +381,10 @@ namespace NebulaSoft
         /// </summary>
         /// <param name="productKeyType">The key type of the product.</param>
         /// <returns>True if the product is subscribed, otherwise false.</returns>
-        public override bool IsSubscribed(ProductKeyType productKeyType)
+        public override bool IsSubscribed(string productKeyType)
         {
 #if MODULE_IAP && !UNITY_IAP_NEW
-            IAPItem item = IAPManager.GetIAPItem(productKeyType);
+            IAPItem item = IAPManager.GetIAPItemByKey(productKeyType);
             if (item != null)
             {
                 Product product = Controller.products.WithID(item.ID);
@@ -388,16 +424,16 @@ namespace NebulaSoft
 #if MODULE_IAP && !UNITY_IAP_NEW
         private class PurchaseCallback
         {
-            public ProductKeyType ProductKeyType { get; private set; }
+            public string ProductKeyType { get; private set; }
             public PurchaseCallbackDelegate Callback { get; private set; }
 
-            public PurchaseCallback(ProductKeyType productKeyType, PurchaseCallbackDelegate callback)
+            public PurchaseCallback(string productKeyType, PurchaseCallbackDelegate callback)
             {
                 ProductKeyType = productKeyType;
                 Callback = callback;
             }
 
-            public delegate void PurchaseCallbackDelegate(AnalyticsIAPData iapData);
+            public delegate void PurchaseCallbackDelegate(PurchaseEvent iapData);
         }
 #endif
     }

@@ -30,6 +30,7 @@ namespace NebulaSoft
         public void Play(AudioClip audioClip, float clipVolume, AudioType type = AudioType.Sound)
         {
             audioType = type;
+            this.clipVolume = clipVolume;
 
             audioSource.clip = audioClip;
             audioSource.volume = clipVolume * AudioController.GetVolume(audioType);

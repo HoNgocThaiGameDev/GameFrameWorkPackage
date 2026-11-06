@@ -7,6 +7,8 @@ namespace NebulaSoft
     [HelpURL("")]
     public class AdsSettings : ScriptableObject
     {
+        [SerializeField] NebulaSoft.Ads.AdsModuleSettings moduleSettings;
+        public NebulaSoft.Ads.AdsModuleSettings ModuleSettings => moduleSettings;
         [BoxGroup("Advertisement", "Advertisement")]
         [SerializeField] AdProvider bannerType = AdProvider.Dummy;
         public AdProvider BannerType => bannerType;

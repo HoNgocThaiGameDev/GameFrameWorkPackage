@@ -67,7 +67,11 @@ namespace NebulaSoft
                 }
 
                 UniqueIDHandler.IDCase idCase = UniqueIDHandler.GetCase(idValue);
+#if UNITY_6000_6_OR_NEWER
+                var instanceID = property.serializedObject.targetObject.GetEntityId();
+#else
                 int instanceID = property.serializedObject.targetObject.GetInstanceID();
+#endif
 
                 if (idCase != null)
                 {

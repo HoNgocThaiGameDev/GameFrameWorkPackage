@@ -158,6 +158,11 @@ namespace Coffee.UIEffectInternal
 
         private void OnPlayModeStateChanged(PlayModeStateChange state)
         {
+            if (!this)
+            {
+                EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+                return;
+            }
             switch (state)
             {
                 case PlayModeStateChange.ExitingEditMode:

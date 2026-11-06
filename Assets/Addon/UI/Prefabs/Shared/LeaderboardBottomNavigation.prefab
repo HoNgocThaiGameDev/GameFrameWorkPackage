@@ -958,7 +958,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
+  m_ActiveFontFeatures: 6e72656bu
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -1093,8 +1093,7 @@ MonoBehaviour:
   keepAboveStorePage: 1
   navigationSortingOrder: 900
   shopLabelSprite: {fileID: 21300000, guid: c608415e3df4325459cac5139a6ee435, type: 3}
-  leaderboardLabelSprite: {fileID: 21300000, guid: 1ab01d94fdbb1fb41985b0c5aa24a61f,
-    type: 3}
+  leaderboardLabelSprite: {fileID: 21300000, guid: 1ab01d94fdbb1fb41985b0c5aa24a61f, type: 3}
   shopLabelSize: {x: 118, y: 58}
   leaderboardLabelSize: {x: 118, y: 58}
   activeTextLabelSize: {x: 166, y: 52}
@@ -1121,6 +1120,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0

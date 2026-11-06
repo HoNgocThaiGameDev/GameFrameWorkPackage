@@ -1,0 +1,64 @@
+@startuml
+!include style.iuml
+autonumber
+participant SDKInitializer as sdk
+participant "behavior\n: SDKBehavior" as behavior
+participant "taskBehavior\n: ISDKTaskBehavior" as task
+participant GameLoading as gl
+-> sdk : Init()
+activate sdk
+loop GetComponents<SDKBehavior>()
+ sdk -> behavior : Init()
+ activate behavior
+ behavior --> sdk
+ deactivate behavior
+end
+loop GetComponents<ISDKTaskBehavior>()
+ sdk -> task : Init(this)
+ activate task
+ task --> sdk
+ deactivate task
+ sdk -> gl : AddTask(taskBehavior.Task)
+end
+alt UNITY_EDITOR
+ sdk -> sdk : OnTasksCompleted()
+ loop mỗi SDKBehavior
+  sdk -> behavior : OnUserConsentReceived()
+  activate behavior
+  behavior --> sdk
+  deactivate behavior
+ end
+else device
+ sdk -> sdk : StartCoroutine(TasksCheck())
+end
+[<-- sdk : Init() return
+deactivate sdk
+opt !UNITY_EDITOR: coroutine tiếp tục ở frame sau
+ -> sdk : Unity resume TasksCheck()
+ activate sdk
+ loop chưa isCompleted
+  sdk -> task : Task.IsFinished
+  task --> sdk : bool
+  note over sdk : Khi tất cả hoàn tất:\nOnTasksCompleted()
+ end
+ sdk -> sdk : OnTasksCompleted()
+ loop mỗi SDKBehavior
+  sdk -> behavior : OnUserConsentReceived()
+  activate behavior
+  note over behavior
+MonetizationSDKBehavior override:
+Monetization.Init(settings)
+AdsManager.Init(settings)
+IAPManager.Init(settings)
+  end note
+  behavior --> sdk
+  deactivate behavior
+ end
+ deactivate sdk
+end
+note over sdk,gl
+GameLoading Activate / poll LoadingTask ở coroutine riêng.
+Editor gọi consent-complete ngay; device chờ task thực tế.
+StartCoroutine không chặn Init() chờ toàn bộ task hoàn tất.
+end note
+@enduml

@@ -3,6 +3,12 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
+#if UNITY_6000_6_OR_NEWER
+using HierarchyObjectId = UnityEngine.EntityId;
+#else
+using HierarchyObjectId = System.Int32;
+#endif
+
 namespace NebulaSoft
 {
     [InitializeOnLoad]
@@ -49,8 +55,13 @@ namespace NebulaSoft
                     }
                 }
 
+#if UNITY_6000_6_OR_NEWER
+                EditorApplication.hierarchyWindowItemByEntityIdOnGUI -= HighlightItems;
+                EditorApplication.hierarchyWindowItemByEntityIdOnGUI += HighlightItems;
+#else
                 EditorApplication.hierarchyWindowItemOnGUI -= HighlightItems;
-                EditorApplication.hierarchyWindowItemOnGUI += HighlightItems; 
+                EditorApplication.hierarchyWindowItemOnGUI += HighlightItems;
+#endif
                 
                 PrefabStage.prefabStageClosing += OnPrefabStageClosing;
             }
@@ -70,7 +81,7 @@ namespace NebulaSoft
             Hierarchy.ClearHierarchies();
         }
 
-        private static void HighlightItems(int instanceID, Rect selectionRect)
+        private static void HighlightItems(HierarchyObjectId instanceID, Rect selectionRect)
         {
             if (!CoreEditor.UseHierarchyIcons)
             {

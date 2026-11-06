@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using System.Threading;
 
 namespace NebulaSoft
 {
@@ -16,6 +15,12 @@ namespace NebulaSoft
         public static bool IsSaveLoaded => isSaveLoaded;
 
         private static bool isSaveRequired;
+        private static readonly object stateGate = new object();
+        private static long saveRevision;
+        private static bool isInitializing;
+        private static UnityCallbackReciever callbackReciever;
+        private static SaveWriteCoordinator writeCoordinator = new SaveWriteCoordinator();
+        private static BaseSaveWrapper saveWrapper = BaseSaveWrapper.ActiveWrapper;
 
         public static float GameTime => globalSave.GameTime;
 
@@ -25,29 +30,29 @@ namespace NebulaSoft
 
         public static void Init(float autoSaveDelay, bool clearSave = false, float overrideTime = -1f)
         {
-            Serializer.Init();
-
-            GameObject saveCallbackReciever = new GameObject("[SAVE CALLBACK RECIEVER]");
-            saveCallbackReciever.hideFlags = HideFlags.HideInHierarchy;
-
-            GameObject.DontDestroyOnLoad(saveCallbackReciever);
-
-            UnityCallbackReciever unityCallbackReciever = saveCallbackReciever.AddComponent<UnityCallbackReciever>();
-
-            if (clearSave)
+            if (isSaveLoaded || isInitializing) return;
+            isInitializing = true;
+            try
             {
-                InitClear(overrideTime != -1f ? overrideTime : Time.time);
-            }
-            else
-            {
-                Load(overrideTime != -1f ? overrideTime : Time.time);
-            }
+                Serializer.Init();
+                if (clearSave)
+                    InitClear(overrideTime != -1f ? overrideTime : Time.time);
+                else
+                    Load(overrideTime != -1f ? overrideTime : Time.time);
 
-            if (autoSaveDelay > 0)
-            {
-                // Enable auto-save coroutine
-                unityCallbackReciever.StartCoroutine(AutoSaveCoroutine(autoSaveDelay));
+                GameObject receiverObject = new GameObject("[SAVE CALLBACK RECIEVER]");
+                receiverObject.hideFlags = HideFlags.HideInHierarchy;
+                if (Application.isPlaying) GameObject.DontDestroyOnLoad(receiverObject);
+                callbackReciever = receiverObject.AddComponent<UnityCallbackReciever>();
+                if (autoSaveDelay > 0)
+                    callbackReciever.StartCoroutine(AutoSaveCoroutine(autoSaveDelay));
             }
+            catch
+            {
+                UnloadStatic();
+                throw;
+            }
+            finally { isInitializing = false; }
         }
 
         public static void UpdateTime(float time)
@@ -68,12 +73,23 @@ namespace NebulaSoft
 
         public static T GetSaveObject<T>() where T : ISaveObject, new()
         {
-            return GetSaveObject<T>(typeof(T).ToString().GetHashCode());
+            return GetSaveObject<T>(typeof(T).FullName);
         }
 
         public static T GetSaveObject<T>(string uniqueName) where T : ISaveObject, new()
         {
-            return GetSaveObject<T>(uniqueName.GetHashCode());
+            if (!isSaveLoaded)
+            {
+                Debug.LogError("Save controller has not been initialized");
+                return default;
+            }
+            return globalSave.GetSaveObject<T>(uniqueName);
+        }
+
+        public static T GetSaveObject<T>(string uniqueName, int legacyHash) where T : ISaveObject, new()
+        {
+            if (!isSaveLoaded) throw new InvalidOperationException("Save is not initialized.");
+            return globalSave.GetSaveObject<T>(uniqueName, legacyHash);
         }
 
         private static void InitClear(float time)
@@ -92,7 +108,7 @@ namespace NebulaSoft
                 return;
 
             // Try to read and deserialize file or create new one
-            globalSave = BaseSaveWrapper.ActiveWrapper.Load(SAVE_FILE_NAME);
+            writeCoordinator.Execute(() => globalSave = saveWrapper.Load(SAVE_FILE_NAME));
 
             globalSave.Init(time);
 
@@ -105,25 +121,63 @@ namespace NebulaSoft
 
         public static void Save(bool forceSave = false, bool useThreads = true)
         {
-            if (!forceSave && !isSaveRequired) return;
-            if (globalSave == null) return;
+            SaveCurrent(forceSave, useThreads, false);
+        }
 
-            globalSave.Flush(true);
+        public static void SaveChecked()
+        {
+            SaveCurrent(true, false, true);
+        }
 
-            BaseSaveWrapper saveWrapper = BaseSaveWrapper.ActiveWrapper;
-            if(useThreads && saveWrapper.UseThreads())
+        private static void SaveCurrent(bool forceSave, bool useThreads, bool checkedWrite)
+        {
+            GlobalSave source = globalSave;
+            long revision;
+            lock (stateGate)
             {
-                Thread saveThread = new Thread(() => BaseSaveWrapper.ActiveWrapper.Save(globalSave, SAVE_FILE_NAME));
-                saveThread.Start();
+                if (source == null)
+                {
+                    if (checkedWrite) throw new InvalidOperationException("Save is not initialized.");
+                    return;
+                }
+                if (!forceSave && !isSaveRequired) return;
+                isSaveRequired = true;
+                revision = ++saveRevision;
             }
-            else
+
+            try
             {
-                BaseSaveWrapper.ActiveWrapper.Save(globalSave, SAVE_FILE_NAME);
+                source.Flush(true);
+                GlobalSave snapshot = source.CreateSnapshot();
+                BaseSaveWrapper wrapper = saveWrapper;
+                writeCoordinator.Execute(() =>
+                {
+                    try
+                    {
+                        wrapper.Save(snapshot, SAVE_FILE_NAME);
+                        lock (stateGate)
+                        {
+                            if (revision == saveRevision && ReferenceEquals(source, globalSave))
+                                isSaveRequired = false;
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        if (checkedWrite) throw;
+                        ReportSaveFailure(exception);
+                    }
+                }, useThreads && wrapper.UseThreads());
             }
+            catch (Exception exception)
+            {
+                if (checkedWrite) throw;
+                ReportSaveFailure(exception);
+            }
+        }
 
-            Debug.Log("[Save Controller]: Game is saved!");
-
-            isSaveRequired = false;
+        private static void ReportSaveFailure(Exception exception)
+        {
+            Debug.LogError("[Save Controller]: Failed to save: " + exception.Message);
         }
 
         public static void SaveCustom(GlobalSave globalSave)
@@ -132,13 +186,18 @@ namespace NebulaSoft
             {
                 globalSave.Flush(false);
 
-                BaseSaveWrapper.ActiveWrapper.Save(globalSave, SAVE_FILE_NAME);
+                GlobalSave snapshot = globalSave.CreateSnapshot();
+                writeCoordinator.Execute(() => saveWrapper.Save(snapshot, SAVE_FILE_NAME));
             }
         }
 
         public static void MarkAsSaveIsRequired()
         {
-            isSaveRequired = true;
+            lock (stateGate)
+            {
+                saveRevision++;
+                isSaveRequired = true;
+            }
         }
 
         private static IEnumerator AutoSaveCoroutine(float saveDelay)
@@ -157,7 +216,8 @@ namespace NebulaSoft
         {
             globalSave.Flush(false);
 
-            BaseSaveWrapper.ActiveWrapper.Save(globalSave, fullFileName);
+            GlobalSave snapshot = globalSave.CreateSnapshot();
+            writeCoordinator.Execute(() => saveWrapper.Save(snapshot, fullFileName));
         }
 
         public static void Info()
@@ -167,12 +227,13 @@ namespace NebulaSoft
 
         public static void DeleteSaveFile()
         {
-            BaseSaveWrapper.ActiveWrapper.Delete(SAVE_FILE_NAME);
+            writeCoordinator.Execute(() => saveWrapper.Delete(SAVE_FILE_NAME));
         }
 
         public static GlobalSave GetGlobalSave()
         {
-            GlobalSave tempGlobalSave = BaseSaveWrapper.ActiveWrapper.Load(SAVE_FILE_NAME);
+            GlobalSave tempGlobalSave = null;
+            writeCoordinator.Execute(() => tempGlobalSave = saveWrapper.Load(SAVE_FILE_NAME));
 
             tempGlobalSave.Init(Time.time);
 
@@ -181,10 +242,21 @@ namespace NebulaSoft
 
         private static void UnloadStatic()
         {
+            writeCoordinator.Complete();
+            UnityCallbackReciever receiver = callbackReciever;
+            callbackReciever = null;
+            if (receiver != null)
+            {
+                receiver.StopAllCoroutines();
+                if (Application.isPlaying) UnityEngine.Object.Destroy(receiver.gameObject);
+                else UnityEngine.Object.DestroyImmediate(receiver.gameObject);
+            }
             globalSave = null;
 
             isSaveLoaded = false;
             isSaveRequired = false;
+            saveRevision = 0;
+            isInitializing = false;
 
             OnSaveLoaded = null;
         }
@@ -193,16 +265,28 @@ namespace NebulaSoft
         {
             private void OnDestroy()
             {
+                if (callbackReciever != this) return;
 #if UNITY_EDITOR
-                SaveController.Save(true);
+                SaveController.Save(true, false);
 #endif
+                callbackReciever = null;
             }
 
             private void OnApplicationFocus(bool focus)
             {
 #if !UNITY_EDITOR
-                if(!focus) SaveController.Save();
+                if(!focus) SaveController.Save(false, false);
 #endif
+            }
+
+            private void OnApplicationPause(bool paused)
+            {
+                if (paused && callbackReciever == this) SaveController.Save(false, false);
+            }
+
+            private void OnApplicationQuit()
+            {
+                if (callbackReciever == this) SaveController.Save(true, false);
             }
         }
     }

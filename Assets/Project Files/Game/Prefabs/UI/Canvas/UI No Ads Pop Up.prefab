@@ -143,6 +143,7 @@ MonoBehaviour:
       m_Calls: []
   showPopup: 0
   productKey: 0
+  productKeyId: no_ads
   purchaseButton: {fileID: 568070833750377076}
   references:
     version: 2

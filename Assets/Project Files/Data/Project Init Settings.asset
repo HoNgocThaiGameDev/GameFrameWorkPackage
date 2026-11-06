@@ -82,6 +82,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   modules:
   - {fileID: 150167048453217202}
+  - {fileID: 1358063386015252027}
   - {fileID: 6377013955087300433}
   - {fileID: 2650117374181925186}
   - {fileID: 1166592688446620423}
@@ -92,6 +93,21 @@ MonoBehaviour:
   - {fileID: -4942777565868066768}
   - {fileID: 5225613000792799278}
   - {fileID: -319585252694912297}
+  - {fileID: 7401020202601}
+  - {fileID: 8187994974875880341}
+--- !u!114 &7401020202601
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b1c587d7d804a899252e3b1c138c273, type: 3}
+  m_Name: NebulaSoft.IAPInitModule
+  m_EditorClassIdentifier: 
+  settings: {fileID: 11400000, guid: fdf9c98599504856979c49c7ae12a0ba, type: 2}
 --- !u!114 &150167048453217202
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -120,6 +136,19 @@ MonoBehaviour:
   m_Name: NebulaSoft.CurrencyInitModule
   m_EditorClassIdentifier: 
   currenciesDatabase: {fileID: 11400000, guid: f87cad86488371b479fdbde4e0b934c4, type: 2}
+--- !u!114 &1358063386015252027
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e0330a5109311545be8421d1a86d8b7, type: 3}
+  m_Name: NebulaSoft.AnalyticsInitModule
+  m_EditorClassIdentifier: Assembly-CSharp::NebulaSoft.AnalyticsInitModule
+  settings: {fileID: 11400000, guid: cf79178af5c4a0e49afbf6f9c5165504, type: 2}
 --- !u!114 &2650117374181925186
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -190,18 +219,19 @@ MonoBehaviour:
   tweensFixedUpdateCount: 30
   tweensLateUpdateCount: 0
   verboseLogging: 0
---- !u!114 &8686307833972740282
+--- !u!114 &8187994974875880341
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f98d81a701353494b9fcbff0fcc76423, type: 3}
-  m_Name: NebulaSoft.AnalyticsHelperInitModule
-  m_EditorClassIdentifier: 
+  m_Script: {fileID: 11500000, guid: e75f6c72972aa67448353de188b2aa59, type: 3}
+  m_Name: Ads
+  m_EditorClassIdentifier: Assembly-CSharp::NebulaSoft.AdsInitModule
+  settings: {fileID: 11400000, guid: c27b8b6b3c496424883635ddb0e06186, type: 2}
 --- !u!114 &9145584784677371558
 MonoBehaviour:
   m_ObjectHideFlags: 1

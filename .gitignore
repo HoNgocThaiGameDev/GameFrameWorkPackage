@@ -22,6 +22,8 @@
 
 # Reinstallable dependencies for the Firebase tooling.
 /tools/firebase/node_modules/
+__pycache__/
+*.pyc
 
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be committed to version control.
 *.blend1
@@ -122,3 +124,9 @@ InitTestScene*.unity*
 # Local Unity Test Runner and framework smoke-test reports.
 /editmode-test-results.xml
 /framework-smoke-*-results.xml
+
+# Generated document QA previews; keep the generator and final documents.
+/tmp/docx_qa2/
+/tmp/docx_qa3/
+/tmp/docx_qa4/
+/tmp/pdfs/

@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-using UnityEditor;
 using UnityEngine;
 
 namespace NebulaSoft
@@ -10,7 +9,6 @@ namespace NebulaSoft
     /// </summary>
     public static class EditorAdsDebugMenu
     {
-        [MenuItem("Tools/Picture Puzzle/Ads/Restore Ads In Play Mode")]
         private static void RestoreAdsInPlayMode()
         {
             if (!Application.isPlaying)

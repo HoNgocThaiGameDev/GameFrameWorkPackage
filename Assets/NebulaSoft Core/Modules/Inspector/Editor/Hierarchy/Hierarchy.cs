@@ -1,10 +1,16 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using static System.Linq.Expressions.Expression;
+
+#if UNITY_6000_6_OR_NEWER
+using HierarchyObjectId = UnityEngine.EntityId;
+#else
+using HierarchyObjectId = System.Int32;
+#endif
 
 namespace NebulaSoft
 {
@@ -84,7 +90,7 @@ namespace NebulaSoft
             SetIconWidth(defaultIconWidth, defaultSpaceBeforeIcon);
         }
 
-        public void DrawElementGUI(int instanceID, Rect selectionRect)
+        public void DrawElementGUI(HierarchyObjectId instanceID, Rect selectionRect)
         {
 #if UNITY_6000_3_OR_NEWER
             GameObject instanceObject = EditorUtility.EntityIdToObject(instanceID) as GameObject;

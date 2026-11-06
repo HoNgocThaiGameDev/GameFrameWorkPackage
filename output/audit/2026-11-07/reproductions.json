@@ -1,0 +1,68 @@
+{
+  "runtime": "9.0.7",
+  "boundary": "Standalone .NET; Unity, storage and SDKs are mocked",
+  "total": 10,
+  "failures": 7,
+  "results": [
+    {
+      "id": "BASE-ADS",
+      "name": "Repeated reward and close grant exactly once",
+      "passed": true,
+      "observed": "Safety assertion satisfied"
+    },
+    {
+      "id": "BASE-IAP",
+      "name": "Same successful transaction cannot grant twice",
+      "passed": true,
+      "observed": "Safety assertion satisfied"
+    },
+    {
+      "id": "BASE-DAILY",
+      "name": "Two ordinary claims on the same UTC day grant once",
+      "passed": true,
+      "observed": "Safety assertion satisfied"
+    },
+    {
+      "id": "AUD-01",
+      "name": "IAP retry after observer exception does not duplicate coins",
+      "passed": false,
+      "observed": "First attempt coins=100; same transaction retried coins=200; TimesPurchased=1"
+    },
+    {
+      "id": "AUD-02",
+      "name": "Distinct save identities remain isolated despite a hash collision",
+      "passed": false,
+      "observed": "audit_save_11673 and audit_save_22341 hash to -720916531; same save object returned, second.Value=71"
+    },
+    {
+      "id": "AUD-04",
+      "name": "Volume change preserves the clip\u0027s gain",
+      "passed": false,
+      "observed": "Expected active volume=0.4; actual=0"
+    },
+    {
+      "id": "AUD-06",
+      "name": "Analytics can retry initialization after transient failure",
+      "passed": false,
+      "observed": "First=False; retry=False; provider initialization calls=1; pending=1"
+    },
+    {
+      "id": "AUD-09",
+      "name": "Remote parser preserves braces inside JSON string values",
+      "passed": false,
+      "observed": "Valid input JSON became invalid extracted JSON: {\u0022text\u0022:\u0022a}"
+    },
+    {
+      "id": "AUD-10",
+      "name": "Daily reward cannot be claimed twice through a synchronous observer",
+      "passed": false,
+      "observed": "outer=True; nested=True; same-day coins=20 (expected 10)"
+    },
+    {
+      "id": "AUD-11",
+      "name": "Reading a missed daily reward does not write storage repeatedly",
+      "passed": false,
+      "observed": "Five GetState calls after initial normalization caused 5 additional storage writes"
+    }
+  ]
+}

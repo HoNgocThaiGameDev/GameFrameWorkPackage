@@ -11,7 +11,7 @@ public sealed class CoinSafeProgressTests
 {
     private const BindingFlags PrivateStatic = BindingFlags.NonPublic | BindingFlags.Static;
     private const string ConflictDialogPath =
-        "Assets/Addon/UI/Prefabs/Shared/SaveProgressFoundDialog.prefab";
+        "Assets/Addon/UI/Prefabs/Popups/SaveProgressFoundDialog.prefab";
 
     [TearDown]
     public void TearDown()

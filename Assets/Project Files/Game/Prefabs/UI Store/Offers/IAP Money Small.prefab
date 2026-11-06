@@ -380,6 +380,7 @@ MonoBehaviour:
       m_Calls: []
   showPopup: 0
   productKey: 2
+  productKeyId: coins_small
   purchaseButton: {fileID: 2685269683853514903}
   references:
     version: 2

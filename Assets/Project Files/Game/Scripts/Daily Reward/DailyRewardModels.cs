@@ -155,7 +155,7 @@ namespace NebulaSoft
         public void Save(DailyRewardSave save)
         {
             SaveController.MarkAsSaveIsRequired();
-            SaveController.Save(forceSave: true, useThreads: false);
+            SaveController.SaveChecked();
         }
     }
 

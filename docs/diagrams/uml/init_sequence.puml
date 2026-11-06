@@ -1,0 +1,65 @@
+@startuml
+!include style.iuml
+autonumber
+participant "GameLoading" as gl
+participant "LoadingGraphics" as lg
+participant "Initializer" as init
+participant "SDKInitializer" as sdk
+participant "SceneManager" as scene
+activate gl
+gl -> lg : Init(this)
+activate lg
+lg -> lg : DontDestroyOnLoad\nchuẩn bị loading UI
+lg --> gl
+deactivate lg
+note over gl : Coroutine: yield null,\nyield WaitForEndOfFrame
+gl -> init : Init()
+activate init
+init -> init : SystemMessage.Init()\nOverlay.Bind(...)\nAnalyticsModules.Init()\nDontDestroyOnLoad
+init --> gl
+deactivate init
+note over gl : Connection probe nếu bật.\nScene hiện tại: false.
+gl -> init : InitModules()
+activate init
+ref over init : Xem sequence khởi tạo module ở chương 7
+init --> gl
+deactivate init
+gl -> init : InitSDKs()
+activate init
+init -> sdk : Init()
+activate sdk
+ref over sdk : SDK behavior / task / consent\n(xem UML-15)
+sdk --> init
+deactivate sdk
+init --> gl
+deactivate init
+loop taskIndex < loadingTasks.Count
+ gl -> gl : kiểm tra / Activate task\nyield return null
+end
+note over sdk : Device: đợi các task.\nEditor: consent-complete ngay.\nXem UML-15.
+gl -> scene : LoadSceneAsync(nextIndex)
+activate scene
+scene --> gl : AsyncOperation
+deactivate scene
+note over scene : Unity tải Menu.\nAwake/Start có thể chạy\ntrước khi loading bị hủy.
+loop chờ scene / minimumFinishTime
+ gl -> lg : SetLoadingState(...)
+end
+opt useManualControl = true
+ note over gl : Đợi owner gọi MarkAsReadyToHide()
+end
+gl -> lg : OnLoadingFinished()
+activate lg
+lg -> lg : DOFade(0, 0.6f, unscaled)\nOnComplete(callback)
+lg --> gl : fade đã được lên lịch
+deactivate lg
+gl -> gl : Destroy(Game Loading)
+deactivate gl
+destroy gl
+... Tween hoàn tất sau 0,6 giây ...
+-> lg : OnComplete callback
+activate lg
+lg -> lg : SetActive(false); Destroy(gameObject)\nAdsManager.EnableBanner()
+deactivate lg
+destroy lg
+@enduml

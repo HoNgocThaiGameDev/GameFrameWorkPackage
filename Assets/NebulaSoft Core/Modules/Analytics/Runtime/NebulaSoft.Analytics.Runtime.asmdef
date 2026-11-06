@@ -1,0 +1,6 @@
+{
+    "name": "NebulaSoft.Analytics.Runtime",
+    "rootNamespace": "NebulaSoft.Analytics",
+    "autoReferenced": true,
+    "noEngineReferences": true
+}

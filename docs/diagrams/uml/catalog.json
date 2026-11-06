@@ -1,0 +1,22 @@
+{
+  "scene_lifecycle": {"type": "State diagram", "caption": "UML-01. Scene đang active và các lời gọi chuyển scene có thật.", "basis": "source", "max_height": 290},
+  "mvc_components": {"type": "Component diagram", "caption": "UML-02. Dependency MVC đề xuất cho game mới.", "basis": "proposed", "max_height": 230},
+  "init_structure": {"type": "Class diagram", "caption": "UML-03. Init: reference giữa các component và settings asset theo source.", "basis": "source", "max_height": 450},
+  "init_sequence": {"type": "Sequence diagram", "caption": "UML-04. Bootstrap thực tế của Init. Ref dẫn tới sequence module ở chương 7.", "basis": "source", "max_height": 650, "full_page": true},
+  "menu_structure": {"type": "Class diagram", "caption": "UML-05. Menu: serialized reference, kế thừa UIPage và binding PLAY.", "basis": "source", "max_height": 520},
+  "menu_sequence": {"type": "Sequence diagram", "caption": "UML-06. Menu: Awake, InitPages, Start và callback PLAY theo source.", "basis": "source", "max_height": 650, "full_page": true},
+  "game_structure": {"type": "Class diagram", "caption": "UML-07. Game: dependency tới UIController và kế thừa UIPage.", "basis": "source", "max_height": 390},
+  "game_mvc": {"type": "Class diagram", "caption": "UML-08. Composition đề xuất cho game mới. Các kiểu chưa có được đánh dấu rõ.", "basis": "proposed", "max_height": 400},
+  "game_sequence": {"type": "Sequence diagram", "caption": "UML-09. Game: boot HUD và win flow. GameComplete không tự hiện popup.", "basis": "source", "max_height": 650, "full_page": true},
+  "game_outcome_activity": {"type": "Activity diagram", "caption": "UML-10. Activity outcome đề xuất, có nhánh win/fail/revive và tăng level rõ ràng.", "basis": "proposed", "max_height": 650, "full_page": true},
+  "ui_classes": {"type": "Class diagram", "caption": "UML-11. Quan hệ type thực tế: reference, dependency, inheritance và interface realization.", "basis": "source", "max_height": 500},
+  "modules_sequence": {"type": "Sequence diagram", "caption": "UML-12. Initializer gọi InitModule.CreateComponent theo ProjectInitSettings.modules[].", "basis": "source", "max_height": 570, "full_page": true},
+  "save_sequence": {"type": "Sequence diagram", "caption": "UML-13. Save đồng bộ (useThreads = false): mutation, snapshot và dirty revision.", "basis": "source", "max_height": 570},
+  "ads_classes": {"type": "Class diagram", "caption": "UML-14. Ads: interface boundary và adapter; runtime không phụ thuộc vendor concrete type.", "basis": "source", "max_height": 560},
+  "sdk_sequence": {"type": "Sequence diagram", "caption": "UML-15. SDK behavior, loading task và consent: phân nhánh Editor / device.", "basis": "source", "max_height": 630, "full_page": true},
+  "ads_lifetime": {"type": "Class diagram", "caption": "UML-16. AdsModule sở hữu service lifetime; AdsSaveBridge nối service với save.", "basis": "source", "max_height": 330},
+  "mvc_controllers": {"type": "Class diagram", "caption": "UML-17. Quan hệ thực tế giữa controller scene, UI, session/model và persistence.", "basis": "source", "max_height": 550},
+  "mvc_restore_sequence": {"type": "Sequence diagram", "caption": "UML-18. Restore / cache model trong Init; UI bind model đã được feature khởi tạo.", "basis": "source", "max_height": 590},
+  "mvc_currency_sequence": {"type": "Sequence diagram", "caption": "UML-19. CurrencyController đổi state, mark dirty và phát event cho UI; persist diễn ra riêng.", "basis": "source", "max_height": 590},
+  "mvc_win_sequence": {"type": "Sequence diagram", "caption": "UML-20. Win: GameController -> ActiveSession -> save state; mở UI và NEXT là luồng riêng.", "basis": "source", "max_height": 640}
+}

@@ -1,0 +1,56 @@
+@startuml
+!include style.iuml
+autonumber
+participant CurrencyController as cc
+participant Currency as cur
+participant "state\n: Currency.Save" as model
+participant SaveController as save
+participant "coinsPanel\n: CurrencyUIPanelSimple" as view
+note over cc,view
+Điều kiện: Init đã bind Currency.Save;
+panel đang subscribe OnCurrencyChanged.
+end note
+-> cc : Add(type, amount)\nfeature / reward caller
+activate cc
+cc -> cur : Amount += amount
+activate cur
+cur -> model : đọc / ghi save.Amount
+model --> cur : Amount mới
+cur --> cc
+deactivate cur
+cc -> save : MarkAsSaveIsRequired()
+activate save
+save -> save : dirty = true; revision++
+save --> cc
+deactivate save
+cc -> cur : InvokeChangeEvent(amount)
+activate cur
+cur -> view : OnCurrencyAmountChanged\n(currency, difference)
+activate view
+view -> cur : đọc Amount / AmountFormatted
+activate cur
+cur -> model : đọc save.Amount
+model --> cur : Amount hiện tại
+cur --> view : giá trị / chuỗi đã format
+deactivate cur
+view -> view : text.text = giá trị mới
+view --> cur
+deactivate view
+cur --> cc
+deactivate cur
+[<-- cc : Add() return
+deactivate cc
+... Tại thời điểm persist được yêu cầu ...
+-> save : Save() / pause / quit
+activate save
+ref over model,save
+Flush -> snapshot -> writer (UML-13).
+Autosave chỉ chạy khi autoSaveDelay > 0.
+end ref
+[<-- save : return (có thể trước worker hoàn tất)
+deactivate save
+note over model,view
+Label đã cập nhật từ state RAM trước bước ghi file.
+SaveController không gọi Redraw() hoặc ShowPage().
+end note
+@enduml

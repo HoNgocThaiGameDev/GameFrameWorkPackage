@@ -1,0 +1,3348 @@
+{
+  "audit_date": "2026-11-07",
+  "scope": "Working tree; automated inventory is not a full semantic or Unity build verification",
+  "unity_version": "m_EditorVersion: 6000.6.8f1",
+  "source_counts": {
+    "Assets/NebulaSoft Core": {
+      "files": 466,
+      "lines": 43619
+    },
+    "Assets/Project Files/Game/Scripts": {
+      "files": 152,
+      "lines": 20281
+    },
+    "Assets/Tests": {
+      "files": 13,
+      "lines": 2461
+    }
+  },
+  "test_attributes": {
+    "UnityTest": 4,
+    "Test": 103,
+    "TestCase": 26
+  },
+  "working_tree_status_counts_at_scan": {
+    " M": 765,
+    " D": 557,
+    "??": 124
+  },
+  "first_party_assemblies": [
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Configuration/NebulaSoft.Ads.Configuration.asmdef",
+      "name": "NebulaSoft.Ads.Configuration",
+      "rootNamespace": "NebulaSoft.Ads",
+      "references": [
+        "NebulaSoft.Ads.Contracts"
+      ],
+      "autoReferenced": true
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Contracts/NebulaSoft.Ads.Contracts.asmdef",
+      "name": "NebulaSoft.Ads.Contracts",
+      "rootNamespace": "NebulaSoft.Ads",
+      "references": [],
+      "autoReferenced": true,
+      "noEngineReferences": true
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Runtime/NebulaSoft.Ads.Runtime.asmdef",
+      "name": "NebulaSoft.Ads.Runtime",
+      "rootNamespace": "NebulaSoft.Ads",
+      "references": [
+        "NebulaSoft.Ads.Contracts"
+      ],
+      "autoReferenced": true,
+      "noEngineReferences": true
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Runtime/NebulaSoft.Analytics.Runtime.asmdef",
+      "name": "NebulaSoft.Analytics.Runtime",
+      "rootNamespace": "NebulaSoft.Analytics",
+      "autoReferenced": true,
+      "noEngineReferences": true
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Core.Inspector.Editor.asmdef",
+      "name": "Core.Inspector.Editor",
+      "rootNamespace": "",
+      "references": [
+        "GUID:320a7f1e3dd30bf4dbb1ac85ea51c249",
+        "GUID:58d423447910e474892c01353162b1ba",
+        "GUID:dfd68d793e4e5c24da9f1a86e6e09fbe",
+        "GUID:60e58814b7969e0459416e87b0b42a14"
+      ],
+      "includePlatforms": [
+        "Editor"
+      ],
+      "excludePlatforms": [],
+      "allowUnsafeCode": false,
+      "overrideReferences": false,
+      "precompiledReferences": [],
+      "autoReferenced": true,
+      "defineConstraints": [],
+      "versionDefines": [],
+      "noEngineReferences": false
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Core.Inspector.asmdef",
+      "name": "Core.Inspector",
+      "rootNamespace": "",
+      "references": [],
+      "includePlatforms": [],
+      "excludePlatforms": [],
+      "allowUnsafeCode": false,
+      "overrideReferences": false,
+      "precompiledReferences": [],
+      "autoReferenced": true,
+      "defineConstraints": [],
+      "versionDefines": [],
+      "noEngineReferences": false
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Core Settings/Editor/Core.Settings.Editor.asmdef",
+      "name": "Core.Settings.Editor",
+      "rootNamespace": "",
+      "references": [
+        "GUID:ead44b7ff0c1fef46af9d702fccc0dd9",
+        "GUID:58d423447910e474892c01353162b1ba"
+      ],
+      "includePlatforms": [
+        "Editor"
+      ],
+      "excludePlatforms": [],
+      "allowUnsafeCode": false,
+      "overrideReferences": false,
+      "precompiledReferences": [],
+      "autoReferenced": true,
+      "defineConstraints": [],
+      "versionDefines": [],
+      "noEngineReferences": false
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Core Settings/Runtime/Core.Settings.asmdef",
+      "name": "Core.Settings"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Editor/Core.UE.Editor.asmdef",
+      "name": "Core.UE.Editor",
+      "rootNamespace": "",
+      "references": [
+        "GUID:dfd68d793e4e5c24da9f1a86e6e09fbe",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+      ],
+      "includePlatforms": [
+        "Editor"
+      ],
+      "excludePlatforms": [],
+      "allowUnsafeCode": false,
+      "overrideReferences": false,
+      "precompiledReferences": [],
+      "autoReferenced": true,
+      "defineConstraints": [],
+      "versionDefines": [],
+      "noEngineReferences": false
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Runtime/Core.UE.asmdef",
+      "name": "Core.UE"
+    }
+  ],
+  "assets_examined_for_script_guids": 118,
+  "package_cache_available": true,
+  "duplicate_local_guids": {},
+  "orphan_meta_files": [
+    "Library/PackageCache/com.unity.inputsystem@2436e68c60c4/Samples~/SimpleDemo/SimpleDemo_UsingActionAsset.meta",
+    "Library/PackageCache/com.unity.test-framework@ee3fe9477490/Samples~/15_TestCases_15.meta"
+  ],
+  "stale_first_party_script_references": [
+    {
+      "path": "Assets/Project Files/Data/Project Init Settings.asset",
+      "guid": "f98d81a701353494b9fcbff0fcc76423",
+      "name": "NebulaSoft.AnalyticsHelperInitModule",
+      "classification": "stale first-party script reference; active usage must be checked separately"
+    },
+    {
+      "path": "Assets/Project Files/Data/Skins/Level Skin Database.asset",
+      "guid": "5d08e9208693e354e8ad15c0943a3810",
+      "name": "Level Skin Database",
+      "classification": "stale first-party script reference; active usage must be checked separately"
+    }
+  ],
+  "unresolved_script_references": [
+    {
+      "path": "Assets/Readme.asset",
+      "guid": "fcf7219bab7fe46a1ad266029b2fee19",
+      "name": "Readme",
+      "classification": "unresolved; may belong to a UPM package"
+    },
+    {
+      "path": "Assets/Project Files/Data/Project Init Settings.asset",
+      "guid": "f98d81a701353494b9fcbff0fcc76423",
+      "name": "NebulaSoft.AnalyticsHelperInitModule",
+      "classification": "stale first-party script reference; active usage must be checked separately"
+    },
+    {
+      "path": "Assets/Project Files/Data/Skins/Level Skin Database.asset",
+      "guid": "5d08e9208693e354e8ad15c0943a3810",
+      "name": "Level Skin Database",
+      "classification": "stale first-party script reference; active usage must be checked separately"
+    }
+  ],
+  "source_fingerprints": [
+    {
+      "path": "Assets/NebulaSoft Core/Examples/Example 03 - Haptic/Scripts/HapticTestController.cs",
+      "sha256": "141fc44bd2c8a0a21c8e8117436248e73c5f7776750626f6caed6b6109135499",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Examples/Example 04 - Ads/Scripts/AdsManagerExampleScript.cs",
+      "sha256": "a141a57b7a28e8e7e3e6cfe188a5418938e3b11dde17b2923f235bb811d5bee0",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Examples/Example 05 - IAP/Scripts/IAPExampleScript.cs",
+      "sha256": "99bc4e1593c7bdbf41b86c204675bded1396a9509ccbcf2c213f1771a306e757",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Examples/Example 05 - IAP/Scripts/ItemPanelScript.cs",
+      "sha256": "6f9c6c136cb2c37c2c0d79dbc3c4905e15fb0c1c28ea67fc1543857f2882e725",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Configuration/AdPlacement.cs",
+      "sha256": "5d0b1d362572631fcf979e2c7c401396ecbb398070d6ff2937d5d3421c2792a3",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Ads/Configuration"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Configuration/AdsCatalog.cs",
+      "sha256": "93710c43956b0cc124a67e0dfa507e20e44d3ecf58157f647e1624b512e8eee6",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Ads/Configuration"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Configuration/AdsModuleSettings.cs",
+      "sha256": "d4c99e7855384533ce02c06f7f8d94f092fbab379cae1dd23b0202536eb5b344",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Ads/Configuration"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Configuration/AdsPlacementExtensions.cs",
+      "sha256": "71fc19aaaeb3b06dc8ac0a9b9ae6453d20665106759aa40d1f030ad2a7bdf7db",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Ads/Configuration"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Configuration/AdsProviderConfig.cs",
+      "sha256": "0b490e4c3411065b0c3f51b3a9eee33df7c183f2408bc4af1ef157c7ea66ecac",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Ads/Configuration"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Contracts/AdModels.cs",
+      "sha256": "c74e44d6c0ed5a173064a51c9d6e16b79e1360722dd4260a97f1fbbd0e181b3d",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Ads/Contracts"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Contracts/IAdsProvider.cs",
+      "sha256": "a782db79429b3ba684653863ef8c80708d11253b7d760f82988b8f6651ec656f",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Ads/Contracts"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Contracts/IAdsService.cs",
+      "sha256": "eef9aeb351db98973ccb98be687cbdc1c03e50d39677762a6bf649dbbd71358a",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Ads/Contracts"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Providers/AdsKit/AdsKitAdMobConsentConfig.cs",
+      "sha256": "60ec45a0362828f873238263e14e6825a7b81c180d81295f227b9272a6ac3d90",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Providers/AdsKit/AdsKitConsentProviderConfig.cs",
+      "sha256": "0c96d1226f980730012f4104d275c6bc6f97e2d4ad23cdf9f575302ba97e72d8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Providers/AdsKit/AdsKitProvider.cs",
+      "sha256": "d867c9af39e2e612cc4e3ffcffdcc880e9d158f1fb1cc118e0912cae9c771571",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Providers/AdsKit/AdsKitProviderConfig.cs",
+      "sha256": "ea0ccd0b79d5f66469d68868ad01c3f2da6fe6d2ff7e6d05fc493c92c3da0ccc",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Providers/Dummy/DummyAdsProvider.cs",
+      "sha256": "6d79d9b9522c4784807f64f204af64304a53ba5135f767e28b7da7edccc8637a",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Providers/Dummy/DummyAdsProviderConfig.cs",
+      "sha256": "282d6ee02157b819d6fd0c596d24fb3b3d6c11704acf8975a0cd82560fe2c2c8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Runtime/AdsService.cs",
+      "sha256": "cde7ed3c11d7d8085fb1b599ced6e936f5b72f4ee8025e978a7438844591684e",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Ads/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Unity/AdsInitModule.cs",
+      "sha256": "c0439e55487ad31dfa52bccf9aed51858a92976e4ea37d90870cf67eb5c13a6d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Unity/AdsModule.cs",
+      "sha256": "e9c868d0550cfd90b743c05dfead007a00ea424247e5b53f6b488c8ea556983d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Ads/Unity/AdsSaveBridge.cs",
+      "sha256": "2c761f3d04cdca69e8120b1c54dd1f1bf9585bed4079d6050a281ef5fbbe0b14",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/AnalyticsController.cs",
+      "sha256": "698b95facd5782bd0351b874fa37efb4875178506c0a79a126384a76e4163012",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/AnalyticsController.Service.cs",
+      "sha256": "32910a5dc31e9803f5d1e4b0966a443ca9a90397e9da85a72119b3e40805be6d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/AnalyticsEventType.cs",
+      "sha256": "50f71d046c2fd9d2c31d0d6140df85d0b30b26791cfe4419c8f870fa2c05cb95",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/AnalyticsLegacyBridge.cs",
+      "sha256": "6ff6f064c924daf55c1469f891ee0fc5601c1c352e8591e9e6f5ce615f561576",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/AnalyticsModules.cs",
+      "sha256": "beb612afb343279ac49fefda76de6051d7b7b77a2da5a10c64773d7b71e07b01",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/AnalyticsModules.Registration.cs",
+      "sha256": "f6469424df3ab8cf0a3e206ef39d08e5bc90b98d70a66e2a1a6f491e1e1510c0",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/BaseAnalyticsModule.cs",
+      "sha256": "ca39fd416c8edff7ade0c440c6021253f857ee7db12218aa78f6fd1f8f115ec5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/CurrencyEvent.cs",
+      "sha256": "40bcc84a24d8bebb462918008f0664587568599e8724c7a6a1fae2ae92b1dfc6",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Editor/AnalyticsSettingsEditor.cs",
+      "sha256": "f1b858047836a01cb85a3bfd4d98f19b56d4251fdbd8c9c3693f1e77588e3040",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/IAnalyticsEventData.cs",
+      "sha256": "fcaab3523da1aa90a06077911e59ffee27609653c0d534042a5ba65a86260137",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/InterstitialEvent.cs",
+      "sha256": "50965b038458a7c85e53b8a08b76020df292ad1ff1f69a875b7480fd171acc4c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/LevelEvent.cs",
+      "sha256": "54da6a4327945bcb068527811b4c2beba55f5fb81946a58818e52431d540bb37",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Providers/ConsoleProvider.cs",
+      "sha256": "c9af322a88dadc48a066319b7e2d2d3f064afa3e8a151b94b24a9ac1a12b9f9a",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Providers/FirebaseProvider.cs",
+      "sha256": "fe36fc7abd3ec774cd86b8889787b82431b2cd1063963909778c79b98714c831",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/PurchaseEvent.cs",
+      "sha256": "84b0182dc2d2cc2e4ad665b6041c34d51d77a53a8e3a6a8c062652da3003e897",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/PurchaseFailEvent.cs",
+      "sha256": "bdb1e0290e1af887a6ffc9f480c312165b43ba4c49223a4c49775635e65d7dee",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/RewardedAdEvent.cs",
+      "sha256": "b28f7de8b00a66548573d148d701d580ac5435342d0ea12ad8a7053baa2f6895",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Runtime/AnalyticsEvent.cs",
+      "sha256": "bf82bae554e462576766a110bd29deb5cd1db82e49c85fde51ff93135a07472c",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Analytics/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Runtime/AnalyticsEvents.cs",
+      "sha256": "227913ce916079caba1303ae776d1cf05cdd8fb0457f32ef891c85042bf87cd4",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Analytics/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Runtime/AnalyticsService.cs",
+      "sha256": "4981fabee0760fab1bafe1044f63a3f0dcb9ff54e8f6f853693e11645e1494bb",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Analytics/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Runtime/IAnalyticsProvider.cs",
+      "sha256": "da31803686ff9746117f8b3fafd95a4a5d9cbe6234f54811142ab9fcc67bc77f",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Analytics/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Runtime/IAnalyticsService.cs",
+      "sha256": "009845a70d40f06aaa8585de52ecdd2c2e39aab92b288f5ff041e878bf8e9d36",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Analytics/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Runtime/LevelTracker.cs",
+      "sha256": "a8cb56a48f44dd4386157bed9b6f3fbe964854187ff3d8015b5e9a0e891177c2",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Analytics/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Unity/AnalyticsBackend.cs",
+      "sha256": "5e395ca862d7b3555b56e5045a5aefeb5de7e29b366bc5031e9595e929467601",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Unity/AnalyticsBridge.cs",
+      "sha256": "9a64f1cda8fcd9c2525e595eeba82b0cbeab3ad366c6d323e66811e6e6afcaa1",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Unity/AnalyticsInitModule.cs",
+      "sha256": "577572f74c7c7f870633ff35dc62a41b65d126144d6cd85ac39c2ec9d306a431",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Unity/AnalyticsModule.cs",
+      "sha256": "a4c2fd9e7d2632792d5f55bd18dbd064938d72b195389da44ade96853578ef11",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Analytics/Unity/AnalyticsSettings.cs",
+      "sha256": "0fbb8b95ee9b5bfa40de29b7c375005c7a1da727a761c6a4e9f400b3c687f79d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Audio/Scripts/AudioCase.cs",
+      "sha256": "3b7d07e9f39478ed9908395474c86bdfc2151b71c4329500c1c2e14188b541de",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Audio/Scripts/AudioClipHandler.cs",
+      "sha256": "6e76d092b785d99b13eb5a33af0d5186e750e8052f5152acefe0d6cbf24ebeb7",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Audio/Scripts/AudioController.cs",
+      "sha256": "72088c6d7590b2d25ff84978a0beaa1e4f5cc352ad39880e9288b61b4c9bb52c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Audio/Scripts/AudioInitModule.cs",
+      "sha256": "6f78cda3d6ec53046370c73cd1310ef03d854e01c83fc199e51a657bc2b18ab4",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Audio/Scripts/AudioSave.cs",
+      "sha256": "edcafcea3c2f7749a7d8a5b35dfea6c5d5d214bf5216ac806cb50c96ac501e52",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Audio/Scripts/AudioSourceCase.cs",
+      "sha256": "0a54055ccd57d91977f7b9c97b1c461491f02d1f923791971e0b6295d916e47c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Audio/Scripts/Editor/AudioInitModuleEditor.cs",
+      "sha256": "9effe8d8fbe8f959c1e1811b5d362d58ae3554c9041ff6d3a53a65192c52c8af",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Audio/Scripts/MD_AudioClips.cs",
+      "sha256": "03117672d3f10ffafb1129ce51239268f4f28582f08a96a5e089cddd7dcfcf0e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Audio/Scripts/MusicSource.cs",
+      "sha256": "032156d91d0fcd44d9c59e83fa66ebab78b9961656e908fc9f1dc588a8d5a914",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/Currency.cs",
+      "sha256": "7e05f0b1db22260fc45b4c3aac1727cb4b95aa53731f5b53875a832711237ef2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/CurrencyAmount.cs",
+      "sha256": "d5348af9b0efcc1339435f34f24dd53959efa994d5db9f1aa6f63cef442362f3",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/CurrencyController.cs",
+      "sha256": "80c5d9298586ce1e4435ba8cb0b51d34d00ebec24ddd401b214617c5bd46e2bb",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/CurrencyDatabase.cs",
+      "sha256": "48e747adb40759e91e9c57edacb9766b3a4bc3c2c0894db4fdfc384040f0e37e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/CurrencyHelper.cs",
+      "sha256": "4e54ea7f0c455ff96398f27fd4ba1860f199e075f39be75c81326d20322e24ac",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/CurrencyInitModule.cs",
+      "sha256": "406c0ba0274d8944419f41ccd1e3ff3a4fd5a9718d56d2ed382efbda6fdb3a1f",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/CurrencyRemoteConfigData.cs",
+      "sha256": "638a8d28f65769bb79d0b90972e2f37ca358be9aa0fc06825be55baffb7bbc4d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/CurrencyReward.cs",
+      "sha256": "a835caa60824ddf162eb3e99b9b326b189a56964324080c0418dcbbe5a823ae9",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/CurrencyRewardHolder.cs",
+      "sha256": "177e3be7d51082bb5cdba39c11829fc81393fe57dae7ba5e636699859231f273",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/CurrencyRewardPreviewSettings.cs",
+      "sha256": "db85bd005e364492f00b2b0acef09a26eb3e69f1952b89862a1f8f1e41e0fdb8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/CurrencyRewardView.cs",
+      "sha256": "48ee7065aa4da6faf6ad5adf1c8eec6b8fd8b94fde8e27cbd7beb3d68a8eefb4",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/Editor/CurrencyAmountPropertyDrawer.cs",
+      "sha256": "643f4e569afa8e7e97f8a0fe90b37fda1ac5a74e74116ccbd8d5ae0d96425dcb",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/Editor/CurrencyDatabaseEditor.cs",
+      "sha256": "b773046ff2d92e6073e099ba7be03c3ebb4bacbe1377871c12fb3809e1addef7",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/Editor/CurrencyInitModuleEditor.cs",
+      "sha256": "b3f9774251676f6bcc09248e1eaae616de144a1de77a57dd90a726727bc856d7",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/Editor/MD_CurrencyActionsMenu.cs",
+      "sha256": "639d5916e838f159293f92fa36cbe6524a33bf0d458f9d219763318804eca763",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/MD_CurrencyData.cs",
+      "sha256": "a78dcde3651752f52ca0c927508286b6927e67fe04a29345910cdbcdd11f905e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/MD_CurrencyType.cs",
+      "sha256": "29d55197c9842d7ca79e24f976a3e7f5a374b09c9ab7c5ad162004599f6379fd",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/UI/CurrencyUI.cs",
+      "sha256": "db6c6474d7855f7247c272df54d8662dd07400a2a9ca06b55b89248320dcacdf",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/UI/CurrencyUIController.cs",
+      "sha256": "fe3e794cc9208462e1d72e799ddcd995b69b862b8da8e538d158abf89dc56d63",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/UI/CurrencyUIHelper.cs",
+      "sha256": "af529d003d7aa8abb417b758be5babd91fd1de2e17d0299bc4063f6252b39526",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/UI/CurrencyUIPanelSimple.cs",
+      "sha256": "bbd82c1c0a476074d04b2c4097167cab0888848c8f469f91c3ee8e1174c63812",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Currency/Scripts/UI/UICurrencyButton.cs",
+      "sha256": "e7e86c3b78061bc980ece135b31afa6e0e3d56d5859de4e5343bbafcc7b9d71c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Defines/Scripts/DefineAttribute.cs",
+      "sha256": "42a74d80af7015b78543108f80549c565e83f9011f3e3d062f5f874994c12de7",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Defines/Scripts/Editor/DefineManager.cs",
+      "sha256": "29bce10b184c8d9d413dd69015929dc23e0e8a7609ef2d8706236565c9989383",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Defines/Scripts/Editor/DefineManagerWindow.cs",
+      "sha256": "c1b00811d6383458842f0ecceb82279b2ee59f45de219b9d62d4d4c8c94642fa",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Defines/Scripts/Editor/DefinePostprocessor.cs",
+      "sha256": "ae2efc92df905dd5eb7f3bb35a84d49dbfb16f4871deccebc968c4c1d3e97fa1",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Defines/Scripts/Editor/DefineState.cs",
+      "sha256": "2d13ab7ce535c48dda76d6f7f10825b2d4edc2be279df4794b4643cd9ed4139a",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Defines/Scripts/Editor/DefineString.cs",
+      "sha256": "978992f6ca581eae8f0dce17a901e91ac0e0e4bb860e4cfcf7954e102495cc09",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Defines/Scripts/Editor/MD_DefineSettings.cs",
+      "sha256": "cae584a9aa1e777c66016a7c24cd4aa062dadc8debcbfcbff947c320537fa69c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Defines/Scripts/Editor/RegisteredDefine.cs",
+      "sha256": "b77f2ed0ab55f5df97f968d7a5abc43bad8e08ed8a560a6b99c73c337483180a",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Haptic/Scripts/Behaviors/HapticHandler.cs",
+      "sha256": "6f95fac5557a3f02f186e8219888e241b55b83a14932881f5831d33cbfe568f2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Haptic/Scripts/Editor/HapticiOSPostProcessor.cs",
+      "sha256": "8edff811880d7dbf8b719d98f29b2c1e38938a05953b9f1e9fd0bafac925c94f",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Haptic/Scripts/Haptic.cs",
+      "sha256": "9a2c800822bcad8a3213fbf5d7f621ebce634fef79f495715d97774f4d98255a",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Haptic/Scripts/HapticData.cs",
+      "sha256": "2f68a0551bf07efbc7c2b9ba6b9cdec2ec402f603032a9658135df854e496179",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Haptic/Scripts/HapticEvent.cs",
+      "sha256": "1b619741c4ef145397ca3526748b6f8d62a9e6ef4aec616e3467940a77e85d4c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Haptic/Scripts/HapticInitModule.cs",
+      "sha256": "81faa1823113c3c0dd8105ba7528664dafbd748f106086f873be5feee14c6b89",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Haptic/Scripts/HapticPattern.cs",
+      "sha256": "1e863131e2bb81c40f8b8ea63449303cf12667f58f93b7a6252d0c2be0689de4",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Haptic/Scripts/HapticSave.cs",
+      "sha256": "a72646040f29a2f4af1f9645923a2eb7eab0d78d557242c854a28d3b7b15d065",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Haptic/Scripts/Wrapper/AndroidHapticWrapper.cs",
+      "sha256": "c6667e5815df5cefa7edeaef82fdd209c3b51d252f640784e4bdc657d7468c30",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Haptic/Scripts/Wrapper/BaseHapticWrapper.cs",
+      "sha256": "a31d68e9311275d6ac95e2238b16996284b914e1f20d4b95b3ac5290370fb236",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Haptic/Scripts/Wrapper/EditorHapticWrapper.cs",
+      "sha256": "8295bc6070dff547a68fe046d303147e8881e75e039a321ee212f707b6d7bb97",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Haptic/Scripts/Wrapper/IOSHapticWrapper.cs",
+      "sha256": "2fdfc4359052026a0a52f7b8b2a7ce7af681ab9732f94da018a0592ceb0bff29",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Haptic/Scripts/Wrapper/WebGLHapticWrapper.cs",
+      "sha256": "75f06636a975e7f94165a60c2c765dbd4f7b26c4da73268c594e83bc88da8f79",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/Editor/AutoInitializerLoader.cs",
+      "sha256": "3d7c04c2ca4c1c74811733599f80fb7a1c2438fde29985e7777ed1b15c15dd8b",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/Editor/InitModuleEditor.cs",
+      "sha256": "08824576bb626adc189e0705705a099f960e3ba157e3255dbd86815a3e508de5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/Editor/ProjectInitSettingsEditor.cs",
+      "sha256": "46b1bf8f8108775fa396c09313ee1b3e00db0d4cb1cc29724ab63a102009fd5b",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/GameLoading.cs",
+      "sha256": "f4b3d0f2d13b05d89f54f1555261cb39c8af798e664032eccaf323326dcfc2a8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/Initializer.cs",
+      "sha256": "eb84c6a410dae67905123ca258f154a8d2ca0ba072115d766f93a13a6e950b01",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/InitModule.cs",
+      "sha256": "aec10e2be620a178286e823edbb227c8a659f1e758b8e3c37213696842368c4b",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/Loading Tasks/ATTTaskBehavior.cs",
+      "sha256": "363c30be623dc64c8ac79e9edf3cb08bec7f796418011ccd193517a76511ede1",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/Loading Tasks/UMPTaskBehavior.cs",
+      "sha256": "6b4e4a77324a4aee4d287312bd4a9024719a3fe9a205ddd884c8e7e8cfc322a1",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/LoadingGraphics.cs",
+      "sha256": "495dbcd884bfbd2d83a65123f9b7a7b8e939dbc1e86d436cb9f4657d8725584d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/LoadingTask.cs",
+      "sha256": "ff2c902bee1c0662f63ce4b4beb8fec13777d18348d491df1d71640e87c091db",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/MD_ConsentData.cs",
+      "sha256": "06d39e68d42b383eaee3feec44b88a9e46fa60bcc2ec2bfc87f0329545627482",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/MD_StaticModules.cs",
+      "sha256": "03f8a18c966ca5a92d1cd040660f18da92d565ee047809e40c93b1d86d0aec8c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/NetworkCheckInitModule.cs",
+      "sha256": "c84030dc1f8ef200aebde00f08b78285e4167e45833ac3f96182b91ffba9835b",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/NetworkCheckPopup.cs",
+      "sha256": "c84eb46cd187fb0f2f973bd11f3f10b88f212f9b012d63afa227770322efa6dd",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/NetworkConnection.cs",
+      "sha256": "bbb7ddfd5bcc30f484dbeb671686ad229236c67c58917373b1eeb190f125acb3",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/ProjectInitSettings.cs",
+      "sha256": "667d424e7d7aef5d7d002153fabec9cebf5d0706ceacb56210fb2e917b43c369",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/RegisterModuleAttribute.cs",
+      "sha256": "dc3593eae0bff5a1bd7540b061d3aa7f9c7fcddc85c73751bf1ec19fe994abaf",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/Remote Config/Editor/RemoteConfigHandlerEditor.cs",
+      "sha256": "9822c650240a307f643c346c4aeaf12e6a0945468b39bd88e82e2bc77168d98c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/Remote Config/RemoteConfigController.cs",
+      "sha256": "d3a53439baba3034d4d41f3efc91a025576a5ae1cd6d4f07704ded59e19a8150",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/Remote Config/RemoteConfigData.cs",
+      "sha256": "929fa2b62d9c0330f8d9d9aa5966b803c7147d3e1ab4d6a2ba68c1c17f5aa1d2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/Remote Config/RemoteConfigDebugHandler.cs",
+      "sha256": "36bd03f816d276801d78fba9fe3bba77b5462f59f094d3dee882e5e24a456a01",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/Remote Config/RemoteConfigHandler.cs",
+      "sha256": "1d6f594b8e71611ca2f5971d98bea5b6d6c1d30b1b9beca9b9fb26c0b289f8a0",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/SDKBehavior.cs",
+      "sha256": "77479ea5f7c97489a399497bf8863a32140a4719328a33da8edbe6aabd85eefe",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/SDKInitializer.cs",
+      "sha256": "9254d648e90ce10c7cd69d842904d17e911a9ce2cde6d2a5b5331dda4b4a0213",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/SDKTaskBehavior.cs",
+      "sha256": "99d5f44ad15e13365eb49c0f650b8530426631eb75b39bafbaeb902a1dcec7ec",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Initializer/Scripts/SystemMessage.cs",
+      "sha256": "f1ba9a553217fa62bf7b8c4d33c25da74273aee55cdb50c2d1877769fa473e26",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/CustomAttributesDatabase.cs",
+      "sha256": "79405fddd9cae634ce2a85ce1d34c334ee1971bfe882eb654a1214a740e0881d",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/CustomInspector.cs",
+      "sha256": "85cda75a5a38992d59fdf5c94fcfdbba388f5d237d716f8892dea8098a8da6d4",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Conditions/HideIfPropertyDrawCondition.cs",
+      "sha256": "b6851c1a46792a7763225aee5d997f7a6c842fe5deabd636cae73705f37ae0c4",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Conditions/HidePropertyDrawCondition.cs",
+      "sha256": "5762ac670c8d8d5a75acc935595f4be078c636cd378e81106a65db5342d193e3",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Conditions/PropertyCondition.cs",
+      "sha256": "2301d92239a92fbdc00d3a4af7d79ba53c19a64c6829c0cf8e18d7cbec4c0d48",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Conditions/ShowIfPropertyDrawCondition.cs",
+      "sha256": "24804583e5973fcf97088b7c35a88f04a9b6fdf207530de6cfa321ff908e68db",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Groups/BoxFoldoutPropertyGrouper.cs",
+      "sha256": "06dc5785da38e6b0d7fefc036798239bde101f35adb329ab64a454be6add52a4",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Groups/BoxGroupPropertyGrouper.cs",
+      "sha256": "f9f4f615a96029fb9341124e29ecdaf23bcb7317bc1c54969efc15575bea5dc5",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Groups/FoldoutPropertyGrouper.cs",
+      "sha256": "b6c05bfc7b28b1f3c6ec1941c8824e06b96604e7e727c9d4a77150ce5e60804f",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Groups/GroupPropertyGrouper.cs",
+      "sha256": "b5cb218bda9fd4ab4d62c9eff6fa814e5338d1e37d55ebb6a5005c27fbf56fa4",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Groups/HorizontalGroupPropertyGrouper.cs",
+      "sha256": "c30a835e2405fc171f6e99d0d84f65f1cbbe1099cb90d288774df523ca3a2f74",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Groups/PropertyGrouper.cs",
+      "sha256": "b56df2c3d522c783ef33dad70c08f3566fac24a17e7d9fcc7664ac1c31a125ef",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/LineSpacerDrawer.cs",
+      "sha256": "a76c55f499d592cd163aadbe9ec3f3fea82259d39ca5b500b342fa224e67e652",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Properties/CreateScriptableObjectDrawer.cs",
+      "sha256": "0cbe9977cbfbf1fc99fcdcf0bd2af55a6b6958d4b48fc92ac9a5f5785d674684",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Properties/DrawReferenceDrawer.cs",
+      "sha256": "e357207b925fceee605665982399919acf1a597339aabe6aa49252ed93beafd8",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Properties/EnumFlagsAttributeDrawer.cs",
+      "sha256": "bab2ed81329bfccb7b95b1d219d8608e38e754c86eb1289052e94c19dcd45817",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Properties/MinMaxSliderPropertyDrawer.cs",
+      "sha256": "7c2884bdfad535c36e979a1d5cf8811bdded00ff4b6f53a97dcd405452a037ae",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Properties/OnOffPropertyDrawer.cs",
+      "sha256": "bfdaaa90cef23d75022161d51255cb8cb5bca0dec068462d107b6b0b8673570c",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Properties/SliderPropertyDrawer.cs",
+      "sha256": "f5745fc4ede4b9e22313d658c02f9355df624d489d4560540fed59f251a6431d",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Drawers/Properties/TogglePropertyDrawer.cs",
+      "sha256": "73c666f867035a6903f0cf69e611cba71dda7136f8e4ee69d2141fdca775a4c9",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/EditorColor.cs",
+      "sha256": "5b92541aa8cef965337cc0bc7592534714aa0e6783480f7399db692bd8dd3d9e",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/EditorCoroutines.cs",
+      "sha256": "4389bd96e069e6fe842cf8f36ab59eba753366a9cbd41a1deb443819ec843277",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/EditorCustomStyles.cs",
+      "sha256": "fe4a559c62612699deb37a3707da30bff6efe99c5eccd938d84bf52d965abd66",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/EditorData.cs",
+      "sha256": "d43f1d2aa5c66b53f07ccdcc19e8124c9968c5cd5008ccd8958f4ebb0df0a3c5",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/EditorFoldoutBool.cs",
+      "sha256": "f781917fc729e28cd002bca710fedbc7a8f358cb66d472f19d8b992556e8af7b",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/EditorGUILayoutCustom.cs",
+      "sha256": "a3681731b7a524021a91294e0d8bbf296ffea432fb5ec3ed056795af1732e33a",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Hierarchy/EditorCustomHierarchy.cs",
+      "sha256": "cfa163114af5bec2eaa5b63604a95f9a29f8c8504002a66870a871a68617d20d",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Hierarchy/Hierarchy.cs",
+      "sha256": "be71a086fb4013559c649b03d018a2104b8e037b45f4ff5d47a0196d1286488a",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Renderers/GroupGUIRenderer.cs",
+      "sha256": "3a708a6f9f1815c5484738182ee5b4f34e6a36619c50b465c96db99d299c139f",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Renderers/GUIRenderer.cs",
+      "sha256": "31089a2777dfbc9d036b35a2209ccd6dade21b5597dcb2631c43f902269ad123",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Renderers/HelpButtonGUIRenderer.cs",
+      "sha256": "203c3fdd8f7440070ed002b471f274b9db0f1031150d23e1e8051bfe93856a1a",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Renderers/MethodGUIRenderer.cs",
+      "sha256": "2346e8fc402c285c1fca127c12bfa47c62f4985710ac95f3351736c114bb1e76",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Renderers/NonSerializedFieldGUIRenderer.cs",
+      "sha256": "ea6030c1e42374d5b3b6779abfa9530cb716a87faab1c3e269a85023c9495614",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Renderers/PropertyGUIRenderer.cs",
+      "sha256": "6c0cdbe68073a326c852430daa3fffeb0676d39aca11e5081ff6eeb097ed0ff7",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Renderers/SerializedArrayGUIRenderer.cs",
+      "sha256": "d7dc9bf9e97f43bcf46ffcb2397fde8dc03754f10d378820e120a57d8f763197",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Renderers/SerializedPropertyGUIRenderer.cs",
+      "sha256": "67294f88c34b762a9298ba5a06cad8f35f90024ffbdf0e0c266be666107e1c8e",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Renderers/UnwrapNestedGUIRenderer.cs",
+      "sha256": "5b1e178e353b8a261b84ff940af3a6a53a9065f100a72a00d8fb7e7324537730",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Scopes/ColorScope.cs",
+      "sha256": "ab17d7023cb86ddeb678a8f2a9744604802342710ab95eaae4b3d1c819b9ef5b",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Scopes/LabelWidthScope.cs",
+      "sha256": "e44edb7d95cb65a2834ba450d75af6e4bacce7048955238e67cfea34825fb21e",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Unique ID/UniqueIDHandler.cs",
+      "sha256": "9b8a15cff902d89d1661a863c6bf1886bf02de5acecfcdb1efe49a60a4817d1b",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Unique ID/UniqueIDPropertyDrawer.cs",
+      "sha256": "2310bd8aa60696aec6b423dcd937b1f61ba109268321e549607a21eb626f21d0",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Unique ID/UniqueIDValidator.cs",
+      "sha256": "6b16cfee1341ec0295d0c4690bfdc58bdae1cc32d6509238afef489d75bafbba",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Utils/EditorStylesUtils.cs",
+      "sha256": "a36d145ef84ee8833829ce85ddf7ee12c5dbcaa9b1923178991ed92bf6946bd7",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Editor/Utils/PropertyUtility.cs",
+      "sha256": "477491f5a9c18f5f44ed7590be885ee506f8daacb8d5cd9862ccb1a4b9ebad1b",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/BaseAttribute.cs",
+      "sha256": "08fa77a43e3c56d93ae4ef954a3f34d3e2a81f1f4b1127189de0fd3337e01518",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/ButtonAttribute.cs",
+      "sha256": "ead532f738dddac73809e915622875673ab8377c7fd310db85383a6acd1ba20f",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Conditions/ConditionAttribute.cs",
+      "sha256": "59d7c91322a4491c05287e8269a030a287f4fcaca34d2502a00de02d3d243078",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Conditions/HideAttribute.cs",
+      "sha256": "334b3ef52b3b3887c40950effd292754b53c007579199d468a638c02375edec0",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Conditions/HideIfAttribute.cs",
+      "sha256": "ad65d79328930e08ab911278391f04636dc192bb65af179183cd86c83cf719c5",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Conditions/PropertyDrawConditionAttribute.cs",
+      "sha256": "115332dfc04884300c6410dbf1173e58853cbe045735219bf3f33fda2f2ec479",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Conditions/ShowIfAttribute.cs",
+      "sha256": "ea1a3e78b9b3fdaca95eb275c33717eb4c46d86caadd0d2ee4d2a4f6f465d7dc",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/CreateScriptableObjectAttribute.cs",
+      "sha256": "ffa9ef0cbb8b18823ddcef47b5e10bfa5a54c1dad5219baac4ad7ae3776155ea",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Groups/BaseFoldoutGroupAttribute.cs",
+      "sha256": "9257849385d0a1f3b88894c50a77b5747075e1ac552e49d986b3824ebb84c72b",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Groups/BoxFoldoutAttribute.cs",
+      "sha256": "aea5460ac49b94d538e7c7fe6b284206f171707bd996585833dae5d9b12d32ab",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Groups/BoxGroupAttribute.cs",
+      "sha256": "3ebc1d372ccdf86da50f143a52ce055062577dbc0ee8fd4616f329a712eace2d",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Groups/FoldoutAttribute.cs",
+      "sha256": "7826212e4c0852c3d3be9d031858ed3d2dfc791a572d2acbe5d112f4c62a75dd",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Groups/GroupAttribute.cs",
+      "sha256": "060573d42468900374699246ea041e9e8aa051cc689ea96d922c0f0dd2f837ed",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Groups/HorizontalGroupAttribute.cs",
+      "sha256": "d11679996f8ba9fa5fdf41b62450b2a351f331537c7b429a861dd24b28f270e7",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Groups/PropertyGrouperAttribute.cs",
+      "sha256": "9c4d674c9ee8c60ed7c47e454cc3d4e2dcc1833f0ca4df74188b6d1b16076556",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Groups/TabAttribute.cs",
+      "sha256": "938bf986af58ee7b02c9586d532402d92db34fe5d9650b1ee521900822dd0f25",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/HelpButtonAttribute.cs",
+      "sha256": "4e07104e51451409c84b8ead5aa295b3ad2b4cf9ab93843a342b2f4a2caa5970",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/HideScriptFieldAttribute.cs",
+      "sha256": "41b253798277396541cae8bfbfcb9dcef33e86ab60c3b403b8a5070bdb33ffc6",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/IndentAttribute.cs",
+      "sha256": "bda5ccc8390286f8d15e0114d7f17a9c82cdcf93c4a4fe90a0f139c476f5630e",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/InfoBoxAttribute.cs",
+      "sha256": "b01ff9656e081f042dd6f43f8ffb9ab0500260200801ddb6550d5a14b7aec956",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/InlineButtonAttribute.cs",
+      "sha256": "e58eb7ee3873ddccc58b7c22662813d41d13532c63f00ff7cccbcad7d1632f40",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/LabelAttribute.cs",
+      "sha256": "03c1de9c2a2ddb81d2486cddcacb9ce3a7748aa988785524c69913127e929182",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/LabelWidthAttribute.cs",
+      "sha256": "17596c6f493493a4d70a866d57193a5bfb69880613d9faa16e49cea3a6010db2",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/LineSpacerAttribute.cs",
+      "sha256": "2f835d8e8f7757c8294689ebae6b2f9cafde430bf2c164aa32407d1f0adb5422",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/OnValueChangedAttribute.cs",
+      "sha256": "776d0e9b19dde373e3a643fbfc40f335a7bd33487b3e1d4865f25e9a4c7e907e",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/OrderAttribute.cs",
+      "sha256": "ca95ab850fb9a345d3a9057f3c3a02ec106a0af5a236e75b2e3f48a6b403939f",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Properties/DrawReferenceAttribute.cs",
+      "sha256": "5bf350ad6a14a8ea79508a5c0d8c2baea42e1e278a192d55affa04a2377e463d",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Properties/EnumFlagsAttribute.cs",
+      "sha256": "ca559277941a78ec1dcff80568673140482b850f0f599f86ba7e13f0a4946ab1",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Properties/MinMaxSliderAttribute.cs",
+      "sha256": "d0093b329ef53fce43abe30df2e47db250306b8e3f316b5d65bad6f7c5e9a10b",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Properties/OnOffAttribute.cs",
+      "sha256": "4aab836e0c32cc32bdeb93e07d0ef4e94942e44e943ba3d931e4dd98a2cd798a",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Properties/ReorderableListAttribute.cs",
+      "sha256": "b67020a9bf794d96dd8e30ce6b59735ca5700b8624ae8155b40e10795e8fca20",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Properties/ShowNonSerializedFieldAttribute.cs",
+      "sha256": "51c58d45043bc49a5190f81cc960db285aa2769310f63d87a5ca97721e54a153",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Properties/SliderAttribute.cs",
+      "sha256": "dd526a9082dd4183058f6a93101e57d5753cd44a2d13905290fdcb8c8db4b141",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/Properties/ToggleAttribute.cs",
+      "sha256": "c66b3bd77a92d85014fa92759c63655a37bd10395b19a63cbcc295d74273f926",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/States/DisableIfAttribute.cs",
+      "sha256": "37e577f784af09d392fdcd6d3b7682bd40d74ab35d31865c3c1db3fe0ed3b3f4",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/States/EnableIfAttribute.cs",
+      "sha256": "7e2a9eb677c0863b1e23ca73573bf8106a8f6374ebaac60c0c2a3c6d625915b7",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/States/ReadOnlyAttribute.cs",
+      "sha256": "3b4690716f508cc4159e32e67901c08b5362d0f28d6b6e497301e51c0c65765f",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Attributes/UnpackNestedAttribute.cs",
+      "sha256": "147fcdfb0a99ca016136a4ff4a981187595e708838918080e2f1627faa307ed5",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Unique ID/UniqueIDAttribute.cs",
+      "sha256": "6a8d1c97e6b7ea4d497fcdb33c183ff5401d2259e1e70cf99e57d41c9dde845f",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Inspector/Runtime/Unique ID/UniqueIDUtils.cs",
+      "sha256": "27faa64ca119bb34fde5abe62ce08344b9e15ef38900dcab436ab509789423cb",
+      "assembly_folder": "Assets/NebulaSoft Core/Modules/Inspector/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/AdProvider.cs",
+      "sha256": "56afb8d183b8cfe66201d1dd6e609973db2aa618855f759089b7e71a925aa7f3",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/AdProviderHandler.cs",
+      "sha256": "a972d53eba84f0c232a169c930af0829f6da706b9dd9793a0c9c17b5f754b6cd",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/AdSave.cs",
+      "sha256": "76d3a1636a01cc5200072e94d300f1e6948cc0784c5b54c33aa85c4e4f2810d7",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/AdsManager.cs",
+      "sha256": "f1fc73c49eebb09d041b94e2fe0251682f46a438b16c0e7e73c786b0afe80380",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/AdsRemoteConfigData.cs",
+      "sha256": "cdab9d23010ef137c5f6143acec88474db8400ec1e2233c990288faf54fe618e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/AdsRewardsHolder.cs",
+      "sha256": "8d92015de2cee7ac1621318268ddb4b87ae61f03202a6ab1eeded766a251c410",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/AdsSettings.cs",
+      "sha256": "5b09e1fd92465882ebdc19e4653354eae330c9cc4d66bf72a6fb3af7fe63bfa9",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/AdType.cs",
+      "sha256": "d210041b97e4b3c98f32acd2699a385edf9fe871f790688d86b8d98b6b6ad3eb",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/AuthorizationTrackingStatus.cs",
+      "sha256": "62ad20b4621eabd66fe2cf07fd26930da1513c94b59344da75639852ecdf34b4",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/BannerPosition.cs",
+      "sha256": "5b1dd4d687aa262a765b7d4f46e2e62dca8b18ba000162a3b473ff876d596459",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/ConsentRequirementStatus.cs",
+      "sha256": "245e4148d0e56921d0665e1356437de0cbf2624bc7e8e24ed3aceef09d0d0be7",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/Editor/AdsPostBuild.cs",
+      "sha256": "d928e267c1485bbb92baf55e41d7fd8c767a1e314f52ba5fd03e4c01b5c232c8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/Editor/AdsSettingsEditor.cs",
+      "sha256": "9f2343241e4642335b864d28ae03796f7c9aec9eedd790c3657503f53c858d3d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/Editor/EditorAdsContainer.cs",
+      "sha256": "7209e83acbf66274b4a5f86afa86663068ae3f47a02e884bbde2e9a430d24d3e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/IDFALoadingTask.cs",
+      "sha256": "8d7e9522de8c3a85752a294b9855b2dec8a938d5bde53832ee1280cd2d1d1f1f",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/NoAdsReward.cs",
+      "sha256": "f2ed1cfb37c776bf1833791deced1bc2758e531f77962187d07467568fb6521d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/NoAdsRewardView.cs",
+      "sha256": "95b5e704f75d79e9212e3a178f67921d13f591f3a582c24d49a58687884b4114",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/Providers/Applovin/ApplovinContainer.cs",
+      "sha256": "4a4dd99e0e516a9c2ffbb28d3a1c774d11f4aad408321a82aaee972e0a930cc1",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/Providers/Applovin/Editor/EditorApplovinContainer.cs",
+      "sha256": "9631fef9ddbf1f081c3bf5fd792aa47cc7f74d9aa74ccf3aa2fb8f132bacab60",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/Providers/Dummy/AdDummyContainer.cs",
+      "sha256": "da4a3fd5a90097116209fed6a3099f6dad0e97ff694bac3526af6f4fe7b0b2ff",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/Providers/Dummy/AdDummyController.cs",
+      "sha256": "391306cb1907ffd1eab41701e73d1fe8cbaac0f30a46cf7802585f1630caa4c0",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/Providers/Dummy/Editor/EditorDummyContainer.cs",
+      "sha256": "7ad6bdc5c302815ae269ff5ca89d6ec38b2bdfbdfd1f5465260f58abdc32ac0d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/Providers/LevelPlay/Editor/EditorLevelPlayContainer.cs",
+      "sha256": "8592c04cb618d7d5488fe18b17b89f048c0965346e0159d935b2bc2185120f1e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Advertisement/Providers/LevelPlay/LevelPlayContainer.cs",
+      "sha256": "1686ea0827941b04ff6f29c4a7df032946684a94b521f247526ad82e9103e965",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Editor/MonetizationPlatformDetector.cs",
+      "sha256": "6d5f3a70fc0beb2bf39db32bebc2ee6d2773f793702bdb984f883187b86245c8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Editor/MonetizationSettingsEditor.cs",
+      "sha256": "63b1f923943fd4dc4fdbcfb50f87ce3ea107d204c1ed066427883c65b314f07e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Monetization.cs",
+      "sha256": "6f7d83e722d520e9afdc11ade718f549632a9003f8568f46e6afef204ac21641",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/MonetizationSDKBehavior.cs",
+      "sha256": "4ce370cdc8ab6899b68a2905e7828c9f00894e3eced4faa839e970ed5236f162",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/MonetizationSettings.cs",
+      "sha256": "693f143eaf70a44375eb812022cce723211d3f459e9655b9730c96527f3e6516",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/Editor/IAPPackageDetector.cs",
+      "sha256": "42d65b89b75500077d6816c7d519ba675b07b0d098daeddb4f2fd421efd6fc2c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/Editor/IAPRewardsHolderEditor.cs",
+      "sha256": "910c30da1528281c064b0431ae8cb006a096def29a51e6c331f9e282f03029cc",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/Editor/IAPSettingsEditor.cs",
+      "sha256": "aa1482deddf28d8165ef4062dc6ea3153acf847c06316865361f1f2c53450840",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/Editor/IAPSettingsResolver.cs",
+      "sha256": "b1402ae407add2e7a145ca8e4e873dd382b5c4c53d252fa69d26e456809fa202",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/FakeStoreMode.cs",
+      "sha256": "c3081854d09650d7d9c40a03351983501b851df9295441a3a3398f9bf2659646",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/IAPButton.cs",
+      "sha256": "63d59dda0fa0040c76ea5f104bfefee1225b662210f05e582fdea2b56ff0f088",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/IAPInitModule.cs",
+      "sha256": "8832dca9c4fbb0b3b505680d055c4eb87eda30f2dc1be18737458082aed3a3a6",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/IAPItem.cs",
+      "sha256": "001d9abd98117f139e50e58e1fc24d062ca0260383a80a72d7593c9e64e72024",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/IAPManager.cs",
+      "sha256": "2d3f6dc6f1427dfe4dc7a8c64d650a76b98e6bea92812954bea867e78efe9abd",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/IAPRemoteConfigData.cs",
+      "sha256": "507f1592de8d59c736a885d47e3452bd091d6aa4cb0349716828eb7e1cd07a45",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/IAPRewardsHolder.cs",
+      "sha256": "23411c7b3d8fe2b563bd2ed94f4753552a75277efda81a7437c7ed852e18bae3",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/IAPSettings.cs",
+      "sha256": "5371a36494bdf1b0ca424d8af149d95f4792cb41563ab5b048d30c815bb8201c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/MD_ProductKeyType.cs",
+      "sha256": "832c669ddf55273e5ac37aed63f94d1bf96f89cb05962c01e3f1094e5054a16c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/ProductData.cs",
+      "sha256": "3c6eeb1dc658eb8f90f89ce236d8445bdc3c579df077fadc7437b35703f26b37",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/ProductType.cs",
+      "sha256": "7a22eeb53cf02d19dde5f9defb96a2d6dd8ba0a81291377801aa4cb2cea9e274",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/PurchaseFailureReason.cs",
+      "sha256": "7963d62a07f2e57a840214da8b3cee96020506508ef7411a3b8789235074a253",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/Wrappers/DummyIAPWrapper.cs",
+      "sha256": "034e9b670ea7eecd1e971c95d06b282de0aafaf3e0ea71c01981f832326d0371",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/Wrappers/IAPWrapper.cs",
+      "sha256": "ebcaa94607b01ac31f7686d47cb9855a9d30a6c565048f8b7855f6e5af26ad29",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/Wrappers/UnityIAP5Wrapper.cs",
+      "sha256": "d4527598b654d4dc1ca1b4368f2998c2d9fe1f4f573e03403a51e61b106d33fe",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Monetization/Scripts/Purchasing/Wrappers/UnityIAPWrapper.cs",
+      "sha256": "f74c0ca824e42e713ff739f8447ffb84d2fb853c821080225ca3a1e24d2aeeb8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Pool/Scripts/Editor/PoolManagerEditor.cs",
+      "sha256": "f9ebd486d8badf741cd05ed00380873a2443397a24caeae46f751b2521f44e66",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Pool/Scripts/Editor/PoolMultiplePropertyDrawer.cs",
+      "sha256": "56486b293d6c959cbbb7ab4b75e34ec2ee8fb2fb41739dd8b06f861147a88b55",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Pool/Scripts/Editor/PoolPropertyDrawer.cs",
+      "sha256": "1e749471e2f909f2b02bd1f62f8bf29de07f3b1c5862f2b4198acac3d2ee30c2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Pool/Scripts/IPool.cs",
+      "sha256": "7295659d6d2a8ebc50939015ee07f60896d882a85dd5b8e191c715338350f96d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Pool/Scripts/Pool.cs",
+      "sha256": "fb72251f04753fafd9251a4fad67d7904da0b44f0a668b3bc37c6f5e648773e9",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Pool/Scripts/PoolExtensions.cs",
+      "sha256": "f84075eb975446fe8dbed2fe4c8467f81e6dd2606512ffc463f3fed58099f1c3",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Pool/Scripts/PoolGeneric.cs",
+      "sha256": "9068786b09221795fa957acf4f96de797c482d72ae7b0085e609a91a092530ec",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Pool/Scripts/PoolManager.cs",
+      "sha256": "fe9c3d5019b5053560df881b32b9be5a0f96bc4134a30a2ac7f4d3aaf6d219c2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Pool/Scripts/PoolMultiple.cs",
+      "sha256": "2a1a4c2841d0878d5fdc986c5cbd023d07f74656607655ceab292c8168e18d29",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Pool/Scripts/PoolSceneHolder.cs",
+      "sha256": "f1b3795e528c86ad8a146405e312c169cc4230cc2da1d95e90a24268d6d785bb",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/Editor/RewardSetEditor.cs",
+      "sha256": "b233dbdbb27ea12af4904b57cbc7daca50ef2ce168e5819f63b9043d545fe129",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/Editor/RewardsHolderEditor.cs",
+      "sha256": "5bbf354fa1fd5d139295e5dda6b0d4ec4b6406d30aeccbae85d3ad0f308e06b7",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/Editor/RewardsMapGenerator.cs",
+      "sha256": "a29165040f583cccc41a1c6db3fe839fba0223c21a137c3547cfbd063d5f9edf",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/Editor/SimpleRewardDrawer.cs",
+      "sha256": "7a36af86383fa8cf84042c2810111917bbce4a2d12658038f657e0974e591a35",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/Editor/SingleRewardDrawer.cs",
+      "sha256": "2aa89afa104baba1996d6ff4b9ff4a733d361ce53357bc5bf97a377ea96a4c46",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/IRewardHolder.cs",
+      "sha256": "8fff7ef9f89ad897731ca5c990ff0509565df83ab315ee582f9068a9804de761",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/IRewardPreview.cs",
+      "sha256": "753a9753ff768b38d8afa172ad99a4c179ab82786feaa14c9a85de9739a7c8dc",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/MD_GeneratedRewardsMap.cs",
+      "sha256": "5be0971ec649ca7ac0d295012065f6632a7752d5f38ac03af1f02164d83aa7a0",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/RegisterRewardAttribute.cs",
+      "sha256": "dd089e59a1e9e45e0bb7832a5596847ce949d053d8c449f5d784f0c89dbbbce9",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/Reward.cs",
+      "sha256": "eb59222ece78a2bb43104ebbd7a0e6c651ba0b748c4899bd33efdcca35a85a08",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/RewardPreview.cs",
+      "sha256": "c62f88c448529bc6ad059c2eae3d35241e94f5eb78beb1ad7433f3bb03b00c94",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/RewardsHolder.cs",
+      "sha256": "515fe447f8dacf177c5304d5ecdfc9a69d8c5ac5441eba8f943c6b56b4d7db01",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/RewardsSet.cs",
+      "sha256": "afb7c0f00152a0e49489d3c411147eddc2a359f98411e84fb850bbdd890e8438",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/RewardsUtils.cs",
+      "sha256": "f5351e2f9bd49445637ab63b3d10024177d4b1a99245439c4bb7aac8ba49a5a9",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/RewardView.cs",
+      "sha256": "e5739882e5804b4c45ee5bcf9507f975a52db77568283966d5d6bc57754e11b6",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/SimpleReward.cs",
+      "sha256": "94ccf7e2f12957f2971e66994be6476c3b19d78d2d4481caacff63f0373b444b",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/SingleReward.cs",
+      "sha256": "0d8a523d1067f5a1eda42b35239dc44300187b72a32a8ef3ad8ab79ecbccc824",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/TimerRewardsHolder.cs",
+      "sha256": "7013bfcaca5113718518418a9c658fcce3559c089d523200c41616fe2f4ceb46",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/UIRewardPreviewBehavior.cs",
+      "sha256": "a8d49dbcda333a82b6a8939ae22c6fbca9fdb59aef9e605bccc80a31c1f69fd3",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Reward/Scripts/UIRewardsConfirmation.cs",
+      "sha256": "41490bed90d39f6317ab6cd48419c96814f8fb74703bc26bf491f9826df363a0",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/Editor/SaveActionsMenu.cs",
+      "sha256": "c98191d5744083062d07d2acb22381623e9c8d06f10916422df126d72cd5901c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/Editor/SavePresetsWindow.cs",
+      "sha256": "8d470aa48a619ca0ec23f4fd9335cd35829952faa0f14a6e0507f14b74af57e4",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/Editor/WebGLPreBuildCheck.cs",
+      "sha256": "e8c074e6a0667a369c486a0eabf62aaf225c4a4177b36a956ca176a2b2ac10f1",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/GlobalSave.cs",
+      "sha256": "72609445543828ae580c20df17f48aa1787046b85cee3644e6ef3ee25eebc9bf",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/ISaveObject.cs",
+      "sha256": "8534434c2d71b7e94d8beee35a3f71223425f9ba4b6b79bdcba5a40146f10650",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/Save Presets/SavePresets.cs",
+      "sha256": "8891d5ef0fd70a425f7399d1a1387fe64c0a405a8e615021de24cb92eb6f9cb7",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/SaveController.cs",
+      "sha256": "aef506d02d8f993943f54d7e197a932b4957c5a57c89d8a65526a7b636526530",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/SavedDataContainer.cs",
+      "sha256": "18b44b2b47c9af4aa331b72b2a0d49bdc4b1e5c8b8173549f079c7ca762c1326",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/SaveInitModule.cs",
+      "sha256": "9d97928d8913f3632dead15f4e0160e45d682a82cd5513373f51b8e14592e53c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/SaveWriteCoordinator.cs",
+      "sha256": "858b411cceb63c9dc2e12db505b09c61ca4749508730f534d12bff52f8de414d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/Serializer.cs",
+      "sha256": "0b842a81734f3f55a7d05a38a015b380d7b6b3e4cdad09861818a946d7bc0391",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/Simple Save/SimpleBoolSave.cs",
+      "sha256": "ae8d8aa70b643530837f287e5cb9745cb45af097fc85902db7e806090cda450c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/Simple Save/SimpleFloatSave.cs",
+      "sha256": "b86d86e05ca1352546f64ddc10c83d096afb2c80d9efa60ef2eadbfbbb000320",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/Simple Save/SimpleIntSave.cs",
+      "sha256": "3827253aff560661889cb51a29a1ed24570ed3ca81d5a1fa998cbcdb35ec1732",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/Simple Save/SimpleLongSave.cs",
+      "sha256": "5769fa4b44f933ccebc518dab1be86add7804f2e3463eb986885d5031b94df4c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/Simple Save/SimpleStringSave.cs",
+      "sha256": "94cc69a49d60a3bd606dd9046dd2967ab1feebae9c48fd250dc81f969e3d54d5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/Wrappers/BaseSaveWrapper.cs",
+      "sha256": "9b87b954d4a0d1c2ddecd9edcf40bdb9ed59fb91643cd43b8cfda65e7a0e47e2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/Wrappers/DefaultSaveWrapper.cs",
+      "sha256": "8527e4b7b72471234a046ed867edfb624400a930098a23baa6b1d1be470f0ae8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Save/Scripts/Wrappers/WebGLSaveWrapper.cs",
+      "sha256": "49512eff1267c2e56965e3dc76f76872eca806c99f7a5fee8d1388152e11da0d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/AbstractSkinData.cs",
+      "sha256": "f8af561b79ef8b46b8e7ff4c79c312476dd27f1fbd15eb4058d1417f299d8186",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/AbstractSkinDatabase.cs",
+      "sha256": "4dbe16805df2594ebed0902223a5ede5da39e34c2e0fa32db53523f2260da86b",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/Editor/AbstractSkinsProviderEditor.cs",
+      "sha256": "bac2208d637060d749a32c6f4cd63c2dc737cde6885eadd160548458222c1c7f",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/Editor/EditorSkinsProvider.cs",
+      "sha256": "a9bc687c4cb7ab4abde58f920ecfa62e5105c124b6d936b310850023848aee07",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/Editor/SkinDataPropertyDrawer.cs",
+      "sha256": "37b6caebcf07642a0158b7aed183502783876e3c0d39eabf2277c946de4a0862",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/Editor/SkinPickerPropertyDrawer.cs",
+      "sha256": "ab75d04cae3500fda6286a2dad361f2dc0b971b56866922db052166645084cbb",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/Editor/SkinPickerWindow.cs",
+      "sha256": "eac3405d8d56903ffee3cfbac8151069688b13379ef52d8483831260c291d9b2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/GenericSkinDatabase.cs",
+      "sha256": "d9e2e7be1d4354a86618b9f00df9a5948df47bada25627e26920567b9530e0b0",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/ISkinData.cs",
+      "sha256": "b1ca6522fc5f453acca1a46874da797f204cf04e413b142be8fbb44600eb891b",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/ISkinsProvider.cs",
+      "sha256": "8021c1b26dcd0e85dcbe88cb7d23d508b64684860b1542cbfa4a99cf2ec78549",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/SkinController.cs",
+      "sha256": "729de887406684337d787092b487d8b52b47da757dd80f6f721db0ced9fac9bf",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/SkinGlobalSave.cs",
+      "sha256": "b06219d4cad8dadb0dbe32e02a8198c2a5b4f3c763e041263c3698654d6e412a",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/SkinPickerAttribute.cs",
+      "sha256": "b80b00891720f00774b3d7fd3b3431c599a05265491a0eaa2bc263af36195680",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/SkinPreviewAttribute.cs",
+      "sha256": "2e8df34a808478652da8a0335a6d9626ef5886f3e03fb8a61f8f8b40ee77d1a4",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/SkinReward.cs",
+      "sha256": "253c97e8f442c629f47337f85d35772b362b35a87ada16d93c6b482733a9df51",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/SkinRewardView.cs",
+      "sha256": "8594b50efd494cb20aeb8e68dc034d50f8bff3b20d29b206aa6fb442f12e5634",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/SkinSave.cs",
+      "sha256": "14e12e5ab2bfb38749656ab85d055d3a3e43c09034acb57670107758e6e48e00",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Skins/SkinsHandler.cs",
+      "sha256": "d36c7fd0e611338f0a0dfb44069ae7959f8a8e0dc211840c95f857856e3a909d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Animations/FracturedExplosion.cs",
+      "sha256": "ea3a3de61bc92ab9821809eb4020ca3c1ad859b779127d143bb0cba409cc48e6",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Animations/JuicyBounce.cs",
+      "sha256": "308c6e039fdf52b5b7edfd163375a3b39d7396526ac033c4977e8b368baa9cb8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Animations/SimpleBounce.cs",
+      "sha256": "678d13bfee460f281ad9c773700437e5f21939659eebb102fc8249401f29cabc",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Behaviors/AnchoredPositionTweenBehavior.cs",
+      "sha256": "8a6eeb70f60116d3fedebca2764b8f33c689f6154e28c8fc4dd189705aeb0ad8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Behaviors/ColorTweenBehavior.cs",
+      "sha256": "4ca274a6d475ca6410cef483dca4c14dc7914467bb64e00888a027c6572458b0",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Behaviors/FadeTweenBehavior.cs",
+      "sha256": "eb1691670ea8e910f4be3841beedd8a87813b41636cf370f9a806ccea61f700d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Behaviors/RotateTweenBehavior.cs",
+      "sha256": "2c4db666e1e2d4254efe564fbec18183d0641b5485a2f794e03406be7b7b4a52",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Behaviors/ScaleTweenBehavior.cs",
+      "sha256": "33bb104dba1a3dafbb5c234bf5150ce387582294c874cbcba2c7523e1b6620fa",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Behaviors/TweenBehavior.cs",
+      "sha256": "33cb735ea67897d6b54b09bc4332ab455a30814869dcb12aa82681ce3ac583e8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Cases/AnimationTweenCases.cs",
+      "sha256": "fa6cfe503375a590d26b63a5c64ba71e55e5d9c4cd1bebdf2112f236417eb679",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Cases/AudioTweenCases.cs",
+      "sha256": "c0d489325b868977ce0e8a10cdfaddcffdce3d515d34caab78fcb3c8f5494fa8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Cases/CameraTweenCases.cs",
+      "sha256": "7ce82084af33e559dc87bb4eae5f4d29e36c3aee6871437d1037b0144f003ba5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Cases/GraphicTweenCases.cs",
+      "sha256": "2552313bf13c18bc738211aff85b590b6b6089220982800f15f6db38abb9a9a3",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Cases/ImageTweenCases.cs",
+      "sha256": "6133f7dd86ea01ecbb7133fa57af2e442208266ec46177a71b217f12a1955725",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Cases/MaterialTweenCases.cs",
+      "sha256": "c4a9072ff756c0085f1fc81f1602f1650c6237388c114aa9176df45efdce7319",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Cases/ParticleTweenCases.cs",
+      "sha256": "9cb2116b8e9e2ab484b502bb878562be8a5561e16e29e5756ceb41ca9ea2b415",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Cases/RectTransformTweenCases.cs",
+      "sha256": "27efce71b98f58dd0b78516198fe7c02bf5b18b2acabb26523c00248666c4ca9",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Cases/RendererTweenCases.cs",
+      "sha256": "ca56eddfa18ee97f71aec2ed58e00fe3ab6bc243554a99dfa5a40a8cd1678182",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Cases/SpriteRendererTweenCases.cs",
+      "sha256": "cf9f0add01c77dbb5ca2ff993f7a29c72bb1e0144006468f82ea6e0177e669fa",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Cases/SystemTweenCases.cs",
+      "sha256": "3c07826f81e621133244393d0f8fe0a4edf53a9bad1abb74fa4209accafe343e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Cases/TextTweenCases.cs",
+      "sha256": "bc3e4c02b55334b4fe6a71a57ded953595c046d3c14accade43514f3112053a1",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Cases/TransformTweenCases.cs",
+      "sha256": "7e37a6fa3495f8a0dde0ea358bcd85ee1df095d29d8e83d9c2bab3fecd5b70c3",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Cases/UITweenCases.cs",
+      "sha256": "261615290544f2588a365c2761986f6f499686c066dcd5c0b541a0c28eb4c8d5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Easing/AnimationCurveEasingFunction.cs",
+      "sha256": "db87af7e64217317af6cd99fedd12677ad01474d72033cac4992f726800f244b",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Easing/CustomEasingFunction.cs",
+      "sha256": "2ed99cb27c9c4dc4e0141cee9e457679dad527934633598b89c39711941b6600",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Easing/Ease.cs",
+      "sha256": "b24c1f1e35f8b45caf19905fcc84865652f878cd30737330269644ad90d99de2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Editor/TweenEditor.cs",
+      "sha256": "afc4d73ad2fcb59b1aa18144adb502bd0fe5001919bb5cbf4f6734681792a3a0",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/Tween.cs",
+      "sha256": "1849f78567f983a402e9ffdc5bc6000271a87c75846efc7ce4902dff34a2f038",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/TweenCase.cs",
+      "sha256": "86fecbd64d16d26c3f6eb9a52bbe13714d7f0a3a759a7da7e49dcecdf43a57ac",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/TweenCaseCollection.cs",
+      "sha256": "08120cc60dc30ca86cd353c4b1aaf20b300ce20df71417e6c32ab7c761b3cca0",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/TweenCaseFunction.cs",
+      "sha256": "3d9d66904460df794946443ffe3d982b6bd1c1f0e62e9c243ccfbe9b6d8c230f",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/TweenExtension.cs",
+      "sha256": "adc975d181f45663362a81af5e427ad18361b96e906bcf16d8f260a2efe49640",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/TweenInitModule.cs",
+      "sha256": "454b1bd7163ce70dd868f2fa39840657532e7816dd4c93a06ce106938c781e9d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/Tween/Scripts/TweensHolder.cs",
+      "sha256": "a252f08be8f9c596daa3bbcbc18788449d8f4b402d44b1fb6f7761487cc28dcc",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/CachedPages.cs",
+      "sha256": "014d3aef5913676cd6d4dfffc207ec162b305ad828b108e6393f140b8973e63c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/Components/Editor/UIFadeAnimationPropertyDrawer.cs",
+      "sha256": "d21222effa5bc9dde25123db554c28372e94a18d14d81a485670cc1f1b9bb922",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/Components/Editor/UIScaleAnimationPropertyDrawer.cs",
+      "sha256": "e40d3dfa50b0ca72162a3da2429d2aa8d71ca136e653683867d2ed359427c292",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/Components/UIFadeAnimation.cs",
+      "sha256": "4f504afea6ccef5815deb3dc7e49dd1b01deaa0a4c21c3762e2ec06bacca497e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/Components/UIScaleAnimation.cs",
+      "sha256": "96ceba327389e9784d6ece8dad3fd34db7bbbec9a387ca01e39aada274254696",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/Editor/PagePrefabPostprocessor.cs",
+      "sha256": "fe8e06d9678b77a65896419f3e53f372f8ec669d30630dd8e3e63935362d2282",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/Editor/UIControllerEditor.cs",
+      "sha256": "277bf0cd1f78d4099d12e240760c684d30bfad497c003c3cfab47e5037348707",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/Editor/UIPagePrefabStageHooks.cs",
+      "sha256": "f11e74dfd350eee6321736a4f61dd9cb84337bc283529b852004926b6a603bce",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/FloatingCloud.cs",
+      "sha256": "de6e2de86382bf048e75a680a41227cf985a764aed96b54841de056fc4ebc08e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/FloatingCloudSettings.cs",
+      "sha256": "41cf580eb337aad29a66d7f2e13a78b161855ac379006b307e2b7d790f2f4d06",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/Helpers/RaycastGraphics.cs",
+      "sha256": "50840ceb76d9c85d8f28bf5ac697e797d3a15f55599ddd510b8f6d2316e76dcb",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/IPausePopup.cs",
+      "sha256": "ce98f78045caf64cf8c3f441e3aa698fe4f49d3df439781421f1c7b51f85b449",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/IPopupWindow.cs",
+      "sha256": "e5ae68fe045435941492eccdab16e544eb6f41a0db2f4090733164337b50133e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/IUIPageElement.cs",
+      "sha256": "a416e2dc2588ce13af65fe67adbc800e0a07e5dc7736fd91668d5a90e3af9e7b",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/NotchSafeArea.cs",
+      "sha256": "df60a531033307561839ec977cff9894397a33bb57af41b30cac7fc69b2d047a",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/Overlay/BaseOverlayPanel.cs",
+      "sha256": "899a6e4102eca900a5f89f6b8c21a8a6d87c882e88c61650c3143ee8bd6767fe",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/Overlay/DummyOverlayPanel.cs",
+      "sha256": "75aa52060db713bb225fd7a07639d3e5cd84138c944748537074422f467e55ea",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/Overlay/FadeOverlayPanel.cs",
+      "sha256": "e3c2e749bf52e34d8165e4625907b4c2266b291010f3e60256aef3110b6ba311",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/Overlay/IOverlayPanel.cs",
+      "sha256": "fb9e6cc520b73c337b4ab89492a46a54f4396c143db619d98a9788f012ab9507",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/Overlay/Overlay.cs",
+      "sha256": "99cbfd90f8e19d78ab4e78de53f8f570154a421f845174b74f6613fa14e031fa",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/Overlay/SwapOverlayPanel.cs",
+      "sha256": "34c7361c20e690db8e2bab481df1eff1f07daff553d4fdac519cd28336dd0803",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/UIAudioButtonListener.cs",
+      "sha256": "054460221afb2841cf9b0348aee498b8b346144f715acb1d39aa36750c0eef68",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/UIAudioFeedback.cs",
+      "sha256": "d1a4e843ca6b478c9a40923a30a8151504ef90e143601b7776eb979a74848dec",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/UIController.cs",
+      "sha256": "ccfe41e111c3c4c19a61ffd2e912a4515096db04cdc94a7b8c4143ee64cf1a6f",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/UIHapticButtonListener.cs",
+      "sha256": "84a97c30ac1f0e5499b9f9df58ab086355886b110ac949a5d3b671026e120926",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/UIHapticFeedback.cs",
+      "sha256": "1a6657cd9a1a049f7e7353d753ca0100e4774ec807362027ebb7af98fdd56ea6",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/UIPage.cs",
+      "sha256": "cd151670dadbc2843ada6129eb8a7eeed3561622b9e6468e0880c0738c0a60de",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/UIUtils.cs",
+      "sha256": "4fd22ad0b3c02ae0ec4431d8c46084f5ea80ef54d56e60104f2582ddd9d22479",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/World Space UI/WorldSpaceButton.cs",
+      "sha256": "b798e37a43c1be956695a7d7fadedf04da28a4c3da2cd7c9dd7e062e1c273dda",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/Scripts/World Space UI/WorldSpaceRaycaster.cs",
+      "sha256": "01d7e30901f8227e1a785a1d6c9436d0e507f9e282641a9d2fa3f87a96d7ac3d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Modules/UI/UIExtensions.cs",
+      "sha256": "c0e8591899b658bcf8620e8d0dd840081dbe1afed0a1d7c8481a56b398c00dea",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Cached Components/CachedBoxCollider.cs",
+      "sha256": "fe508b195c1e04fe712bb8370f0515b7a8db961fe896f6e53cf476242d08743f",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Cached Components/CachedCapsuleCollider.cs",
+      "sha256": "7dc116a3a30badb25cb43b843e2f45c0b31d330b618bc231c5e67f3659ce41c5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Cached Components/CachedRectTransform.cs",
+      "sha256": "dba7bf09948126d8814465824189dd72ee305f1a2b70e7fe0dc39365d3cca0b3",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Cached Components/CachedSphereCollider.cs",
+      "sha256": "84bbb7f518cb4d345b772334a61c877c93ccf889d1e20a2fde6fb8887653af34",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Cached Components/CachedTargetAttribute.cs",
+      "sha256": "08f2665f36a3b18dc03619389eab9ae4e8b0636bf014d81dc9cbdece151f29bc",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Cached Components/CachedTransform.cs",
+      "sha256": "049fbebffa013e030e341d79fa9234d41ad118083ca866c11aeff8f85e1941cb",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Cached Components/Editor/CachedComponentPropertyDrawer.cs",
+      "sha256": "27f248a20ecda95a2014e6207b2668be740b5e4e2530b93cf23bef68374f8f7c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Cached Components/ICachedComponent.cs",
+      "sha256": "f4028c8d7c139744d2762cfd990b3f952e1523911739f74d5ccf2b72c3e58e5a",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Compatibility/Editor/DisableRenderGraphCompatibilityMode.cs",
+      "sha256": "86dfcf8f1d162051eaa72aa624a7ae56e101d7601c0216317ce84db8d4f47a06",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Core Settings/Editor/CoreEditor.cs",
+      "sha256": "c9727a5e9550b22075a52db06a54e141160750770f8ebe30fa00ac0b0156ba08",
+      "assembly_folder": "Assets/NebulaSoft Core/Scripts/Core Settings/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Core Settings/Editor/CorePreferences.cs",
+      "sha256": "6f5c713f346d6e73ac6c9de1c287f6dbd092c098df1779a4a23c746e29b70a6d",
+      "assembly_folder": "Assets/NebulaSoft Core/Scripts/Core Settings/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Core Settings/Editor/CoreSettingsEditor.cs",
+      "sha256": "1926616041f58e9d64d8face7575876147ef3d423cee157fb54f49791ed8a94f",
+      "assembly_folder": "Assets/NebulaSoft Core/Scripts/Core Settings/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Core Settings/Runtime/CoreSettings.cs",
+      "sha256": "1cd4f529f109f87e26c00062bc5f8a164f8ff5ce1abf42fd74c284ce06315d1b",
+      "assembly_folder": "Assets/NebulaSoft Core/Scripts/Core Settings/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Core.cs",
+      "sha256": "4475c5d30ef83c91899936fcb1c5c3db903903f255d10b989aff6de0337806a5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Custom List/Editor/CustomList.cs",
+      "sha256": "30df0c7ec0e0013060160456e2b72e083af90ddbaf2bf6c67f7b85cb0dc7d02c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Custom List/Editor/Fields.cs",
+      "sha256": "7c270c5ddb1390cda1f89438f0bca97348766d0962581b9c604d97466abfea5d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Custom List/Editor/Style/CustomListStyle.cs",
+      "sha256": "eb73a598bd748c4e7760cd986b35a5a0a74b8a4e647f9f50fddaba4663f2ad3f",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Custom List/Editor/Style/ListStylesDatabase.cs",
+      "sha256": "539b7681c2764cd3780d7fdadf81db3f6884f736825418c295a0464abda31631",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Duo Types/DuoColor.cs",
+      "sha256": "48b5cc5db3e9d95ae5d286e0691c7c165bdceb055e4cca504f497cf12390ef51",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Duo Types/DuoDouble.cs",
+      "sha256": "182577000ae481d57ebdd62695afb80cb6e66fdeff167438bb0b67e137a2ee5e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Duo Types/DuoFloat.cs",
+      "sha256": "02dee83c0ca82e9858a2b349b6c880d0897f24ce3816af35195903824d70170c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Duo Types/DuoInt.cs",
+      "sha256": "550cbd4f91e2bc59d133a98c36b31b01de5ea564639e11dbc44dce1a337febfb",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Duo Types/DuoTypesExtensions.cs",
+      "sha256": "b2273ecadcbc2270115d6f96ec2fefe9bdf534d9dcc41d56f30bc0ed706a69f5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Duo Types/DuoVector3.cs",
+      "sha256": "5fa8f65a6f8be2da3886da20649be01dc934df4f6c8e9c42dd74f8d6f148c2b5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Duo Types/Editor/DuoTypesPropertyDrawer.cs",
+      "sha256": "ae58d43cd25a34c9d84968b64d9f319457805c2a7523911ca37f769c0dd3f9a2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Editor/AboutWindow.cs",
+      "sha256": "70484dd29eb73616bfa9187751a0d4e2862b178ff7e6fc288bd6262a9ba80e10",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Editor/AudioSmartImporter.cs",
+      "sha256": "b39cea173cd88348e3c54142d24abef2c91ec42f944da90ca68cf9a59639b0b4",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Editor/CorePreparationTool.cs",
+      "sha256": "4bc3716bb89111997de007bc42c83d8ed7ac414761c7bd107104d5495897070c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Editor/EditorScenesToolbar.cs",
+      "sha256": "556b26026b1d54f8f589920c6d8d7846410f7876ad1c166fddd40c3a5307ad6d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Editor/HelpMenus.cs",
+      "sha256": "617f530fc2b6d95a21bee2f79a41e7e112d65be8b6009d093d91f19caba80592",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Editor/MD_SceneLoadingActionsMenu.cs",
+      "sha256": "f19390764094962a65fd88fa95f3520d2ab93fa4abab3f61f2d2e8160203d1ce",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Editor/PromotionWindow.cs",
+      "sha256": "522315b3458a7a45a284f0b3a86b87c3d48b6e92a494944f232b5827c9e5c8c1",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Editor/SmartSelector.cs",
+      "sha256": "12111d7f2d9a5387688974c316ebf083cb0fe8418a4a4110899fd479067475ed",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Floating Text/Behaviours/FloatingTextBehavior.cs",
+      "sha256": "d8e4c9214a9701cc0c19b7c1677ae6bfdf2e78e498f782e19a2ce1594d9c7a65",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Floating Text/Behaviours/FloatingTextHitBehavior.cs",
+      "sha256": "2104da15ab4d134b7c7988a00b6e1501beb10c0bea36c124d7b88f427442ffdc",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Floating Text/Behaviours/FloatingTextUpgradesBehavior.cs",
+      "sha256": "78eb767352f151d9f8b69b9f2d76a35cf60ff879be9c1e707affad252ec7f792",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Floating Text/Behaviours/FollowingTextBehavior.cs",
+      "sha256": "20c14d387c3661c3b686453a7d91306f924b6daa11a2b0b950d1f16f6d903a01",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Floating Text/FloatingTextBaseBehavior.cs",
+      "sha256": "2b1f3d46561a8615e5f8d85e3f4d03689b96b901deabee18af87e9f66a895d4d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Floating Text/FloatingTextCase.cs",
+      "sha256": "2c9f4a5aa098e0757529f966db8f23ef3be8dde2dd314cd2ea9f6ba6cbe8b7d5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Floating Text/FloatingTextController.cs",
+      "sha256": "354a723850819ecc1be0a4a3f165fe5bc7c84e241505d3ba509a44e37791b043",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Particles/Scripts/Editor/ParticlesControllerEditor.cs",
+      "sha256": "8a791605ec003b415863f44e916b75228a1e3160a049762eca6d5020db6549b3",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Particles/Scripts/Particle.cs",
+      "sha256": "3f8f407b1ca2863a6bd46756016901ecc6ea4f983540487ad0269aefb6e82d67",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Particles/Scripts/ParticleBehaviour.cs",
+      "sha256": "20ca8ff4f22fb5207cc940b711ffcc4674651c510d64b328eae087ee34e2a89d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Particles/Scripts/ParticleCase.cs",
+      "sha256": "289b272c8b1d7fb5ee685eae6413eab0c795076a0bdce4ab539aa75d8aa27da5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Particles/Scripts/ParticlesController.cs",
+      "sha256": "138da0b52d174d86a6e92f207cf9383d1a2447e6a9916e8bdd9ef9cb5154fcf7",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Particles/Scripts/ParticlesExtensions.cs",
+      "sha256": "d8b9165bbc8922a596b9dd84a47f312536dcfd585d7ba4b76a9bdfa050a5e29e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Scene Picker/Scripts/Editor/SceneObjectPropertyDrawer.cs",
+      "sha256": "60dadb3b312db72a0615d8a537293f74730aa73804754fdcde871544b08e110e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Scene Picker/Scripts/SceneObject.cs",
+      "sha256": "4f05bd4819e6425f687803f5dd3d8fce3fc2d8100e3136aed6f4a353f63c2461",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Scene Saving Handler/Editor/SceneSavingHandler.cs",
+      "sha256": "111b0facd0f4d84ebfaab0cc2a1960ddead9ab63adb5362542512a7a9855c807",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Scene Saving Handler/ISceneSavingCallback.cs",
+      "sha256": "6bd578c1ed7d47fe17e591b2e5d088887040d2c9300277446f60430e7a5aeb3d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/ScreenSettings.cs",
+      "sha256": "b374e8dd123db158541b4b54080e1b516ff900d386484dc3bbfd471b6ddb3f95",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/SimpleCallback.cs",
+      "sha256": "12543c49d9755f8f6a70e886477e392f6621500b5d84035cfabf121c74bd9d00",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Static Unloader/Editor/StaticUnloader.cs",
+      "sha256": "3375a0a1778e4f166fd0241385a7743839355eeb905bb02fb89f47cdce4f0a25",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Static Unloader/StaticUnloadAttribute.cs",
+      "sha256": "5031c825c48b937a58d90c4275deac25a5a74de1c35e3a72e05a7c9be7816ba8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Toggle Types/Editor/ToggleTypesPropertyDrawer.cs",
+      "sha256": "2ea16b2dbd2be51aca5be4f95df3aa7862334d965e86dc1804207ec611bc5f10",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Toggle Types/ToggleTypes.cs",
+      "sha256": "ecc79a7de1626dc3b4238e579bbc241e5de6d70458538b80f5fd8aebccc92f06",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/User.cs",
+      "sha256": "fb517d1a8a4ef72ecda0534ebbf0266272189f45777c6556858505c6b3473ccf",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Verbose Logging/Editor/VerboseLogging.cs",
+      "sha256": "a068e3b82ee434e0c34cddb48aa172e5b8b5329b02c1344cffce0ef8a6af3da4",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Weighted List/PrefabsWeightedList.cs",
+      "sha256": "6c180d2a5a615471cacee60dbaf56da755d50c7810a9d2967e2c88121cdce505",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Scripts/Weighted List/WeightedList.cs",
+      "sha256": "dd05a4623698e8a3098374fe102c096fa9fd3fb602475c35283e23c65db96064",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Editor/Extensions/EditorExtensions.cs",
+      "sha256": "b43505a045b9193ad6ee98f3d263f4fb750a71e38cfc4e35a6ef1edb435efb66",
+      "assembly_folder": "Assets/NebulaSoft Core/Utils & Extensions/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Editor/Utils/EditorUtils.cs",
+      "sha256": "31d3c9ed5e8c63c02098ffcb38ccc65b37ff7241c8efd3b5b456cf48d2e99e22",
+      "assembly_folder": "Assets/NebulaSoft Core/Utils & Extensions/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Editor/Utils/TMPUtils.cs",
+      "sha256": "8a75009c5680c503b8312189ef49250e341b2f29b3eedcc87756b1182977d1c7",
+      "assembly_folder": "Assets/NebulaSoft Core/Utils & Extensions/Editor"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Runtime/Extensions/CoreExtensions.cs",
+      "sha256": "9ebf6cc1ca4479cbab34462206c8e139f514a8cd07fdc46f1dd8850d46bce708",
+      "assembly_folder": "Assets/NebulaSoft Core/Utils & Extensions/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Runtime/Extensions/TextureExtensions.cs",
+      "sha256": "9fe455d5c72aa1cc4c72b0d5881a2f8088ced587d5a2c93e683f356da03c5591",
+      "assembly_folder": "Assets/NebulaSoft Core/Utils & Extensions/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Runtime/Utils/Bezier.cs",
+      "sha256": "2632dcdbc3a1455d01c95f19576fb5cff3e29f4e0f9f41d11283574432a35d61",
+      "assembly_folder": "Assets/NebulaSoft Core/Utils & Extensions/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Runtime/Utils/EnumUtils.cs",
+      "sha256": "b50b52bbad2f5f78d609d94e1e30aa978dc836685e692a98ed406011811632e1",
+      "assembly_folder": "Assets/NebulaSoft Core/Utils & Extensions/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Runtime/Utils/IOUtils.cs",
+      "sha256": "e186e86a9b88a7db363812738274b1c4358595a7885aae2c2375ab6c1fc0e6fe",
+      "assembly_folder": "Assets/NebulaSoft Core/Utils & Extensions/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Runtime/Utils/RagdollUtils.cs",
+      "sha256": "5fdfd2b32f989c4d3678cc734caac285d1e917f69b3339e3295e17ecca105b5f",
+      "assembly_folder": "Assets/NebulaSoft Core/Utils & Extensions/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Runtime/Utils/ReflectionUtils.cs",
+      "sha256": "b50cceebf06f74507bc491eac91f43c405de2c7c0187f428533ef565dbcd9c35",
+      "assembly_folder": "Assets/NebulaSoft Core/Utils & Extensions/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Runtime/Utils/RuntimeEditorUtils.cs",
+      "sha256": "128609c2d6b4f54fc70eb6069ceacb18905f95e00cc38d33e0a93d9bbc39b064",
+      "assembly_folder": "Assets/NebulaSoft Core/Utils & Extensions/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Runtime/Utils/SceneUtils.cs",
+      "sha256": "74a48bbb936fc014e8c861372edbaf60f68c1567a6c509dbb3e8226ec5806996",
+      "assembly_folder": "Assets/NebulaSoft Core/Utils & Extensions/Runtime"
+    },
+    {
+      "path": "Assets/NebulaSoft Core/Utils & Extensions/Runtime/Utils/TimeUtils.cs",
+      "sha256": "6be86cb8c1c781a6d2703ab9810ae38ec7e65656b640d14e669239b81f43922c",
+      "assembly_folder": "Assets/NebulaSoft Core/Utils & Extensions/Runtime"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Ads/AdsGameBridge.cs",
+      "sha256": "06d78194329d6b637aaa3c25da713c8698948e80d485e6e84c759bab66320a6c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Controllers/CameraController.cs",
+      "sha256": "d499e431efe4ba47f640696c1ba76482aca9a5806d6837676facccb92218cc71",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Controllers/GameConsts.cs",
+      "sha256": "28468bcb1b0e4ed344faeeb4634fbb9e291ea4635e83cdd6a1983d2f754dc972",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Controllers/GameController.cs",
+      "sha256": "12d459c48f089792206b9de06b0728b00e5f1b3783f9ef3201cfaa2064071bdd",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Controllers/MenuController.cs",
+      "sha256": "2cf19c49652447cfc87df09245db119f10c26925dc0ee400fc2ed63779ad65f2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Daily Reward/DailyRewardClaimButtonView.cs",
+      "sha256": "18de7d9674d9555c665a884fc7d9c5d1a58996b79feb25cc5cc79f1749071f28",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Daily Reward/DailyRewardClaimPopup.cs",
+      "sha256": "3a53d745f73bc35a5e6ea2aa3124ea8017e06bd8af33b5a9dc0fd67bc7792940",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Daily Reward/DailyRewardDatabase.cs",
+      "sha256": "cef931d25f846ba15101fd9a41bac477ab0009ceb863e5a69afa46b38d098ad2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Daily Reward/DailyRewardElementView.cs",
+      "sha256": "05d89a0fc41068c449fa26e29a5d08c0145325be9c6147fb729f45ddbaa3c1d4",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Daily Reward/DailyRewardInitModule.cs",
+      "sha256": "b009d6a0869974ab318c7309ac6d8295c697863b72cf0130768eaa3b73f51aac",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Daily Reward/DailyRewardModels.cs",
+      "sha256": "e77e8ea00a3078f4b9c373590a577eb6caa000511024c7ff9b0abaea141f4920",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Daily Reward/DailyRewardPopupView.cs",
+      "sha256": "2f30c453c7f0f9245667e412b5195136dbfe40b51346e652abad89ce2ab335b5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Daily Reward/DailyRewardResponsiveLayout.cs",
+      "sha256": "ac5e5987ab004127d98f906269bf07fba4c81e8916c703aca5623d87ab10d757",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Daily Reward/DailyRewardSave.cs",
+      "sha256": "b128094c8e9be11b57377921bf7b1d38bd24238b5c57900d819cc2a81e9d6453",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Daily Reward/DailyRewardService.cs",
+      "sha256": "549e7128207f844e378794b45ea26373b8a5dd68d7b6183ae8c4c6bc530431c1",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Dev Panel/DevPanel.cs",
+      "sha256": "a23ec42ee9bb846aaddf1bc48c442d3030d34feecd024c2abebfae24decdf10e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Dev Panel/DevPanelDebugToggle.cs",
+      "sha256": "2a1e0de959a49f93cc6691e07dca73fddd92057aec3ccb32dff4d0d339a53135",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Dev Panel/DevPanelEnabler.cs",
+      "sha256": "333fc6ebd67d61e175ee888a87b92ab880ec00700e4acfc92dcfeb4f388a8a83",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Dev Panel/DevPanelGameButtons.cs",
+      "sha256": "f693ff873189565673afd136f963fc566867f1ee142dd0edf5a6b6d0eb5acf96",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Dev Panel/DevPanelInitModule.cs",
+      "sha256": "6401404362d95dd248762f2989ac41fd41d64ad55afba18dc76647669cd0e812",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Dev Panel/DevPanelSettings.cs",
+      "sha256": "6cd1d496212fcc74c57854ad68953ca173a31cc38f9967d28df848c573e59fbc",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Dev Panel/Editor/DevPanelEditor.cs",
+      "sha256": "33b0067c7c73d0df7ccd02de293bde13b0976695a4a07faddcf6ef23e11a0c4b",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Dev Panel/Editor/DevPanelInitModuleEditor.cs",
+      "sha256": "d848824e1833124701221fa305e36d9d90824cd742cfb9ba37b0d4ad4a35557f",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Dev Panel/Editor/DevPanelPreBuildCheck.cs",
+      "sha256": "62ae2b41baba7b0c8bc21ac2d3ce36ccaac5035b2f136656cb831ca209ab9e06",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Dev Panel/Editor/DevPanelSettingsEditor.cs",
+      "sha256": "d19a22e22d5aecf21c30de4e2bce722447fd21add102f7be185d7a6e1edb6260",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Editor/EditorAdsDebugMenu.cs",
+      "sha256": "c93d2a06d87d07fb7a3468fe1b4f27144bcc08191bdbdc6e6089414f42c74158",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Feature Announcement/Editor/FeatureAnnouncementPopupDataDrawer.cs",
+      "sha256": "0c3636874ad70abfb6f3a5f1e00a667be294ae401fd646c5bb6ffde8e106cdca",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Feature Announcement/FeatureAnnouncementPopup.cs",
+      "sha256": "999e3308a5d7a5b5e366376671f686de66876ecb0ea3077a89be5aa32fc4d461",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Feature Announcement/FeatureAnnouncementPopupData.cs",
+      "sha256": "fae0c3a925888e6c3faa84e1db35d07b8ac24a9aa4df1941eb7cc8df2aa35876",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Firebase/CoinSafeCloudSync.cs",
+      "sha256": "270acb7859f21a2466338b1635d613ca3fb8affa602c21fcfb0ff39903c5d8ad",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Firebase/FirebaseAuthHandler.cs",
+      "sha256": "50f3ef5c7df302daeabad22886b10fff48162766bb5220156bae57ebc038f13f",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Firebase/FirebaseIAPTransactionLogger.cs",
+      "sha256": "ec67a83c74bc11af32cffdd3a4da867db466ebbaec958227a209b718bda2991d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Firebase/FirebaseNoAdsEntitlementSync.cs",
+      "sha256": "8d0f81bc73d2b7f43bdae4e3dd376e40ba24a5199b652f7397a923a2cd81d5be",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Firebase/FirebasePlayerNameRegistry.cs",
+      "sha256": "1fd293ff2cf183b8d8361d1fedd3eb7e74e91de96f6e9c5f277692bfe345f694",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Firebase/FirebaseProfileHandler.cs",
+      "sha256": "a63eb457181e94816391c7ad62fddd6b1dd43ba85a890afbb4450375d0824ce2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Firebase/PlayerProfileSave.cs",
+      "sha256": "ea6f5417953240ab2a3e6748dff0454e6f0ba37883af0b4001e75e24086ae66b",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/GameData.cs",
+      "sha256": "8695848fdb6bf874de9aa786c14bef2c3416e98056f2d90e707a54c6731d8912",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/GameInitModule.cs",
+      "sha256": "3c8685a363ac466a605824d228f427d182798a06c1f1daefc6979823185e8b71",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Leaderboard/LeaderboardEntry.cs",
+      "sha256": "eb37088cc85ac9d14bd8f915fa8cecf4ebb1b4215aa6bec41275ce95814f3536",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Leaderboard/LocalLeaderboardService.cs",
+      "sha256": "446f9218303f198838187587c4208bfacee78382e9c004e8277ff1c78ec58b14",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Level System/ActiveSession.cs",
+      "sha256": "cd40ee839e87da2b1da08defec2718895ccd9aec13f8cbe06580d0d335af1fce",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Level System/GameplayTimer.cs",
+      "sha256": "3afd2975790bdcb2265c2671f98ff73dcc772a6558e9f55d4cd74b8fa2c0ce3d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Level System/LevelData.cs",
+      "sha256": "1228b35ff350b67b56b58bb389dc22bd70e63826d07ba44bac0263341bb6fab6",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Level System/LevelSave.cs",
+      "sha256": "9b13b82a970b89fc09e0c930c46cf083e8fc703a31049893598da1c0ea686d0d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Level System/WinStreakProgress.cs",
+      "sha256": "b37d78ec6860a048dafd7ff62d835fe7dde91ecdadf9aa18a0a8857312014c79",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/DoNotSpendLivesMenu.cs",
+      "sha256": "8a68beac9004c91f592ca89c1a9a5cc517fff2dbab74936f07928b474254facb",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/Editor/LivesSystemEditorActions.cs",
+      "sha256": "19b3209e25f9665a88023b1429615c5e5615c1c6ea99d2cb850c226dab879dd5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/LivesData.cs",
+      "sha256": "966f9965387a5fa1b709c13060024cc2d2348a15fd50baa2ac58ee2497938879",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/LivesIndicator.cs",
+      "sha256": "ce20cc7ff5835f16acac8e1d623c65a43f1a11e6361cc4defbb97206938d324c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/LivesInfiniteModeReward.cs",
+      "sha256": "8537f5fa78f7a1af0b9003bb3496c951a9c480b46bbe01890032b4f25d999824",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/LivesInfiniteModeRewardView.cs",
+      "sha256": "71f6d7b6ac06d709c2e69be736ca49a25339227c0c4e241d359ad18f644ff609",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/LivesMaxLivesReward.cs",
+      "sha256": "e7b20ae2a92bf7d6547b8650c71db0a2f38ac3078dc5e30f0f2cc1a6c91242a1",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/LivesMaxLivesRewardView.cs",
+      "sha256": "6b9ed497342093f477af85203f3d2c707ee1a395d4485263dac031e0be274d72",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/LivesRemoteConfigData.cs",
+      "sha256": "6c0c7f8d12ff7724996661fbca881e2807b4fbc68ad3935d5f84090166dc9d5d",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/LivesReward.cs",
+      "sha256": "e1328638d4b6379dc7691f478e2ebe364412e19248b64a61528e9d89b37a976c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/LivesRewardView.cs",
+      "sha256": "3a146d52385ff245df791ebbb475afa6b424a51b14bb507304d2d62f4b9129b4",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/LivesSave.cs",
+      "sha256": "883681cacfc6d6862e9dff32fba901ce5f2472471e114cbeca9b4ec70a676e1b",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/LivesStatus.cs",
+      "sha256": "22145a80806f99929110223a0daf7d10a212e9c49ace7fd1111434b294665c44",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/LivesSystem.cs",
+      "sha256": "7b4e2be0f61ce5302e3e1d89a0b935245d45c390d6de571d43ab9cdda5bd5126",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/LivesSystemInitModule.cs",
+      "sha256": "2ca91c2828cf326e0c9372e5fed3c21deb77c51317256e8a53b7bae456aec5cc",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/UIAddLivesPanel.cs",
+      "sha256": "1636f60fd38cd64b31c9e0727442535f2d8e94f814fe1b3c4e6ab2fa028b0da4",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Lives System/UILevelQuitPopUp.cs",
+      "sha256": "91a8c24cb85743ce356b00a6cfbfd6a7ffb48a923e7053f3d060ca9f8663fb1f",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/No Ads Offer/UIIAPOffer.cs",
+      "sha256": "ab748c79fcd00fa2064599232c39c719b751b2ca50d1b3ed6d189cccea208556",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/No Ads Offer/UINoAdsOffer.cs",
+      "sha256": "be01f8e0873796c94b0b667c6441c9b0d3c7d5478fc308b98ca145e68785d990",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Other/NebulaSoftOutlineFeature.cs",
+      "sha256": "c34bdd029429cc7239edc9f5022727ac96157a4819d61fcbd34c687fc47563a8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/PhysicsHelper.cs",
+      "sha256": "b6f9c45171ad468d7457da7b99ecb9e630f08eff3746c7b455f0173889ee731e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Power Ups/PUSave.cs",
+      "sha256": "a935bf6a66a1d836269bf1904538dc9c3b4f90b020e6e8650c4c3147480df6d6",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Power Ups/PUType.cs",
+      "sha256": "eea7bd9ae4a79980600fb8d88804101397abbff2f7fff9b090de369993b23ee8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Power Ups/PUUIBehavior.cs",
+      "sha256": "533f50b06eb8327938314df44fe3b184b7a9ae5849886cd06a41f3fb8c6a0c35",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Power Ups/PUUIController.cs",
+      "sha256": "ad87ff532ee587aa7921f8d0796d4c154a431cd5d7595cbe0925d49954dc9000",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Quest/QuestDatabase.cs",
+      "sha256": "5955dec65b31fbfc734a011efe28f79f85b59fefd91b4388ec32fd313717afc8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Quest/QuestDefinition.cs",
+      "sha256": "d95a554c7f18dae0a7e8878bd02ea8a5ef90e7bca1bfda67c74384da44573be3",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Quest/QuestEnums.cs",
+      "sha256": "3628139c4d7b540e8daa1e73b94090ebb570cab2c914af252de3e6f2892b377c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Quest/QuestInitModule.cs",
+      "sha256": "c43074f58340e6b433aad93ac609207f9bee4f288dbe42563ca395c85111b9ce",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Quest/QuestMilestoneDefinition.cs",
+      "sha256": "c8b99076bb5965f2aed91fe6b99c3326887a838fea856306d6f673d7d5cdc536",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Quest/QuestOnlineTimeTracker.cs",
+      "sha256": "f1fd6c9f77edde56740d4f092f83e1f4339152c5c2d96737574a419b855519b7",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Quest/QuestProgressSave.cs",
+      "sha256": "af17b8406425e8b38f3999993a1a1938c622747f2a0f555ed09e9894b5afa106",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Quest/QuestReward.cs",
+      "sha256": "ff3ce839d94a9099870f4fda853724d84588d0211c828351f14dab4c1ba08ba6",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Quest/QuestService.cs",
+      "sha256": "ea0930bd40b6b2a7fd70cb59142d074b4e9df28422d654cbbb7d5e882937b8f2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Release/Editor/ExcemptFromEncryption.cs",
+      "sha256": "8f7b5e7dbd6e2dac81fe5fa8820dfdeca066105a6d13d313cb20aaa6978afaa4",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Remote Config/ReviveRemoteConfigData.cs",
+      "sha256": "988ef0a66449656b62ee080c8044601357c90f1d1854e8236371fcdc2ab4e920",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Remote Config/RewardRemoteConfigData.cs",
+      "sha256": "9e68c7cac2ec3e98860d40166e4966884f57c3f612f040120addc21a7da5f836",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Settings/Buttons/SettingsButtonBase.cs",
+      "sha256": "01ec585f644e14cb996ac254d2872108cecdfbb0e659725825ddedff5795c2f6",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Settings/Buttons/SettingsExitButton.cs",
+      "sha256": "d050b465652515fa8b48d27195c51a8cc24ac7fe74e9d32042ab7073667768de",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Settings/Buttons/SettingsHapticToggleButton.cs",
+      "sha256": "6ab5269d05fd25b8a6ae1eaa162ca066be9ee5eb9e2f2ee2b57fa46f009fe1a5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Settings/Buttons/SettingsLinkButton.cs",
+      "sha256": "1d12fe9e5a6323a9acf5475614cd11d8fd6bcc4db875456ed6e87880984e656b",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Settings/Buttons/SettingsMenuButton.cs",
+      "sha256": "80562272e46436bdabbbf4ddbe523cbff42d81d6e2727306cc29401528d42ccc",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Settings/Buttons/SettingsPrivacyButton.cs",
+      "sha256": "3615c5cbdec3783e029b4ec7ca7197541b39b9c3f7ee4e3e09db03e58aa54287",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Settings/Buttons/SettingsRestoreButton.cs",
+      "sha256": "e7dc86da342f369e8ebe0ac09ca9679cbefb8e04ff3d9491fbb62f8251723872",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Settings/Buttons/SettingsSoundToggleButton.cs",
+      "sha256": "6ba0813973ec9c15e07c5e44ef8e89ea8852774b623a22e1af22cd2950cb3f75",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Settings/Buttons/SettingsTermsButton.cs",
+      "sha256": "2250b057e0e747cf18824be458c1d531cc97c546bd7e4242996138820f3cac13",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Settings/SettingsElementsGroup.cs",
+      "sha256": "8774ca2515e07d000d0471e23142cd1c1c6ef122f33419f1b1c825290f633385",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Settings/SettingsPanelButton.cs",
+      "sha256": "c8db95ca13b7b3d7897e0f17a24f63180a0461883c450520538f038ecc32fb0e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Settings/UISettings.cs",
+      "sha256": "a3b1dc02127a9c409764e4c2c5c9231920a31e79fbdb3c948fb317bacb13b8a7",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Tutorial/BaseTutorial.cs",
+      "sha256": "c3bc743f126822fd315b14b97ae3ac083d6083a29a85490a4d04c35345aed813",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Tutorial/ITutorial.cs",
+      "sha256": "8fbdc6350fc56a427aaa3514e4fe7b3145026a517773296c2c75cf607ee68ebf",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Tutorial/TutorialBaseSave.cs",
+      "sha256": "54ada3ac7a915293ce39452180f1fe041ee69c33409b16d02726dac4eba0d005",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Tutorial/TutorialCanvasController.cs",
+      "sha256": "51016c41d5a3945defe07e65dbbcffbd976e849c28fa24f3d29bbb5b5fd93bc3",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Tutorial/TutorialController.cs",
+      "sha256": "ec98a9eeefd4ca336f7ca668dc4cb3ec0159335030eadc96b9bbc9555e95568a",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Tutorial/TutorialHelper.cs",
+      "sha256": "415a8b67e67066d7318bdb5a2bcf6005d45b09c8b9072142f06e94ba8aca6826",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/Tutorial/TutorialID.cs",
+      "sha256": "54b7bb5d1d2f56c1a2fc1d37403c0e03431fc05cb2ec35a9c0010e11e0b70c32",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/BottomNavigationBannerSpacer.cs",
+      "sha256": "56a461a43ba18ad6b15560171ce25d1692453b69c8f980cef5a215c3b22c432a",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/BottomNavigationVisibilityEvents.cs",
+      "sha256": "865f4aaabf224a44086cf9184389845ea1b594098d8ebb9800b1d7096687ad02",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/CoinSafePopupView.cs",
+      "sha256": "32ba8711ce4f5cb6efb90cc592839371041d9f07b4c96bfda6f61322ed8992b6",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/CoinSafeProgress.cs",
+      "sha256": "85f360f05c2fea47e81091d15cebd08dd2ac9518f8dbf6c4dc8684613f31e16f",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/CoinSafeProgressText.cs",
+      "sha256": "debcd8795e2883579e4bbd6643b9444d7530624181e70371ed06f8334b1ef9c5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/Components/MenuButton.cs",
+      "sha256": "7491708f773245e295be7fe5350d4e4d6c72578c45ad0cfe664a312b2cb037a7",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/Components/Sliced Filled Image/Editor/SlicedFilledImageEditor.cs",
+      "sha256": "2f9de2d25f42d2269e42895d338fa6f500a9a5cb1f28167988f475f1aaba93dd",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/Components/Sliced Filled Image/SlicedFilledImage.cs",
+      "sha256": "d21618b4d8b9f558dd7ec1a9ef49e5b1af06234ecaadb57a15c21d678a89fad2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/Components/Sliced Filled Image/SlicedFilledImageExtensions.cs",
+      "sha256": "e14232ec8b6b5ba0a1d4e73da15383949a6d28fe720d689e55deda161504fa74",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/Components/TimerVisualiser.cs",
+      "sha256": "457e0a86a4e1d8fae8e5da0031d52e344090601547a57380ce5134014c13a138",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/ConstantRotation.cs",
+      "sha256": "be759da2533a7ff8a6f5b6081cd1c66c8a8352c306ec3659e2a07c4dc3d7c431",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/Editor/SparksUIAnimationEditor.cs",
+      "sha256": "13f1d8da9f06ba4ede683992263fe3f8c285654451920117f3724abcb508bc6f",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/IngameDebugConsoleStartupBuffer.cs",
+      "sha256": "949580c1e9c3184db7c1f3d746ed7d4abbc667b40afd8d9ada2a686e48a3aa7f",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/LeaderboardBottomNavigationController.cs",
+      "sha256": "9bdab9719cc5a05153d8a9693d21d145ca7b78c59e4a1aa17d5e8aeb915a4c1a",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/LeaderboardPanelView.cs",
+      "sha256": "561b940fc1baddbbbc8855e9ed191b44dbf3385442a8579ed85746e1693739bf",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/LevelPanel.cs",
+      "sha256": "0fca4a43ff8780b1c35a69cba694075da2c5864908738b22742bd99fb4226f32",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/LoginResultDialogView.cs",
+      "sha256": "8cf2227bfad21a2c4f4e576cf42525c0b9c0d95bd123b66364dfc41190e8ab02",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/MessageBox.cs",
+      "sha256": "ad1a0576f7e42e0e51e302d9f1899f125b5a5a05adcf5f07194cf92fbe006e97",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/PlayerElement.cs",
+      "sha256": "f7e6d2f5b9d42a8ed490e46c132211cdc6ee05ee8adeaa5853ac4b90aefe41a2",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/PowerUpBannerSpacer.cs",
+      "sha256": "0c0fd77c08b9664de45fc810f2ddd7b5f7384d3bc5abaf42d3c83487f393f273",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/ProfileSelectableItem.cs",
+      "sha256": "b20b6ad3bca370c7fd07838e00053dec55b2d86b7952b0231bd3c7eb2dcd7851",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/ProgressBoxIdleAnimation.cs",
+      "sha256": "c2089ca492267f837a52b25ebcb6c8a6b49c0af5ff3a3be0a508d06e5f71c942",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/ProgressBoxShinyPulse.cs",
+      "sha256": "bcaef44ab2057230d51e88d385bb015a01c5cdd9849f6d708172a4c527c6abb6",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/ProgressPopupEntranceAnimation.cs",
+      "sha256": "089c633aaa2c763299218c23ee2d7130c73ab07a27fce3e66df491d2933a990a",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/ProgressPopupToggle.cs",
+      "sha256": "c99fa2b5daf397d90d3bcb448e512155510a204a45311b3e13bb31389f56d038",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/ProgressSliderExactFill.cs",
+      "sha256": "8df418f30dfdf2a90008b4faa40027f18fb59b5c29475314471c62cb4518e510",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/QuestElementView.cs",
+      "sha256": "3f04bde8df382591ca3b148c9f467c5b4da107321f977ecccf3dbd438ffb3d62",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/QuestPanelView.cs",
+      "sha256": "81012609be87e0e2fbc58525f04937d3c8c9742fb5e95960c9122cb27261ddf9",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/QuestPatternScroller.cs",
+      "sha256": "1f5c3df428dfdcf945e0e73fb266df1b800503d365e554f76f0d278cda7b93c6",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/QuestRewardClaimPopup.cs",
+      "sha256": "43e97f0818e1226e90c7c6c22cf2a09c6423394408ec6889f5268d6d7c5345c4",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/QuestTabTransitionAnimation.cs",
+      "sha256": "13169c26d53c8c44957df94cbb36035f68078e65000a59717dc70f09639150a4",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/RewardProgressConfirmPopupAnimation.cs",
+      "sha256": "835a418ae7cd57fe594a9aeb814d528762cc2ec288cddacf01ebd257cde76ba1",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/SaveProgressFoundDialogView.cs",
+      "sha256": "b5bf2e8ffef754531d1976bb45111cce1eaa5635c53d6ab4bcd07caf7a0bb6e1",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/SparksUIAnimation.cs",
+      "sha256": "1663494535ef48d32888d475aa614e8d90951a06c9ea8def7489c90d34fc2c40",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/StaticMapPanel.cs",
+      "sha256": "83f32f555b1aa5ab681663744c0b9a217f7b535f715f55b568a8eb4f14b90d74",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/UIComplete.cs",
+      "sha256": "1513c08d6612ab7d4f2784eda34eceb4c434350980b17a7a4f8fe489711bc436",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/UIGame.cs",
+      "sha256": "d53e9b0e9718d99b132dc468f1ab12210c7d83e93b3793163f2348935dc0dc27",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/UIGameOver.cs",
+      "sha256": "04721f279f220b517b7f3e25c852da48ab74a13741918db9898544f54288f8e9",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/UIMainMenu.cs",
+      "sha256": "fdb046b0a2e4b73150e114637ec0a0fc4e80392909db896cd03873ad2957fe67",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/UIMainMenuButton.cs",
+      "sha256": "cfd9d4021ad9a4d7c34aa106fe7ddc0e4e8b80da7b0af0d536948b8c059e7ef7",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/UIOfferIndicator.cs",
+      "sha256": "f2ef3832fb904b9bb9e0724545cbff57d1ca345648f2ad5093d171e094ec49e9",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/UIProfileOpenButton.cs",
+      "sha256": "ab52750f5ddfcf8ab6ea80c2768bda34342a018cdf911c131ba2a09b5968f607",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/UIProfilePopup.cs",
+      "sha256": "e1f650acf7f3f96964e422eb0a826de90e46c94c10f065d9308795a35eb19f8e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/UITargetObject.cs",
+      "sha256": "8b2bb8f4ab2189390ab36adc669c8e00a452f14faf66e852858dda1afc377f05",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/UITargetPanel.cs",
+      "sha256": "5063981dc73c205edd9a57f284f7bb2de8e323ea85e098a454daabfcd9eb0418",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/UITouchHandler.cs",
+      "sha256": "528bac183c0fafc6c7a66bb4d29ac889a91870b4919db75d2e15a8ca68e2b76c",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI/WinStreakText.cs",
+      "sha256": "51ff607360e6ee12517a40333d6f5e74682bede2095a0c3def168e29f7f05b79",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI Store/DefaultStoreElement.cs",
+      "sha256": "9c86e458743cdb915246c64ea1652e5aeb0577b99fd949594ebacb875352cbe5",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI Store/GroupStoreElement.cs",
+      "sha256": "b49bb8f8e526e5b34e372f509737cbe46f8952ec139fa79c6cd32dd6946fdd98",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI Store/IStoreElement.cs",
+      "sha256": "c501531718a68f26e10795d6e03491b251af79964aeb32467bf423fe7bc163b9",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Project Files/Game/Scripts/UI Store/UIStore.cs",
+      "sha256": "5d6c832f8c713bb1771d81038c6c131d420171be73d734c8de5f12ad343690e9",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Tests/Editor/AdsDummyPlayModeTests.cs",
+      "sha256": "04895ae848adf98e376bce4f1d60c9fa0e970136b2d6f19d8617bb5f1445c291",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Tests/Editor/AdsKitPlayModeTests.cs",
+      "sha256": "8b4174c50fc60f25976612c2f306934d5c371bf5049bb7222749c55d53ee09df",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Tests/Editor/AdsModuleTests.cs",
+      "sha256": "901617d3d2de9ff964ee56775832618527535c0d9e57e5e366009419d05b3b4e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Tests/Editor/AnalyticsModuleTests.cs",
+      "sha256": "cfd1cc22e47c78eb1b387038b6d57aae2ae50096680a93e57b93a48d29e94b28",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Tests/Editor/AnalyticsPlayModeTests.cs",
+      "sha256": "557b71838eeac63cbb1735c927c720406fa5e894d0453b953cbcc2b3909e1023",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Tests/Editor/CoinSafeProgressTests.cs",
+      "sha256": "797689da43b04731e969ac10ba898785ce2873aad43498ca37f750173627f073",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Tests/Editor/FirebasePlayerNameRegistryTests.cs",
+      "sha256": "08cbe87eef112a6cb71ec07bb2a13cac3b93440f078a82bb63ada624a288c9b8",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Tests/Editor/FirebaseProgressSnapshotTests.cs",
+      "sha256": "9325f4d5f451a8fc4e83bbc5d170148922f3dc4f7bc11e70d012658a6ac08c1e",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Tests/Editor/FrameworkSceneSmokeTests.cs",
+      "sha256": "9ae7072b05d12cc0e77e32e03e781cadefcaa94d1bc6322a8990d64114bf95d7",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Tests/Editor/IAPModuleTests.cs",
+      "sha256": "44f3573026583e090273522d9db2127d25cf2309b687d6991fe2a5ba26634f63",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Tests/Editor/NetworkConnectionTests.cs",
+      "sha256": "45eb73fba6bb0afd4d9da489ac5ab995b7bbb3d053622ece9e25bae54ee80679",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Tests/Editor/QuestRotationTests.cs",
+      "sha256": "aeb547eaa5434d80d28777e528d843083630b9d05a3c2d99ca2548dc3cac9d3a",
+      "assembly_folder": "predefined assembly"
+    },
+    {
+      "path": "Assets/Tests/Editor/SaveModuleTests.cs",
+      "sha256": "5b737c60ecf3b4bf3c3421267e29a514b9863230450251b85de8dc1a21fac386",
+      "assembly_folder": "predefined assembly"
+    }
+  ]
+}

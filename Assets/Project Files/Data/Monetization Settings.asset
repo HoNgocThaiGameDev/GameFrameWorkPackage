@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34b796d4f76ccb5488f711694f61a821, type: 3}
   m_Name: Monetization Settings
   m_EditorClassIdentifier: 
-  iapSettings: {fileID: 1569315140361065267}
+  iapSettings: {fileID: 11400000, guid: fdf9c98599504856979c49c7ae12a0ba, type: 2}
   adsSettings: {fileID: 1338303973460554233}
   isModuleActive: 1
   verboseLogging: 0
@@ -33,6 +33,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15ddb41bf72d53a48a6bdc593d706f94, type: 3}
   m_Name: Ads Settings
   m_EditorClassIdentifier: 
+  moduleSettings: {fileID: 11400000, guid: c27b8b6b3c496424883635ddb0e06186, type: 2}
   bannerType: 1
   interstitialType: 0
   rewardedVideoType: 0

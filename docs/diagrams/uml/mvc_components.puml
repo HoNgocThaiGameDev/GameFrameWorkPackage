@@ -1,0 +1,21 @@
+@startuml
+!include style.iuml
+left to right direction
+component "View / Input" as view
+component "Controller\n(game mới)" as controller
+component "Model / Rule\n(game mới)" as model
+component "Service framework" as service
+component "InitModule" as init
+component "SaveController" as save
+view ..> controller : intent
+controller ..> model : command / query
+controller ..> view : cập nhật hiển thị
+controller ..> service : gọi API
+init ..> service : configure / initialize
+service ..> save : load / mark dirty / persist
+note bottom
+Thiết kế MVC đề xuất cho game mới.
+Dependency là mũi tên đứt; không có kế thừa giữa các tầng.
+Không biểu diễn mọi thao tác như một chuỗi gọi tuyến tính.
+end note
+@enduml

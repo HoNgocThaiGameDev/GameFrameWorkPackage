@@ -15,6 +15,7 @@ namespace NebulaSoft
         private static IDailyRewardClock clock;
         private static IDailyRewardStateStore stateStore;
         private static DailyRewardSave save;
+        private static bool claimInProgress;
 
         public static bool IsInitialized => scheduleProvider != null && clock != null && stateStore != null && save != null;
         public static event Action StateChanged;
@@ -75,6 +76,7 @@ namespace NebulaSoft
 
         public static bool TryClaimToday()
         {
+            if (claimInProgress) return false;
             DailyRewardState state = GetState();
             if (!state.CanClaimToday)
                 return false;
@@ -96,15 +98,37 @@ namespace NebulaSoft
                 }
             }
 
-            for (int i = 0; i < day.Rewards.Count; i++)
-                day.Rewards[i].Apply("DailyReward");
-
-            save.LastClaimedUtcDateKey = GetTodayKey();
-            save.NextDayIndex = NormalizeDayIndex(state.CurrentDayIndex + 1);
-            save.ScheduleVersion = scheduleProvider.ScheduleVersion;
-            stateStore.Save(save);
-            StateChanged?.Invoke();
-            return true;
+            claimInProgress = true;
+            string previousDate = save.LastClaimedUtcDateKey;
+            try
+            {
+                string today = GetTodayKey();
+                if (save.PendingClaimUtcDateKey != today)
+                {
+                    save.PendingClaimUtcDateKey = today;
+                    save.PendingGrantIndex = 0;
+                }
+                for (int i = save.PendingGrantIndex; i < day.Rewards.Count; i++)
+                {
+                    day.Rewards[i].Apply("DailyReward");
+                    save.PendingGrantIndex = i + 1;
+                }
+                save.LastClaimedUtcDateKey = today;
+                save.NextDayIndex = NormalizeDayIndex(state.CurrentDayIndex + 1);
+                save.ScheduleVersion = scheduleProvider.ScheduleVersion;
+                try { stateStore.Save(save); }
+                catch (Exception exception)
+                {
+                    save.LastClaimedUtcDateKey = previousDate;
+                    save.NextDayIndex = state.CurrentDayIndex;
+                    Debug.LogException(exception);
+                    return false;
+                }
+                AnalyticsController.Events.RewardClaimed("daily_reward", "day_" + (state.CurrentDayIndex + 1));
+                NotifyStateChanged();
+                return true;
+            }
+            finally { claimInProgress = false; }
         }
 
         /// <summary>
@@ -113,14 +137,16 @@ namespace NebulaSoft
         /// </summary>
         public static bool ResetForTesting()
         {
-            if (!IsInitialized)
+            if (!IsInitialized || claimInProgress)
                 return false;
 
             save.LastClaimedUtcDateKey = string.Empty;
             save.NextDayIndex = 0;
             save.ScheduleVersion = scheduleProvider.ScheduleVersion;
+            save.PendingClaimUtcDateKey = string.Empty;
+            save.PendingGrantIndex = 0;
             stateStore.Save(save);
-            StateChanged?.Invoke();
+            NotifyStateChanged();
             return true;
         }
 
@@ -135,16 +161,14 @@ namespace NebulaSoft
             {
                 save.LastClaimedUtcDateKey = string.Empty;
                 save.NextDayIndex = 0;
-                stateStore.Save(save);
                 return;
             }
 
             int elapsedDays = (clock.UtcNow.Date - lastClaimedDate.Date).Days;
-            if (elapsedDays <= 1)
+            if (elapsedDays <= 1 || save.NextDayIndex == 0)
                 return;
 
             save.NextDayIndex = 0;
-            stateStore.Save(save);
         }
 
         private static bool IsClockBeforeLastClaim(string today)
@@ -178,7 +202,18 @@ namespace NebulaSoft
             clock = null;
             stateStore = null;
             save = null;
+            claimInProgress = false;
             StateChanged = null;
+        }
+
+        private static void NotifyStateChanged()
+        {
+            if (StateChanged == null) return;
+            foreach (Action callback in StateChanged.GetInvocationList())
+            {
+                try { callback(); }
+                catch (Exception exception) { Debug.LogException(exception); }
+            }
         }
     }
 }

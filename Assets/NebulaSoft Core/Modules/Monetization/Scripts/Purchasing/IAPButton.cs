@@ -11,107 +11,67 @@ namespace NebulaSoft
         [SerializeField] Button button;
         [SerializeField] TMP_Text priceText;
         [SerializeField] GameObject loadingObject;
-
-        [Space]
         [SerializeField] Sprite activeBackSprite;
         [SerializeField] Sprite unactiveBackSprite;
-
-        private ProductKeyType key;
+        private string key;
 
         private void Awake()
         {
-            button.onClick.AddListener(OnButtonClicked);
-            UIAudioFeedback.RegisterButton(button);
+            if (button == null) button = GetComponent<Button>();
+            if (button != null)
+            {
+                button.onClick.AddListener(OnButtonClicked);
+                UIAudioFeedback.RegisterButton(button);
+            }
         }
-
-        public void Init(ProductKeyType key)
+        private void OnEnable()
         {
-            this.key = key;
-
+            IAPManager.StateChanged += UpdateState;
             UpdateState();
         }
-
-        public void UpdateState()
+        private void OnDisable() => IAPManager.StateChanged -= UpdateState;
+        private void OnDestroy()
         {
-            UpdateState(IAPManager.GetProductData(key));
+            if (button != null) button.onClick.RemoveListener(OnButtonClicked);
         }
-
+        public void Init(ProductKeyType product) => Init(IAPManager.GetIAPItem(product)?.Key ?? IAPItem.GetLegacyKey(product));
+        public void Init(string productKey)
+        {
+            key = productKey;
+            UpdateState();
+        }
+        public void UpdateState() => UpdateState(IAPManager.GetProductData(key));
         public void UpdateState(ProductData product)
         {
-            if (loadingObject == null || priceText == null || backImage == null)
+            var item = IAPManager.GetIAPItemByKey(key);
+            bool ready = IAPManager.IsEnabled && IAPManager.IsInitialized && product != null && item != null;
+            bool busy = IAPManager.IsPurchaseInProgress || IAPManager.IsRestoreInProgress;
+            bool owned = item != null && item.ProductType != ProductType.Consumable && IAPManager.IsPurchased(key);
+            if (button != null) button.interactable = ready && !busy && !owned;
+            if (loadingObject != null) loadingObject.SetActive(IAPManager.IsInitializing || (busy && IAPManager.ActivePurchaseKey == key));
+            if (backImage != null)
             {
-                Debug.LogWarning($"[IAPButton] UI references are not assigned. Skipping UpdateState. Key: {key}");
-
-                return;
+                var sprite = ready && !owned ? activeBackSprite : unactiveBackSprite;
+                if (sprite != null) backImage.sprite = sprite;
             }
-
-            if (product != null)
-            {
-                loadingObject.SetActive(false);
-                priceText.gameObject.SetActive(true);
-
-                backImage.sprite = activeBackSprite;
-
-                IAPItem iapItem = IAPManager.GetIAPItem(key);
-#if UNITY_EDITOR
-                // Unity IAP's Editor store reports a generic $0.01 price for every
-                // product. Preview the configured USD catalog price instead.
-                if (iapItem != null)
-                {
-                    priceText.text = GetDefaultUsdPrice(iapItem);
-                    return;
-                }
-#endif
-
-                if (!string.IsNullOrWhiteSpace(product.LocalizedPriceString))
-                {
-                    priceText.text = product.GetLocalPrice();
-                }
-                else
-                {
-                    if(iapItem != null)
-                    {
-                        // This is a pre-catalog fallback only. A real Google Play
-                        // product always replaces it with localizedPriceString.
-                        priceText.text = GetDefaultUsdPrice(iapItem);
-                    }
-                    else
-                    {
-                        priceText.text = product.GetLocalPrice();
-                    }
-                }
-            }
-            else
-            {
-                SetDisabledState();
-            }
-        }
-
-        private static string GetDefaultUsdPrice(IAPItem iapItem)
-        {
-            return string.Format(CultureInfo.InvariantCulture, "${0:0.00}", iapItem.DefaultUSDPrice);
-        }
-
-        private void SetDisabledState()
-        {
-            if (loadingObject != null)
-                loadingObject.SetActive(true);
-
             if (priceText != null)
-                priceText.gameObject.SetActive(false);
-
-            if (backImage != null && unactiveBackSprite != null)
-                backImage.sprite = unactiveBackSprite;
+            {
+                priceText.gameObject.SetActive(true);
+                if (owned) priceText.text = "Owned";
+                else if (ready && !string.IsNullOrWhiteSpace(product.LocalizedPriceString)) priceText.text = product.GetLocalPrice();
+#if UNITY_EDITOR
+                else if (item != null) priceText.text = string.Format(CultureInfo.InvariantCulture, "${0:0.00}", item.DefaultUSDPrice);
+#endif
+                else priceText.text = ready ? product.GetLocalPrice() : "—";
+            }
         }
-
         private void OnButtonClicked()
         {
-            if (LeaderboardBottomNavigationController.IsNoConnectionActive())
+            if (Application.internetReachability == NetworkReachability.NotReachable)
             {
-                LeaderboardBottomNavigationController.TryShowNoConnectionPopup();
+                SystemMessage.ShowMessage("No internet connection. Please try again later.");
                 return;
             }
-
             IAPManager.BuyProduct(key);
         }
     }

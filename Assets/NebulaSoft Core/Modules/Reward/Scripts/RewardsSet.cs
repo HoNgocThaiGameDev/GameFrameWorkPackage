@@ -17,13 +17,30 @@ namespace NebulaSoft
 
         public void ApplyReward()
         {
-            if(!rewards.IsNullOrEmpty())
-            {
-                for (int i = 0; i < rewards.Count; i++)
-                    rewards[i]?.ApplyReward();
-            }
+            ApplyRewardSteps(0, null);
+            NotifyRewardReceived();
+        }
 
-            RewardRecieved?.Invoke();
+        internal void ApplyRewardSteps(int startIndex, System.Action<int> stepCompleted)
+        {
+            if (rewards == null) return;
+            for (int i = startIndex; i < rewards.Count; i++)
+            {
+                rewards[i]?.ApplyReward();
+                stepCompleted?.Invoke(i + 1);
+            }
+        }
+
+        internal void NotifyRewardReceived()
+        {
+            // UI observers must not interrupt a purchase after rewards were applied.
+            if (RewardRecieved != null)
+                foreach (SimpleCallback callback in RewardRecieved.GetInvocationList())
+                {
+                    if (callback.Target is UnityEngine.Object target && target == null) continue;
+                    try { callback(); }
+                    catch (System.Exception exception) { Debug.LogException(exception); }
+                }
         }
 
         public void RestoreReward()

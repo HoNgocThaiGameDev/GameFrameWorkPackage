@@ -128,9 +128,11 @@ namespace NebulaSoft
             return false;
         }
 
+        protected virtual bool ShouldPresentReward => true;
+
         private void OnRewardRecieved()
         {
-            if (!isInitialized) return;
+            if (!isInitialized || !ShouldPresentReward) return;
 
             void InvokeRewardCallback()
             {

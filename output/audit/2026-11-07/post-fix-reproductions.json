@@ -1,0 +1,68 @@
+{
+  "runtime": "9.0.7",
+  "boundary": "Standalone .NET; Unity, storage and SDKs are mocked",
+  "total": 10,
+  "failures": 0,
+  "results": [
+    {
+      "id": "BASE-ADS",
+      "name": "Repeated reward and close grant exactly once",
+      "passed": true,
+      "observed": "Safety assertion satisfied"
+    },
+    {
+      "id": "BASE-IAP",
+      "name": "Same successful transaction cannot grant twice",
+      "passed": true,
+      "observed": "Safety assertion satisfied"
+    },
+    {
+      "id": "BASE-DAILY",
+      "name": "Two ordinary claims on the same UTC day grant once",
+      "passed": true,
+      "observed": "Safety assertion satisfied"
+    },
+    {
+      "id": "AUD-01",
+      "name": "IAP retry after observer exception does not duplicate coins",
+      "passed": true,
+      "observed": "Safety assertion satisfied"
+    },
+    {
+      "id": "AUD-02",
+      "name": "Distinct save identities remain isolated despite a hash collision",
+      "passed": true,
+      "observed": "Safety assertion satisfied"
+    },
+    {
+      "id": "AUD-04",
+      "name": "Volume change preserves the clip\u0027s gain",
+      "passed": true,
+      "observed": "Safety assertion satisfied"
+    },
+    {
+      "id": "AUD-06",
+      "name": "Analytics can retry initialization after transient failure",
+      "passed": true,
+      "observed": "Safety assertion satisfied"
+    },
+    {
+      "id": "AUD-09",
+      "name": "Remote parser preserves braces inside JSON string values",
+      "passed": true,
+      "observed": "Safety assertion satisfied"
+    },
+    {
+      "id": "AUD-10",
+      "name": "Daily reward cannot be claimed twice through a synchronous observer",
+      "passed": true,
+      "observed": "Safety assertion satisfied"
+    },
+    {
+      "id": "AUD-11",
+      "name": "Reading a missed daily reward does not write storage repeatedly",
+      "passed": true,
+      "observed": "Safety assertion satisfied"
+    }
+  ]
+}

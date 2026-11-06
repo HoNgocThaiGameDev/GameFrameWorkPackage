@@ -1,0 +1,32 @@
+@startuml
+!include style.iuml
+top to bottom direction
+hide empty members
+class AdsModule {
+ - service : AdsService
+ + Save : AdsSaveBridge
+ + Configure(settings)
+ + Shutdown()
+}
+class AdsService
+interface IAdsService <<interface>>
+class AdsSaveBridge {
+ - service : IAdsService
+ - save : AdSave
+ + SetNoAds(bool)
+ + Tick()
+}
+class AdSave
+class SaveController
+AdsModule *-down- AdsService : tạo / Dispose
+AdsModule -down-> AdsSaveBridge : Save
+AdsService ..|> IAdsService
+AdsSaveBridge --> IAdsService : service
+AdsSaveBridge --> AdSave : save
+AdsSaveBridge ..> SaveController : GetSaveObject / mark dirty
+note bottom of AdsModule
+Application lifetime thuộc Initializer.
+Scene popup không shutdown AdsModule.
+Configure lấy provider từ settings.Provider.CreateProvider().
+end note
+@enduml

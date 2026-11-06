@@ -4,11 +4,17 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using NebulaSoft.Ads;
 
 namespace NebulaSoft
 {
     public class AdDummyController : MonoBehaviour
     {
+        public static event System.Action NoAdsOfferRequested;
+        public event System.Action InterstitialClosed;
+        public event System.Action<bool> RewardedClosed;
+        public event System.Action<BannerInfo> BannerGeometryChanged;
+        private bool usesProviderEvents;
         private GameObject bannerObject;
         private Button bannerCloseButton;
 
@@ -26,6 +32,17 @@ namespace NebulaSoft
 
         public void Init(AdsSettings settings)
         {
+            Init(settings.DummyContainer.BannerPosition, false);
+        }
+
+        public void Init(BannerPosition position)
+        {
+            Init(position, true);
+        }
+
+        private void Init(BannerPosition position, bool providerEvents)
+        {
+            usesProviderEvents = providerEvents;
             bannerRectTransform = (RectTransform)bannerObject.transform;
 
             bannerCloseButton.AddEvent(EventTriggerType.PointerDown, (data) => OnBannerCloseButtonClicked());
@@ -40,7 +57,7 @@ namespace NebulaSoft
 
             DontDestroyOnLoad(gameObject);
 
-            switch (settings.DummyContainer.BannerPosition)
+            switch (position)
             {
                 case BannerPosition.Bottom:
                     bannerRectTransform.pivot = new Vector2(0.5f, 0.0f);
@@ -97,6 +114,7 @@ namespace NebulaSoft
                 return;
 
             bannerObject.SetActive(false);
+            if (usesProviderEvents) BannerGeometryChanged?.Invoke(BannerInfo.Hidden);
         }
 
         private void LateUpdate()
@@ -123,7 +141,18 @@ namespace NebulaSoft
             lastOrientation = Screen.orientation;
             lastBannerScreenHeight = bannerScreenHeight;
 
-            AdsManager.SetBannerHeight(bannerScreenHeight);
+            if (usesProviderEvents)
+            {
+                Vector3[] corners = new Vector3[4];
+                bannerRectTransform.GetWorldCorners(corners);
+                Canvas canvas = bannerRectTransform.GetComponentInParent<Canvas>();
+                Camera camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
+                Vector2 bottom = RectTransformUtility.WorldToScreenPoint(camera, corners[0]);
+                Vector2 top = RectTransformUtility.WorldToScreenPoint(camera, corners[2]);
+                BannerGeometryChanged?.Invoke(new BannerInfo("Dummy", Mathf.RoundToInt(Mathf.Abs(top.x - bottom.x)),
+                    Mathf.RoundToInt(bannerScreenHeight), Mathf.Min(bottom.y, top.y)));
+            }
+            else AdsManager.SetBannerHeight(bannerScreenHeight);
         }
 
         public void ShowInterstitial()
@@ -135,7 +164,8 @@ namespace NebulaSoft
         {
             interstitialObject.SetActive(false);
 
-            AdsManager.OnProviderAdClosed(AdProvider.Dummy, AdType.Interstitial);
+            if (usesProviderEvents) InterstitialClosed?.Invoke();
+            else AdsManager.OnProviderAdClosed(AdProvider.Dummy, AdType.Interstitial);
         }
 
         public void ShowRewardedVideo()
@@ -147,31 +177,14 @@ namespace NebulaSoft
         {
             rewardedVideoObject.SetActive(false);
 
-            AdsManager.OnProviderAdClosed(AdProvider.Dummy, AdType.RewardedVideo);
+            if (!usesProviderEvents) AdsManager.OnProviderAdClosed(AdProvider.Dummy, AdType.RewardedVideo);
         }
 
         #region Buttons
         public void OpenNoAdsOfferButton()
         {
             HideBanner();
-
-            UINoAdsOffer noAdsOffer = FindFirstObjectByType<UINoAdsOffer>(FindObjectsInactive.Include);
-            if (noAdsOffer == null)
-            {
-                Debug.LogError("[AdDummyController]: UINoAdsOffer was not found in the scene.");
-                return;
-            }
-
-            if (noAdsOffer.Canvas == null)
-                noAdsOffer.CacheComponents();
-
-            noAdsOffer.Canvas.overrideSorting = true;
-            noAdsOffer.Canvas.sortingOrder = 1000;
-
-            if (noAdsOffer.IsPageDisplayed && !noAdsOffer.Canvas.enabled)
-                noAdsOffer.IsPageDisplayed = false;
-
-            UIController.ShowPage(noAdsOffer);
+            NoAdsOfferRequested?.Invoke();
         }
 
         private void OnBannerCloseButtonClicked()
@@ -182,23 +195,23 @@ namespace NebulaSoft
 
         public void CloseInterstitialButton()
         {
-            AdsManager.ExecuteInterstitialCallback(true);
+            if (!usesProviderEvents) AdsManager.ExecuteInterstitialCallback(true);
 
             CloseInterstitial();
         }
 
         public void CloseRewardedVideoButton()
         {
-            AdsManager.ExecuteRewardVideoCallback(false);
-
             CloseRewardedVideo();
+            if (usesProviderEvents) RewardedClosed?.Invoke(false);
+            else AdsManager.ExecuteRewardVideoCallback(false);
         }
 
         public void GetRewardButton()
         {
-            AdsManager.ExecuteRewardVideoCallback(true);
-
             CloseRewardedVideo();
+            if (usesProviderEvents) RewardedClosed?.Invoke(true);
+            else AdsManager.ExecuteRewardVideoCallback(true);
         }
 
         private void OnInterstitialCloseButtonClicked()

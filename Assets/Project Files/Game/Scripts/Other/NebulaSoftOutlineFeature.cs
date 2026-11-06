@@ -116,8 +116,10 @@ public class NebulaSoftOutlineFeature : ScriptableRendererFeature
 
         readonly System.Func<Material> getMaterial;
 
+#if !UNITY_6000_6_OR_NEWER
         RTHandle maskRT;
         RTHandle sceneCopyRT;
+#endif
 
         public OutlinePass(OutlineSettings settings, System.Func<Material> getMaterial)
         {
@@ -142,6 +144,7 @@ public class NebulaSoftOutlineFeature : ScriptableRendererFeature
         // Classic path (Execute)
         // ===========================
 
+#if !UNITY_6000_6_OR_NEWER
         [System.Obsolete("OnCameraSetup is obsolete but required for compatibility path")]
         public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
         {
@@ -202,14 +205,17 @@ public class NebulaSoftOutlineFeature : ScriptableRendererFeature
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
         }
+#endif
 
         public void DisposePass()
         {
+#if !UNITY_6000_6_OR_NEWER
             maskRT?.Release();
             maskRT = null;
 
             sceneCopyRT?.Release();
             sceneCopyRT = null;
+#endif
         }
 
 #if UNITY_2023_1_OR_NEWER

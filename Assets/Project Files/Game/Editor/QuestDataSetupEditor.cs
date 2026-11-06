@@ -14,7 +14,6 @@ namespace NebulaSoft.EditorTools
         private const string DatabasePath = DatabaseFolder + "/Quest Database.asset";
         private const string ProjectInitSettingsPath = "Assets/Project Files/Data/Project Init Settings.asset";
 
-        [MenuItem("Tools/Picture Puzzle/Quest/Create Default Quest Data")]
         public static void CreateDefaultQuestData()
         {
             QuestDatabase database = EnsureDatabase();

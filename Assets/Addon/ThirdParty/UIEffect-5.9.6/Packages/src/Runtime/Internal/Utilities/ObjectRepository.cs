@@ -1,15 +1,30 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Profiling;
 using Object = UnityEngine.Object;
 
+#if UNITY_6000_6_OR_NEWER
+using ObjectId = UnityEngine.EntityId;
+#else
+using ObjectId = System.Int32;
+#endif
+
 namespace Coffee.UIEffectInternal
 {
     internal class ObjectRepository<T> where T : Object
     {
+        private static ObjectId GetObjectId(UnityEngine.Object value)
+        {
+#if UNITY_6000_6_OR_NEWER
+            return value.GetEntityId();
+#else
+            return value.GetInstanceID();
+#endif
+        }
+
         private readonly Dictionary<Hash128, Entry> _cache = new Dictionary<Hash128, Entry>(8);
-        private readonly Dictionary<int, Hash128> _objectKey = new Dictionary<int, Hash128>(8);
+        private readonly Dictionary<ObjectId, Hash128> _objectKey = new Dictionary<ObjectId, Hash128>(8);
         private readonly string _name;
         private readonly Action<T> _onRelease;
         private readonly Stack<Entry> _pool = new Stack<Entry>(8);
@@ -130,7 +145,7 @@ namespace Coffee.UIEffectInternal
             newEntry.hash = hash;
             newEntry.reference = 1;
             _cache[hash] = newEntry;
-            _objectKey[newObject.GetInstanceID()] = hash;
+            _objectKey[GetObjectId(newObject)] = hash;
             Logging.Log(_name, $"<color=#03c700>Add</color>(total#{count}): {newEntry}");
             Release(ref obj);
             obj = newObject;
@@ -146,7 +161,7 @@ namespace Coffee.UIEffectInternal
 
             // Find and release the entry.
             Profiler.BeginSample("(COF)[ObjectRepository] Release");
-            var id = obj.GetInstanceID();
+            var id = GetObjectId(obj);
             if (_objectKey.TryGetValue(id, out var hash)
                 && _cache.TryGetValue(hash, out var entry))
             {
@@ -175,7 +190,7 @@ namespace Coffee.UIEffectInternal
 
             Profiler.BeginSample("(COF)[ObjectRepository] Remove");
             _cache.Remove(entry.hash);
-            _objectKey.Remove(entry.storedObject.GetInstanceID());
+            _objectKey.Remove(GetObjectId(entry.storedObject));
             _pool.Push(entry);
             entry.reference = 0;
             Logging.Log(_name, $"<color=#f29e03>Remove</color>(total#{_cache.Count}): {entry}");

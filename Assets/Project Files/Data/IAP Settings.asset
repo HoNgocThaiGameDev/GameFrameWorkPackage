@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f28faf74e3de2b4bb5f8724582e5ceb, type: 3}
+  m_Name: IAP Settings
+  m_EditorClassIdentifier:
+  isEnabled: 1
+  useFakeStore: 0
+  fakeStoreMode: 0
+  storeItems:
+  - androidID: com.nebulasoftstudio.cuteanimalsliderescue.no_ads
+    iOSID: com.nebulasoftstudio.cuteanimalsliderescue.no_ads
+    key: no_ads
+    displayName: No Ads
+    useLegacyKey: 1
+    productKeyType: 0
+    productType: 1
+    defaultUSDPrice: 5.99
+    rewardsSet: {fileID: 11400000, guid: 826371c02dd12994284ab8257ca81e40, type: 2}
+  - androidID: com.nebulasoftstudio.cuteanimalsliderescue.starter_pack
+    iOSID: com.nebulasoftstudio.cuteanimalsliderescue.starter_pack
+    key: starter_pack
+    displayName: Starter Pack
+    useLegacyKey: 1
+    productKeyType: 1
+    productType: 1
+    defaultUSDPrice: 11.99
+    rewardsSet: {fileID: 11400000, guid: 4b91f3d8740d818469345ceb6708cf33, type: 2}
+  - androidID: com.nebulasoftstudio.cuteanimalsliderescue.coins_150
+    iOSID: com.nebulasoftstudio.cuteanimalsliderescue.coins_150
+    key: coins_small
+    displayName: Coins Small
+    useLegacyKey: 1
+    productKeyType: 2
+    productType: 0
+    defaultUSDPrice: 0.99
+    rewardsSet: {fileID: 11400000, guid: 5f9ad4d9f5b58fd4683568f8544852ed, type: 2}
+  - androidID: com.nebulasoftstudio.cuteanimalsliderescue.coins_450
+    iOSID: com.nebulasoftstudio.cuteanimalsliderescue.coins_450
+    key: coins_medium
+    displayName: Coins Medium
+    useLegacyKey: 1
+    productKeyType: 3
+    productType: 0
+    defaultUSDPrice: 2.49
+    rewardsSet: {fileID: 11400000, guid: 594ea6a3c4257c046ab50764ebada307, type: 2}
+  - androidID: com.nebulasoftstudio.cuteanimalsliderescue.coins_1000
+    iOSID: com.nebulasoftstudio.cuteanimalsliderescue.coins_1000
+    key: coins_big
+    displayName: Coins Big
+    useLegacyKey: 1
+    productKeyType: 4
+    productType: 0
+    defaultUSDPrice: 4.99
+    rewardsSet: {fileID: 11400000, guid: 3ffa6b32851a8614ebda6128d7f71bb4, type: 2}
+  - androidID: com.nebulasoftstudio.cuteanimalsliderescue.powerup_pack
+    iOSID: com.nebulasoftstudio.cuteanimalsliderescue.powerup_pack
+    key: powerup_pack
+    displayName: Powerup Pack
+    useLegacyKey: 1
+    productKeyType: 5
+    productType: 0
+    defaultUSDPrice: 8.99
+    rewardsSet: {fileID: 11400000, guid: 19e24ec04eb07094c941b4cec6621029, type: 2}

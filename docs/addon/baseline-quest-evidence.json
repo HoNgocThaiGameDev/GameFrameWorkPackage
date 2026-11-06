@@ -1,0 +1,14 @@
+[
+  {
+    "beforePath": "Assets/Project Files/Data/Quest/Quest Database.asset",
+    "afterPath": "Assets/Project Files/Data/Quest/Quest Database.asset",
+    "unchanged": true,
+    "sha256": "dd54a23f47f096eff8e44ca0c62682b53c03ec3cf6184c0e90a43283c424946e"
+  },
+  {
+    "beforePath": "Assets/Addon/UI/Prefabs/Elements/QuestElement.prefab",
+    "afterPath": "Assets/Addon/UI/Prefabs/Quests/QuestElement.prefab",
+    "unchanged": true,
+    "sha256": "02ca58f0a8826f917b5d85355ee4c85916abe113c8261604f5e4c253d90a76e8"
+  }
+]

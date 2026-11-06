@@ -41,8 +41,10 @@ namespace VoxelBusters.CoreLibrary
                 case TextureFormat.BGRA32:
                 case TextureFormat.RGBAHalf:
                 case TextureFormat.RGBAFloat:
+#if !UNITY_6_1_OR_NEWER
                 case TextureFormat.PVRTC_RGBA2:
                 case TextureFormat.PVRTC_RGBA4:
+#endif
                     mimeType = MimeType.kPNGImage;
                     return texture.EncodeToPNG();
 

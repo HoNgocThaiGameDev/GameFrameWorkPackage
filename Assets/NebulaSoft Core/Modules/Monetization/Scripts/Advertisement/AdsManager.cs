@@ -1,1042 +1,276 @@
-﻿#pragma warning disable 0649
-#pragma warning disable 0162
-
-using UnityEngine;
-using System.Collections.Generic;
-using System.Collections;
+using System;
 using System.Collections.Concurrent;
-using UnityEngine.SceneManagement;
+using System.Threading.Tasks;
+using NebulaSoft.Ads;
+using UnityEngine;
 
 namespace NebulaSoft
 {
-    /// <summary>
-    /// The portion of the display occupied by the currently visible banner.
-    /// All values are expressed in the provider's display pixels, with <see cref="TopEdge"/>
-    /// measured from the bottom of the display. This keeps UI layout independent from the
-    /// banner provider while still preserving the provider's real rendered size.
-    /// </summary>
     public struct BannerLayoutInfo
     {
-        public static readonly BannerLayoutInfo Hidden = new BannerLayoutInfo(
-            AdProvider.Disable,
-            false,
-            Vector2Int.zero,
-            0f);
-
+        public static readonly BannerLayoutInfo Hidden = new BannerLayoutInfo(AdProvider.Disable, false, Vector2Int.zero, 0);
         public AdProvider Provider { get; }
         public bool IsVisible { get; }
         public Vector2Int PixelSize { get; }
         public float TopEdge { get; }
-        public float Height => IsVisible ? PixelSize.y : 0f;
-
+        public float Height => IsVisible ? PixelSize.y : 0;
         public BannerLayoutInfo(AdProvider provider, bool isVisible, Vector2Int pixelSize, float topEdge)
         {
             Provider = provider;
             IsVisible = isVisible && pixelSize.x > 0 && pixelSize.y > 0;
-            PixelSize = IsVisible
-                ? new Vector2Int(Mathf.Max(1, pixelSize.x), Mathf.Max(1, pixelSize.y))
-                : Vector2Int.zero;
-            TopEdge = IsVisible ? Mathf.Max(PixelSize.y, topEdge) : 0f;
+            PixelSize = IsVisible ? pixelSize : Vector2Int.zero;
+            TopEdge = IsVisible ? Mathf.Max(pixelSize.y, topEdge) : 0;
         }
     }
 
+    /// <summary>Compatibility facade. New gameplay receives IAdsService; SDK selection belongs to AdsModuleSettings.</summary>
     [StaticUnload]
-    [Define("MODULE_ADMOB", "GoogleMobileAds.Api.MobileAds", "GoogleMobileAds.Unity.dll")]
-    [Define("MODULE_ADSKIT", "VoxelBusters.AdsKit.AdsManager", "Assets/Plugins/VoxelBusters/AdsKit")]
-    [Define("MODULE_UNITYADS", "UnityEngine.Advertisements.Advertisement", "Packages/com.unity.ads")]
-    [Define("MODULE_LEVELPLAY", "Unity.Services.LevelPlay.LevelPlay", "Packages/com.unity.services.levelplay")]
     public static class AdsManager
     {
-        private const int DEFAULT_BANNER_HEIGHT = 0;
-        private const int INIT_ATTEMPTS_AMOUNT = 30;
-
-        private const double FORCED_AD_DISABLED_FOREVER = -1;
-        private const string FIRST_LAUNCH_PREFS = "FIRST_LAUNCH";
-
-        private static AdProviderHandler[] AD_PROVIDERS;
-
-        private static bool isModuleInitialized;
-
+        private static AdsModule module;
+        private static AdsModuleSettings configuration;
         private static AdsSettings settings;
+        private static bool bannerActive = true, remoteBannerEnabled = true, remoteInterstitialEnabled = true;
+        private static bool legacyShowPending;
+        private static double nextInterstitial;
+        private static float interstitialDelay;
+        private static readonly ConcurrentQueue<SimpleCallback> callbacks = new ConcurrentQueue<SimpleCallback>();
         public static AdsSettings Settings => settings;
-
-        private static double lastInterstitialTime;
-
-        private static AdProviderHandler.AdvertisementCallback rewardedVideoCallback;
-        private static AdProviderHandler.AdvertisementCallback interstitalCallback;
-
-        private static readonly ConcurrentQueue<SimpleCallback> mainThreadEvents = new ConcurrentQueue<SimpleCallback>();
-
-        private static bool isFirstAdLoaded = false;
-        private static bool waitingForRewardVideoCallback;
-
-        private static bool isBannerActive = true;
-        public static bool IsBannerActive => isBannerActive;
-
-        private static float bannerHeight = DEFAULT_BANNER_HEIGHT;
-        public static float BannerHeight => bannerHeight;
-
-        private static BannerLayoutInfo bannerLayout = BannerLayoutInfo.Hidden;
-        public static BannerLayoutInfo BannerLayout => bannerLayout;
-
-        private static Coroutine loadingCoroutine;
-        private static TweenCase delayTweenCase;
-
-        private static Dictionary<AdProvider, AdProviderHandler> advertisingActiveModules = new Dictionary<AdProvider, AdProviderHandler>();
-
-        private static float intFirstStartDelay;
-        private static float intStartDelay;
-        private static float intShowingDelay;
-
-        // Events
-        public static event SimpleCallback ForcedAdDisabled;
-        /// <summary>Raised when the permanent No Ads entitlement changes.</summary>
-        public static event System.Action<bool> NoAdsEntitlementChanged;
-        /// <summary>Raised once when a rewarded video grants its reward to the player.</summary>
-        public static event SimpleCallback RewardedVideoRewarded;
-        /// <summary>Raised whenever a banner's visible size or placement changes.</summary>
-        public static event System.Action<BannerLayoutInfo> BannerLayoutChanged;
-
+        public static IAdsService Service => module != null ? module.Service : null;
+        public static bool IsBannerActive => bannerActive;
+        public static BannerLayoutInfo BannerLayout { get; private set; } = BannerLayoutInfo.Hidden;
+        public static float BannerHeight => BannerLayout.Height;
+        public static event SimpleCallback Configured, Initialized, ForcedAdDisabled, RewardedVideoRewarded, ErrorMessageRequested;
+        public static event Action<bool> NoAdsEntitlementChanged;
+        public static event Action<BannerLayoutInfo> BannerLayoutChanged;
+        public static event Action<bool, string> LoadingPresentationChanged;
+        public static event Action<string, bool> AnalyticsRequested;
         public static event AdsModuleCallback AdProviderInitialized;
-        public static event AdsEventsCallback AdLoaded;
-        public static event AdsEventsCallback AdDisplayed;
-        public static event AdsEventsCallback AdClosed;
-
+        public static event AdsEventsCallback AdLoaded, AdDisplayed, AdClosed;
         public static AdsBoolCallback InterstitialConditions;
+        public static AdsBoolCallback RewardedVideoConditions;
 
-        private static AdSave save;
+        public static void ConfigureModule(AdsModuleSettings moduleSettings)
+        {
+            if (module == null) configuration = moduleSettings;
+        }
 
-        #region Initialize
         public static void Init(MonetizationSettings monetizationSettings)
         {
-            if (isModuleInitialized)
+            if (module != null) return;
+            settings = monetizationSettings != null ? monetizationSettings.AdsSettings : null;
+            if (configuration == null && settings != null) configuration = settings.ModuleSettings;
+            if (configuration == null || !configuration.IsEnabled) return;
+            if (!SaveController.IsSaveLoaded || Initializer.GameObject == null)
+            { Debug.LogError("[Ads]: Initialize Save and Initializer before Ads."); return; }
+            var errors = configuration.ValidateSettings();
+            if (errors.Count > 0)
+            { Debug.LogError("[Ads]: Invalid configuration:\n" + string.Join("\n", errors), configuration); return; }
+            try
             {
-                Debug.LogWarning("[AdsManager]: Module already exists!");
-
-                return;
-            }
-
-            isModuleInitialized = true;
-            isFirstAdLoaded = false;
-
-            settings = monetizationSettings.AdsSettings;
-
-            intFirstStartDelay = settings.InterstitialFirstStartDelay;
-            intStartDelay = settings.InterstitialStartDelay;
-            intShowingDelay = settings.InterstitialShowingDelay;
-
-            AdsRemoteConfigData remoteConfigData = RemoteConfigController.TryGetConfig<AdsRemoteConfigData>("ads");
-            if (remoteConfigData != null)
-            {
-                intFirstStartDelay = remoteConfigData.intFSDelay;
-                intStartDelay = remoteConfigData.intSDelay;
-                intShowingDelay = remoteConfigData.intDelay;
-
-                if(!remoteConfigData.useBanner)
-                    settings.DisableBanner();
-
-                if (!remoteConfigData.useInterstitials)
-                    settings.DisableInterstitial();
-            }
-
-            save = SaveController.GetSaveObject<AdSave>("advertisement_forced_ad");
-
-            if (settings == null)
-            {
-                Debug.LogError("[AdsManager]: Settings don't exist!");
-
-                return;
-            }
-
-            AD_PROVIDERS = GetProviders();
-
-            if (!PlayerPrefs.HasKey(FIRST_LAUNCH_PREFS))
-            {
-                lastInterstitialTime = Time.time + intFirstStartDelay;
-
-                PlayerPrefs.SetInt(FIRST_LAUNCH_PREFS, 1);
-            }
-            else
-            {
-                lastInterstitialTime = Time.time + intStartDelay;
-            }
-
-            // Check if ad-free period has expired and send analytics event only once
-            if (save.ForcedAdDisabledUntil != 0 && save.ForcedAdDisabledUntil != FORCED_AD_DISABLED_FOREVER && IsForcedAdEnabled())
-            {
-                AnalyticsController.TrackEvent(AnalyticsEventType.AdFreePeriodExpired);
-
-                save.ForcedAdDisabledUntil = 0;
-            }
-
-            Initializer.GameObject.AddComponent<AdsManager.AdEventExecutor>();
-
-            advertisingActiveModules = new Dictionary<AdProvider, AdProviderHandler>();
-            for (int i = 0; i < AD_PROVIDERS.Length; i++)
-            {
-                if (IsModuleEnabled(AD_PROVIDERS[i].ProviderType))
+                module = Initializer.GameObject.AddComponent<AdsModule>();
+                module.Configure(configuration);
+                Service.StatusChanged += OnStatus;
+                Service.AdEvent += OnAdEvent;
+                Service.BannerChanged += OnBanner;
+                module.Save.NoAdsChanged += OnNoAdsChanged;
+                module.Save.ForcedAdsDisabled += OnForcedAdsDisabled;
+                module.Save.ForcedAdsAvailabilityChanged += OnForcedAdsAvailabilityChanged;
+                interstitialDelay = settings != null ? settings.InterstitialShowingDelay : 0;
+                bool firstLaunch = !PlayerPrefs.HasKey("FIRST_LAUNCH");
+                float initialDelay = settings == null ? 0 : firstLaunch ? settings.InterstitialFirstStartDelay : settings.InterstitialStartDelay;
+                if (firstLaunch) PlayerPrefs.SetInt("FIRST_LAUNCH", 1);
+                var remote = RemoteConfigController.TryGetConfig<AdsRemoteConfigData>("ads");
+                if (remote != null)
                 {
-                    AD_PROVIDERS[i].LinkSettings(Monetization.Settings);
-
-                    advertisingActiveModules.Add(AD_PROVIDERS[i].ProviderType, AD_PROVIDERS[i]);
+                    remoteBannerEnabled = remote.useBanner;
+                    remoteInterstitialEnabled = remote.useInterstitials;
+                    interstitialDelay = remote.intDelay;
+                    initialDelay = firstLaunch ? remote.intFSDelay : remote.intSDelay;
                 }
+                SetInterstitialDelayTime(initialDelay);
+                Configured?.Invoke();
+                InitializeProvider();
             }
-
-            if (Monetization.VerboseLogging)
+            catch (Exception exception)
             {
-                if (settings.BannerType != AdProvider.Disable && !advertisingActiveModules.ContainsKey(settings.BannerType))
-                    Debug.LogWarning("[AdsManager]: Banner type (" + settings.BannerType + ") is selected, but isn't active!");
-
-                if (settings.InterstitialType != AdProvider.Disable && !advertisingActiveModules.ContainsKey(settings.InterstitialType))
-                    Debug.LogWarning("[AdsManager]: Interstitial type (" + settings.InterstitialType + ") is selected, but isn't active!");
-
-                if (settings.RewardedVideoType != AdProvider.Disable && !advertisingActiveModules.ContainsKey(settings.RewardedVideoType))
-                    Debug.LogWarning("[AdsManager]: Rewarded Video type (" + settings.RewardedVideoType + ") is selected, but isn't active!");
-            }
-
-            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
-            SceneManager.activeSceneChanged += OnActiveSceneChanged;
-
-            FirebaseNoAdsEntitlementSync.ApplyPendingCloudState();
-            InitializeModules(settings.LoadAdsOnStart);
-        }
-
-        private static async void InitializeModules(bool loadAds)
-        {
-            // Loop through all the providers and initialize them asynchronously
-            foreach (AdProviderHandler providerHandler in advertisingActiveModules.Values)
-            {
-                Debug.Log($"[AdsManager]: {providerHandler.ProviderType} is trying to initialize!");
-
-                bool isInitialized = await providerHandler.InitAsync();
-
-                if (isInitialized)
-                {
-                    if (Monetization.VerboseLogging)
-                        Debug.Log($"[AdsManager]: {providerHandler.ProviderType} initialized successfully.");
-                }
-                else
-                {
-                    Debug.LogError($"[AdsManager]: {providerHandler.ProviderType} failed to initialize.");
-                }
-            }
-
-            if (loadAds)
-            {
-                TryToLoadFirstAds();
-            }
-        }
-        #endregion
-
-        private static void Update()
-        {
-            if (!isModuleInitialized)
-                return;
-
-            while (mainThreadEvents.TryDequeue(out var a))
-            {
-                try
-                {
-                    a?.Invoke();
-                }
-                catch (System.Exception ex)
-                {
-                    Debug.LogException(ex);
-                }
+                Debug.LogException(exception);
+                if (module != null) { module.Shutdown(); UnityEngine.Object.Destroy(module); module = null; }
             }
         }
 
-        public static void TryToLoadFirstAds()
+        private static async void InitializeProvider()
         {
-            if (loadingCoroutine == null)
-            {
-                Debug.Log("[AdsManager]: Loading first ads..");
-
-                loadingCoroutine = Tween.InvokeCoroutine(TryToLoadAdsCoroutine());
-            }
+            var owner = module;
+            bool ready = await owner.InitializeAsync();
+            if (!ready || module != owner || owner.Service == null) return;
+            if (settings == null || settings.LoadAdsOnStart) TryToLoadFirstAds();
         }
 
-        private static IEnumerator TryToLoadAdsCoroutine()
-        {
-            int initAttemps = 0;
-
-            yield return new WaitForSeconds(1.0f);
-
-            while (!isFirstAdLoaded && initAttemps < INIT_ATTEMPTS_AMOUNT)
-            {
-                if (LoadFirstAds())
-                    break;
-
-                yield return new WaitForSeconds(1.0f * (initAttemps + 1));
-
-                initAttemps++;
-            }
-
-            if (Monetization.VerboseLogging)
-                Debug.Log("[AdsManager]: First ads have loaded!");
-        }
-
-        private static bool LoadFirstAds()
-        {
-            if (!isModuleInitialized)
-                return false;
-
-            if (isFirstAdLoaded)
-                return true;
-            
-            bool isRewardedVideoModuleInititalized = AdsManager.IsModuleInititalized(AdsManager.Settings.RewardedVideoType);
-            bool isInterstitialModuleInitialized = AdsManager.IsModuleInititalized(AdsManager.Settings.InterstitialType);
-            bool isBannerModuleInitialized = AdsManager.IsModuleInititalized(AdsManager.Settings.BannerType);
-
-            bool isRewardedVideoActive = AdsManager.Settings.RewardedVideoType != AdProvider.Disable;
-            bool isInterstitialActive = AdsManager.Settings.InterstitialType != AdProvider.Disable;
-            bool isBannerActive = AdsManager.Settings.BannerType != AdProvider.Disable;
-
-            if ((!isRewardedVideoActive || isRewardedVideoModuleInititalized) && (!isInterstitialActive || isInterstitialModuleInitialized) && (!isBannerActive || isBannerModuleInitialized))
-            {
-                if (isRewardedVideoActive)
-                    AdsManager.RequestRewardBasedVideo();
-
-                bool isForcedAdEnabled = AdsManager.IsForcedAdEnabled();
-                if (isInterstitialActive && isForcedAdEnabled)
-                    AdsManager.RequestInterstitial();
-
-                if (isBannerActive && isForcedAdEnabled)
-                    AdsManager.ShowBanner();
-
-                isFirstAdLoaded = true;
-
-                return true;
-            }
-
-            return false;
-        }
-
-        public static void CallEventInMainThread(SimpleCallback callback)
-        {
-            if (callback != null)
-            {
-                mainThreadEvents.Enqueue(callback);
-            }
-        }
-
-        public static void ShowErrorMessage()
-        {
-            SystemMessage.ShowMessage("Network error. Please try again later");
-        }
-
-        public static bool IsModuleEnabled(AdProvider advertisingModule)
-        {
-            if (!Monetization.IsActive || !isModuleInitialized)
-                return false;
-
-            if (advertisingModule == AdProvider.Disable)
-                return false;
-
-            return (Settings.BannerType == advertisingModule || Settings.InterstitialType == advertisingModule || Settings.RewardedVideoType == advertisingModule);
-        }
-
-        public static AdProviderHandler GetAdProvider(AdProvider adProvider)
-        {
-            if(advertisingActiveModules.ContainsKey(adProvider))
-            {
-                return advertisingActiveModules[adProvider];
-            }
-
-            return null;
-        }
-
-        public static bool IsModuleActive(AdProvider advertisingModule)
-        {
-            return advertisingActiveModules.ContainsKey(advertisingModule);
-        }
-
-        public static bool IsModuleInititalized(AdProvider advertisingModule)
-        {
-            if (advertisingActiveModules.ContainsKey(advertisingModule))
-            {
-                return advertisingActiveModules[advertisingModule].IsInitialized;
-            }
-
-            return false;
-        }
-
-        #region Interstitial
-        public static bool IsInterstitialLoaded()
-        {
-            if (!Monetization.IsActive || !isModuleInitialized)
-            {
-                Debug.LogWarning("[IAP Manager]: Mobile monetization is disabled!");
-
-                return false;
-            }
-
-            AdProvider advertisingModules = settings.InterstitialType;
-
-            if (!IsForcedAdEnabled() || !IsModuleActive(advertisingModules))
-                return false;
-
-            return advertisingActiveModules[advertisingModules].IsInterstitialLoaded();
-        }
-
-        public static void RequestInterstitial()
-        {
-            if (!Monetization.IsActive || !isModuleInitialized)
-            {
-                Debug.LogWarning("[IAP Manager]: Mobile monetization is disabled!");
-
-                return;
-            }
-
-            AdProvider advertisingModules = settings.InterstitialType;
-
-            if (!IsForcedAdEnabled() || !IsModuleActive(advertisingModules) || !advertisingActiveModules[advertisingModules].IsInitialized || advertisingActiveModules[advertisingModules].IsInterstitialLoaded())
-                return;
-
-            advertisingActiveModules[advertisingModules].RequestInterstitial();
-        }
+        private static AdPlacement Placement(AdFormat format) => configuration == null ? null :
+            format == AdFormat.Banner ? configuration.Banner : format == AdFormat.Interstitial ? configuration.Interstitial : configuration.Rewarded;
+        private static bool Ready(AdFormat format) => Service != null && Service.GetState(Placement(format)) == AdState.Ready;
+        public static bool IsInterstitialLoaded() => remoteInterstitialEnabled && IsForcedAdEnabled() && Ready(AdFormat.Interstitial);
+        public static bool IsRewardBasedVideoLoaded() => Ready(AdFormat.Rewarded);
+        public static void RequestInterstitial() { if (remoteInterstitialEnabled) Service?.Load(Placement(AdFormat.Interstitial)); }
+        public static void RequestRewardBasedVideo() => Service?.Load(Placement(AdFormat.Rewarded));
+        public static void TryToLoadFirstAds() { RequestRewardBasedVideo(); RequestInterstitial(); ShowBanner(); }
 
         public static void ShowInterstitial(AdProviderHandler.AdvertisementCallback callback, string analyticsEvent = "Default", bool ignoreConditions = false)
         {
-            AdProvider advertisingModules = settings.InterstitialType;
-
-            interstitalCallback = callback;
-            interstitalCallback += (result) =>
-            {
-                if (string.IsNullOrEmpty(analyticsEvent))
-                    analyticsEvent = "Default";
-
-                AnalyticsController.OnInterstitialDisplayed(analyticsEvent);
-            };
-
-            if (!Monetization.IsActive || !isModuleInitialized)
-            {
-                Debug.LogWarning("[IAP Manager]: Mobile monetization is disabled!");
-
-                ExecuteInterstitialCallback(false);
-
-                return;
-            }
-
-            if (!IsForcedAdEnabled() || !IsModuleActive(advertisingModules) || (!ignoreConditions && (!CheckInterstitialTime() || !CheckExtraInterstitialCondition())) || !advertisingActiveModules[advertisingModules].IsInitialized || !advertisingActiveModules[advertisingModules].IsInterstitialLoaded())
-            {
-                ExecuteInterstitialCallback(false);
-
-                return;
-            }
-
-            delayTweenCase.KillActive();
-
-            if (settings.LoadingAdDuration > 0)
-            {
-                SystemMessage.ShowLoadingPanel();
-                SystemMessage.ChangeLoadingMessage(settings.LoadingMessage);
-
-                delayTweenCase.KillActive();
-                delayTweenCase = Tween.DelayedCall(settings.LoadingAdDuration, () =>
+            if (!remoteInterstitialEnabled || !ignoreConditions && (Time.realtimeSinceStartupAsDouble < nextInterstitial || !CheckExtraInterstitialCondition()))
+            { callback?.Invoke(false); return; }
+            ShowLegacy(AdFormat.Interstitial, callback, analyticsEvent, false);
+        }
+        public static void ShowRewardBasedVideo(AdProviderHandler.AdvertisementCallback callback, string analyticsEvent = "Default", bool showErrorMessage = true)
+        {
+            if (RewardedVideoConditions != null)
+                foreach (AdsBoolCallback condition in RewardedVideoConditions.GetInvocationList())
                 {
-                    advertisingActiveModules[advertisingModules].ShowInterstitial(callback);
+                    try { if (condition()) continue; }
+                    catch (Exception exception) { Debug.LogException(exception); }
+                    callback?.Invoke(false);
+                    return;
+                }
+            ShowLegacy(AdFormat.Rewarded, callback, analyticsEvent, showErrorMessage);
+        }
 
-                    SystemMessage.HideLoadingPanel();
-                }, unscaledTime: true);
-            }
-            else
+        private static async void ShowLegacy(AdFormat format, AdProviderHandler.AdvertisementCallback callback, string analyticsEvent, bool showError)
+        {
+            if (Service == null || legacyShowPending || Service.IsFullscreenBusy)
+            { callback?.Invoke(false); return; }
+            var owner = module;
+            legacyShowPending = true;
+            bool loadingShown = false, completed = false;
+            try
             {
-                advertisingActiveModules[advertisingModules].ShowInterstitial(callback);
+                if (settings != null && settings.LoadingAdDuration > 0 && Ready(format))
+                {
+                    loadingShown = true;
+                    LoadingPresentationChanged?.Invoke(true, settings.LoadingMessage);
+                    await Task.Delay(Mathf.RoundToInt(settings.LoadingAdDuration * 1000));
+                    loadingShown = false;
+                    LoadingPresentationChanged?.Invoke(false, null);
+                }
+                if (module != owner || owner.Service == null) return;
+                AnalyticsRequested?.Invoke(analyticsEvent, format == AdFormat.Rewarded);
+                var result = await owner.Service.ShowAsync(Placement(format));
+                if (module != owner || owner.Service == null) return;
+                legacyShowPending = false;
+                if (showError && (result.Outcome == AdOutcome.NotReady || result.Outcome == AdOutcome.Failed)) ShowErrorMessage();
+                completed = true;
+                callback?.Invoke(result.Succeeded);
             }
-        }
-
-        public static void ExecuteInterstitialCallback(bool result)
-        {
-            if (interstitalCallback != null)
+            catch (Exception exception)
             {
-                CallEventInMainThread(() => interstitalCallback.Invoke(result));
+                Debug.LogException(exception);
+                if (!completed && module == owner) callback?.Invoke(false);
+            }
+            finally
+            {
+                if (module == owner)
+                {
+                    legacyShowPending = false;
+                    if (loadingShown) LoadingPresentationChanged?.Invoke(false, null);
+                }
             }
         }
 
-        public static void SetInterstitialDelayTime(float time)
-        {
-            lastInterstitialTime = Time.time + time;
-        }
-
-        public static void ResetInterstitialDelayTime()
-        {
-            lastInterstitialTime = Time.time + intShowingDelay;
-        }
-
-        private static bool CheckInterstitialTime()
-        {
-            if (Monetization.VerboseLogging)
-                Debug.Log("[AdsManager]: Interstitial Time: " + lastInterstitialTime + "; Time: " + Time.time);
-
-            return lastInterstitialTime < Time.time;
-        }
-
+        public static void SetInterstitialDelayTime(float time) => nextInterstitial = Time.realtimeSinceStartupAsDouble + Mathf.Max(0, time);
+        public static void ResetInterstitialDelayTime() => SetInterstitialDelayTime(interstitialDelay);
         public static bool CheckExtraInterstitialCondition()
         {
             if (InterstitialConditions != null)
-            {
-                bool state = true;
-
-                System.Delegate[] listDelegates = InterstitialConditions.GetInvocationList();
-                for (int i = 0; i < listDelegates.Length; i++)
-                {
-                    if (!(bool)listDelegates[i].DynamicInvoke())
-                    {
-                        state = false;
-
-                        break;
-                    }
-                }
-
-                if (Monetization.VerboseLogging)
-                    Debug.Log("[AdsManager]: Extra condition interstitial state: " + state);
-
-                return state;
-            }
-
+                foreach (AdsBoolCallback condition in InterstitialConditions.GetInvocationList()) if (!condition()) return false;
             return true;
         }
-        #endregion
-
-        #region Rewarded Video
-        public static bool IsRewardBasedVideoLoaded()
-        {
-            if (!Monetization.IsActive || !isModuleInitialized)
-            {
-                Debug.LogWarning("[IAP Manager]: Mobile monetization is disabled!");
-
-                return false;
-            }
-
-            AdProvider advertisingModule = settings.RewardedVideoType;
-
-            if (!IsModuleActive(advertisingModule) || !advertisingActiveModules[advertisingModule].IsInitialized)
-                return false;
-
-            return advertisingActiveModules[advertisingModule].IsRewardedVideoLoaded();
-        }
-
-        public static void RequestRewardBasedVideo()
-        {
-            if (!Monetization.IsActive || !isModuleInitialized)
-            {
-                Debug.LogWarning("[IAP Manager]: Mobile monetization is disabled!");
-
-                return;
-            }
-
-            AdProvider advertisingModule = settings.RewardedVideoType;
-
-            if (!IsModuleActive(advertisingModule) || !advertisingActiveModules[advertisingModule].IsInitialized || advertisingActiveModules[advertisingModule].IsRewardedVideoLoaded())
-                return;
-
-            advertisingActiveModules[advertisingModule].RequestRewardedVideo();
-        }
-
-        public static void ShowRewardBasedVideo(AdProviderHandler.AdvertisementCallback callback, string analyticsEvent = "Default", bool showErrorMessage = true)
-        {
-            rewardedVideoCallback = callback;
-            waitingForRewardVideoCallback = true;
-
-            if (!Monetization.IsActive || !isModuleInitialized)
-            {
-                Debug.LogWarning("[IAP Manager]: Mobile monetization is disabled!");
-
-                ExecuteRewardVideoCallback(false);
-
-                return;
-            }
-
-            AdProvider advertisingModule = settings.RewardedVideoType;
-            
-            if (!IsModuleActive(advertisingModule) || !advertisingActiveModules[advertisingModule].IsInitialized || !advertisingActiveModules[advertisingModule].IsRewardedVideoLoaded())
-            {
-                ExecuteRewardVideoCallback(false);
-
-                if (showErrorMessage)
-                    ShowErrorMessage();
-
-                return;
-            }
-
-            if (string.IsNullOrEmpty(analyticsEvent))
-                analyticsEvent = "Default";
-
-            AnalyticsController.OnRVClicked(analyticsEvent);
-
-            delayTweenCase.KillActive();
-
-            if (settings.LoadingAdDuration > 0)
-            {
-                SystemMessage.ShowLoadingPanel();
-                SystemMessage.ChangeLoadingMessage(settings.LoadingMessage);
-
-                delayTweenCase.KillActive();
-                delayTweenCase = Tween.DelayedCall(settings.LoadingAdDuration, () =>
-                {
-                    advertisingActiveModules[advertisingModule].ShowRewardedVideo(callback);
-
-                    SystemMessage.HideLoadingPanel();
-                }, unscaledTime: true);
-            }
-            else
-            {
-                advertisingActiveModules[advertisingModule].ShowRewardedVideo(callback);
-            }
-        }
-
-        public static void ExecuteRewardVideoCallback(bool result)
-        {
-            if (rewardedVideoCallback != null && waitingForRewardVideoCallback)
-            {
-                AdProviderHandler.AdvertisementCallback callback = rewardedVideoCallback;
-                CallEventInMainThread(() =>
-                {
-                    if (result)
-                        RewardedVideoRewarded?.Invoke();
-
-                    callback.Invoke(result);
-                });
-
-                waitingForRewardVideoCallback = false;
-
-                if (Monetization.VerboseLogging)
-                {
-                    Debug.Log("[AdsManager]: Reward received: " + result);
-                }
-            }
-        }
-        #endregion
-
-        #region Banner
         public static void ShowBanner()
         {
-            if (!Monetization.IsActive || !isModuleInitialized)
-            {
-                Debug.LogWarning("[AdsManager]: Mobile monetization is disabled!");
-
-                return;
-            }
-
-            if (!IsBannerDisplayAllowed())
-            {
-                HideBanner();
-                return;
-            }
-
-            if (!isBannerActive) return;
-
-            AdProvider advertisingModule = settings.BannerType;
-
-            if (!IsForcedAdEnabled() || !IsModuleActive(advertisingModule) || !advertisingActiveModules[advertisingModule].IsInitialized)
-                return;
-
-            advertisingActiveModules[advertisingModule].ShowBanner();
+            if (bannerActive && remoteBannerEnabled && Service != null && UnityEngine.Object.FindFirstObjectByType<LoadingGraphics>() == null)
+                Service.ShowBanner(Placement(AdFormat.Banner));
         }
+        public static void HideBanner() => Service?.HideBanner();
+        public static void DestroyBanner() => Service?.HideBanner(true);
+        public static void EnableBanner() { bannerActive = true; ShowBanner(); }
+        public static void DisableBanner() { bannerActive = false; HideBanner(); }
+        public static float GetBannerHeight() => BannerLayout.Height;
+        public static float GetBannerTopEdge() => BannerLayout.TopEdge;
+        public static bool IsForcedAdEnabled() => module == null || module.Save.ForcedAdsEnabled;
+        public static void DisableForcedAdForever() => module?.Save.SetNoAds(true);
+        public static void DisableForcedAd(int seconds) => module?.Save.DisableFor(seconds);
+        public static void SetNoAdsEntitlement(bool noAds) => module?.Save.SetNoAds(noAds);
+        private static void OnForcedAdsDisabled() => ForcedAdDisabled?.Invoke();
+        private static void OnForcedAdsAvailabilityChanged(bool enabled) { if (enabled) ShowBanner(); }
+        private static void OnNoAdsChanged(bool noAds) { NoAdsEntitlementChanged?.Invoke(noAds); if (!noAds) ShowBanner(); }
 
-        private static void OnActiveSceneChanged(Scene previousScene, Scene nextScene)
+        private static AdProvider Provider(string id)
         {
-            if (!isModuleInitialized)
-                return;
-
-            if (IsBannerDisplayAllowed())
-            {
-                if (isBannerActive)
-                    ShowBanner();
-
-                return;
-            }
-
-            HideBanner();
+            if (Enum.TryParse(id, true, out AdProvider provider)) return provider;
+            return settings != null ? settings.BannerType : AdProvider.Disable;
         }
-
-        private static bool IsBannerDisplayAllowed()
+        private static void OnStatus(AdsStatus status)
         {
-            return Object.FindFirstObjectByType<LoadingGraphics>(FindObjectsInactive.Exclude) == null;
+            if (status != AdsStatus.Ready) return;
+            Initialized?.Invoke();
+            AdProviderInitialized?.Invoke(Provider(module.ProviderId));
         }
-
-        public static void DestroyBanner()
+        private static void OnAdEvent(AdEvent value)
         {
-            ResetBannerLayout();
-
-            if (!Monetization.IsActive || !isModuleInitialized)
-            {
-                Debug.LogWarning("[AdsManager]: Mobile monetization is disabled!");
-
-                return;
-            }
-
-            AdProvider advertisingModule = settings.BannerType;
-
-            if (!IsModuleActive(advertisingModule) || !advertisingActiveModules[advertisingModule].IsInitialized)
-                return;
-
-            advertisingActiveModules[advertisingModule].DestroyBanner();
+            var provider = Provider(value.ProviderId);
+            var format = (AdType)value.Format;
+            if (value.Kind == AdEventKind.Loaded) AdLoaded?.Invoke(provider, format);
+            else if (value.Kind == AdEventKind.RewardGranted) RewardedVideoRewarded?.Invoke();
+            else if (value.Kind == AdEventKind.Started) { AdDisplayed?.Invoke(provider, format); if (format != AdType.Banner) ResetInterstitialDelayTime(); }
+            else if (value.Kind == AdEventKind.Closed) { AdClosed?.Invoke(provider, format); if (format != AdType.Banner) ResetInterstitialDelayTime(); }
         }
-
-        public static void HideBanner()
+        private static void OnBanner(BannerInfo info)
         {
-            ResetBannerLayout();
-
-            if (!Monetization.IsActive || !isModuleInitialized)
-            {
-                Debug.LogWarning("[AdsManager]: Mobile monetization is disabled!");
-
-                return;
-            }
-
-            AdProvider advertisingModule = settings.BannerType;
-
-            if (!IsModuleActive(advertisingModule) || !advertisingActiveModules[advertisingModule].IsInitialized)
-                return;
-
-            advertisingActiveModules[advertisingModule].HideBanner();
+            BannerLayout = info.IsVisible ? new BannerLayoutInfo(Provider(info.ProviderId), true, new Vector2Int(info.Width, info.Height), info.TopEdge) : BannerLayoutInfo.Hidden;
+            BannerLayoutChanged?.Invoke(BannerLayout);
         }
-
-        public static void EnableBanner()
+        public static bool IsModuleEnabled(AdProvider provider) => configuration != null && configuration.IsEnabled &&
+            provider != AdProvider.Disable && module != null && Provider(module.ProviderId) == provider;
+        public static bool IsModuleActive(AdProvider provider) => IsModuleEnabled(provider);
+        public static bool IsModuleInititalized(AdProvider provider) => IsModuleActive(provider) && Service.Status == AdsStatus.Ready;
+        [Obsolete("Use IAdsService. Native provider access is outside the module's public API.")]
+        public static AdProviderHandler GetAdProvider(AdProvider provider) => null;
+        public static void ShowErrorMessage() => ErrorMessageRequested?.Invoke();
+        public static void CallEventInMainThread(SimpleCallback callback) { if (callback != null) callbacks.Enqueue(callback); }
+        internal static void TickCompatibility()
         {
-            if (!Monetization.IsActive || !isModuleInitialized)
-            {
-                Debug.LogWarning("[AdsManager]: Mobile monetization is disabled!");
-
-                return;
-            }
-
-            isBannerActive = true;
-
-            NotchSaveArea.Refresh(true);
-
-            ShowBanner();
+            while (callbacks.TryDequeue(out var callback))
+                try { callback(); } catch (Exception exception) { Debug.LogException(exception); }
         }
 
-        public static void DisableBanner()
-        {
-            if (!Monetization.IsActive || !isModuleInitialized)
-            {
-                Debug.LogWarning("[AdsManager]: Mobile monetization is disabled!");
-
-                return;
-            }
-
-            isBannerActive = false;
-
-            HideBanner();
-        }
-
-        public static void ResetBannerHeight()
-        {
-            ResetBannerLayout();
-        }
-
-        public static void SetBannerHeight(float height)
-        {
-            if (height <= 0f)
-            {
-                ResetBannerLayout();
-                return;
-            }
-
-            AdProvider provider = Settings != null ? Settings.BannerType : AdProvider.Disable;
-            SetBannerLayout(
-                provider,
-                new Vector2Int(Mathf.Max(1, Screen.width), Mathf.CeilToInt(height)));
-        }
-
-        /// <summary>
-        /// Sets the canonical banner layout reported by the active ad provider.
-        /// <paramref name="bottomInset"/> is the banner's actual distance from the
-        /// display bottom, not an artificial UI gap.
-        /// </summary>
-        public static void SetBannerLayout(AdProvider provider, Vector2Int pixelSize, float bottomInset = 0f)
-        {
-            if (pixelSize.x <= 0 || pixelSize.y <= 0)
-            {
-                ResetBannerLayout();
-                return;
-            }
-
-            float topEdge = Mathf.Max(0f, bottomInset) + pixelSize.y;
-            ApplyBannerLayout(new BannerLayoutInfo(provider, true, pixelSize, topEdge));
-        }
-
-        public static void ResetBannerLayout()
-        {
-            ApplyBannerLayout(BannerLayoutInfo.Hidden);
-        }
-
-        private static void ApplyBannerLayout(BannerLayoutInfo layout)
-        {
-            bool changed = bannerLayout.Provider != layout.Provider ||
-                           bannerLayout.IsVisible != layout.IsVisible ||
-                           bannerLayout.PixelSize != layout.PixelSize ||
-                           !Mathf.Approximately(bannerLayout.TopEdge, layout.TopEdge);
-
-            bannerLayout = layout;
-            bannerHeight = layout.Height;
-
-            if (!changed)
-                return;
-
-            NotchSaveArea.Refresh(true);
-            BannerLayoutChanged?.Invoke(layout);
-        }
-
-        public static float GetBannerHeight()
-        {
-            if (Settings != null && Settings.BannerType != AdProvider.Disable && IsForcedAdEnabled() && IsBannerActive && bannerLayout.IsVisible)
-            {
-                return bannerLayout.Height;
-            }
-
-            return 0.0f;
-        }
-
-        public static float GetBannerTopEdge()
-        {
-            if (Settings != null && Settings.BannerType != AdProvider.Disable && IsForcedAdEnabled() && IsBannerActive && bannerLayout.IsVisible)
-            {
-                return bannerLayout.TopEdge;
-            }
-
-            return 0.0f;
-        }
-        #endregion
-
-        #region Forced Ad
-        public static bool IsForcedAdEnabled()
-        {
-            if (save == null) return true;
-
-            if (save.ForcedAdDisabledUntil == FORCED_AD_DISABLED_FOREVER)
-                return false;
-
-            return TimeUtils.GetCurrentUnixTimestamp() >= save.ForcedAdDisabledUntil;
-        }
-
-        public static void DisableForcedAdForever()
-        {
-            DisableForcedAdInternal(FORCED_AD_DISABLED_FOREVER);
-        }
-
-        /// <summary>
-        /// Applies a restored No Ads entitlement. A false value only clears the
-        /// permanent No Ads flag; timed ad-free rewards are left intact.
-        /// </summary>
-        public static void SetNoAdsEntitlement(bool noAds)
-        {
-            if (save == null)
-                return;
-
-            if (noAds)
-            {
-                if (save.ForcedAdDisabledUntil != FORCED_AD_DISABLED_FOREVER)
-                    DisableForcedAdForever();
-
-                return;
-            }
-
-            if (save.ForcedAdDisabledUntil != FORCED_AD_DISABLED_FOREVER)
-                return;
-
-            save.ForcedAdDisabledUntil = 0;
-            SaveController.MarkAsSaveIsRequired();
-
-            if (isModuleInitialized)
-                EnableBanner();
-
-            NoAdsEntitlementChanged?.Invoke(false);
-        }
-
-        public static void DisableForcedAd(int durationSeconds)
-        {
-            if (durationSeconds < 0)
-            {
-                Debug.LogWarning("[AdsManager]: Invalid duration for ad disable: " + durationSeconds);
-
-                return;
-            }
-
-            double targetTime = TimeUtils.GetCurrentUnixTimestamp() + durationSeconds;
-            if (targetTime <= save.ForcedAdDisabledUntil)
-                return;
-
-            DisableForcedAdInternal(targetTime);
-        }
-
-        private static void DisableForcedAdInternal(double targetTime)
-        {
-            bool hadPermanentNoAds = save.ForcedAdDisabledUntil == FORCED_AD_DISABLED_FOREVER;
-
-            Debug.Log("[AdsManager]: Banners and interstitials are disabled!");
-
-            save.ForcedAdDisabledUntil = targetTime;
-
-            SaveController.MarkAsSaveIsRequired();
-
-            ResetBannerLayout();
-
-            ForcedAdDisabled?.Invoke();
-
-            DestroyBanner();
-
-            bool hasPermanentNoAds = save.ForcedAdDisabledUntil == FORCED_AD_DISABLED_FOREVER;
-            if (hadPermanentNoAds != hasPermanentNoAds)
-                NoAdsEntitlementChanged?.Invoke(hasPermanentNoAds);
-        }
-        #endregion
-
-        public static void OnProviderInitialized(AdProvider advertisingModule)
-        {
-            AdProviderInitialized?.Invoke(advertisingModule);
-        }
-
-        public static void OnProviderAdLoaded(AdProvider advertisingModule, AdType advertisingType)
-        {
-            AdLoaded?.Invoke(advertisingModule, advertisingType);
-        }
-
-        public static void OnProviderAdDisplayed(AdProvider advertisingModule, AdType advertisingType)
-        {
-            AdDisplayed?.Invoke(advertisingModule, advertisingType);
-
-            if (advertisingType == AdType.Interstitial || advertisingType == AdType.RewardedVideo)
-            {
-                ResetInterstitialDelayTime();
-            }
-        }
-
-        public static void OnProviderAdClosed(AdProvider advertisingModule, AdType advertisingType)
-        {
-            AdClosed?.Invoke(advertisingModule, advertisingType);
-
-            if (advertisingType == AdType.Interstitial || advertisingType == AdType.RewardedVideo)
-            {
-                ResetInterstitialDelayTime();
-            }
-        }
-
-        private static AdProviderHandler[] GetProviders()
-        {
-            return new AdProviderHandler[]
-            {
-                new AdDummyHandler(AdProvider.Dummy),
-
-#if MODULE_ADSKIT
-                new AdsKitAdMobHandler(AdProvider.AdMob),
-#elif MODULE_ADMOB
-                new AdMobHandler(AdProvider.AdMob),
-#endif
-
-#if MODULE_UNITYADS
-                new UnityAdsLegacyHandler(AdProvider.UnityAdsLegacy), 
-#endif
-
-#if MODULE_LEVELPLAY
-                new LevelPlayHandler(AdProvider.LevelPlay),
-#endif
-
-#if MODULE_APPLOVIN
-                new ApplovinHandler(AdProvider.Applovin),
-#endif
-            };
-        }
+        // Retained for source compatibility with retired handlers; new providers emit per-request events.
+        public static void ResetBannerHeight() => ResetBannerLayout();
+        public static void ResetBannerLayout() => OnBanner(BannerInfo.Hidden);
+        public static void SetBannerHeight(float height) => SetBannerLayout(settings != null ? settings.BannerType : AdProvider.Disable, new Vector2Int(Screen.width, Mathf.CeilToInt(height)));
+        public static void SetBannerLayout(AdProvider provider, Vector2Int pixels, float bottomInset = 0) => OnBanner(new BannerInfo(provider.ToString(), pixels.x, pixels.y, bottomInset));
+        public static void OnProviderInitialized(AdProvider provider) => AdProviderInitialized?.Invoke(provider);
+        public static void OnProviderAdLoaded(AdProvider provider, AdType type) => AdLoaded?.Invoke(provider, type);
+        public static void OnProviderAdDisplayed(AdProvider provider, AdType type) => AdDisplayed?.Invoke(provider, type);
+        public static void OnProviderAdClosed(AdProvider provider, AdType type) => AdClosed?.Invoke(provider, type);
+        [Obsolete("Providers must return per-request results through IAdsProvider.")]
+        public static void ExecuteInterstitialCallback(bool result) { }
+        [Obsolete("Providers must return per-request results through IAdsProvider.")]
+        public static void ExecuteRewardVideoCallback(bool result) { }
 
         private static void UnloadStatic()
         {
-            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
-
-            isModuleInitialized = false;
-
-            settings = null;
-            lastInterstitialTime = 0;
-
-            rewardedVideoCallback = null;
-            interstitalCallback = null;
-
-            mainThreadEvents.Clear();
-
-            isFirstAdLoaded = false;
-            waitingForRewardVideoCallback = false;
-
-            isBannerActive = true;
-            bannerHeight = DEFAULT_BANNER_HEIGHT;
-            bannerLayout = BannerLayoutInfo.Hidden;
-
-            loadingCoroutine = null;
-
-            advertisingActiveModules.Clear();
-
-            ForcedAdDisabled = null;
-            NoAdsEntitlementChanged = null;
-            RewardedVideoRewarded = null;
-            BannerLayoutChanged = null;
-
-            AdProviderInitialized = null;
-            AdLoaded = null;
-            AdDisplayed = null;
-            AdClosed = null;
-
-            InterstitialConditions = null;
-
-            save = null;
-
-            AD_PROVIDERS = null;
+            if (module != null) module.Shutdown();
+            module = null; configuration = null; settings = null;
+            legacyShowPending = false; bannerActive = true; remoteBannerEnabled = true; remoteInterstitialEnabled = true;
+            nextInterstitial = 0; interstitialDelay = 0; BannerLayout = BannerLayoutInfo.Hidden;
+            while (callbacks.TryDequeue(out _)) { }
+            Configured = null; Initialized = null; ForcedAdDisabled = null; NoAdsEntitlementChanged = null;
+            RewardedVideoRewarded = null; BannerLayoutChanged = null; ErrorMessageRequested = null;
+            LoadingPresentationChanged = null; AnalyticsRequested = null;
+            AdProviderInitialized = null; AdLoaded = null; AdDisplayed = null; AdClosed = null; InterstitialConditions = null;
+            RewardedVideoConditions = null;
         }
-
-        public delegate void AdsModuleCallback(AdProvider advertisingModules);
-        public delegate void AdsEventsCallback(AdProvider advertisingModules, AdType advertisingType);
+        public delegate void AdsModuleCallback(AdProvider provider);
+        public delegate void AdsEventsCallback(AdProvider provider, AdType type);
         public delegate bool AdsBoolCallback();
-
-        private class AdEventExecutor : MonoBehaviour
-        {
-            private void Update()
-            {
-                AdsManager.Update();
-            }
-        }
     }
 }
-
-// -----------------
-// Advertisement v1.4.2
-// -----------------
-
-// Changelog
-// v1.4.2
-// • Added EnableBanner, DisableBanner methods
-// v1.4.1
-// • Added ironSource (Unity LevelPlay) ad provider
-// v1.4
-// • Admob v9.0.0 support
-// • Better naming and code cleanup
-// • Ads callbacks replaced with simplified ones (AdLoaded, AdDisplayed, AdClosed)
-// • Removed ShowInterstitial, ShowRewardedVideo, ShowBanner methods with provider type parameter
-// • Added optional bool parameter to ShowInterstitial method. Allows to show interstitial even if conditions aren't met
-// v1.3
-// • Admob v8.1.0 support
-// • Removed IronSource provider
-// v1.2.1
-// • Some fixes in IronSourse provider
-// • Some fixes in Admob provider
-// • New interface in Admob provider
-// • Added Build Preprocessing for Admob 
-// v1.2
-// • Added IronSource provider
-// v1.1f3
-// • GDPR style rework
-// • Rewarded video error message
-// • Removed GDPR check in AdMob module
-// v1.1f2
-// • GDPR init bug fixed
-// v1.1
-// • Added first ad loader
-// • Moved IAP check to AdsManager script
-// v1.0
-// • Added documentation
-// v0.3
-// • Unity Ads fixed
-// v0.2
-// • Bug fix
-// v0.1
-// • Added basic version

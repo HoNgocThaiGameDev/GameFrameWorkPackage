@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace VoxelBusters.CoreLibrary.Editor
 {
@@ -8,37 +7,27 @@ namespace VoxelBusters.CoreLibrary.Editor
     {
         private struct AssemblyDefinitionData
         {
-            #region Properties
+            #region Fields
 
-            [JsonProperty("name")]
-            public string Name { get; set; }
+            public string name;
 
-            [JsonProperty("references")]
-            public string[] References { get; set; }
+            public string[] references;
 
-            [JsonProperty("optionalUnityReferences")]
-            public string[] OptionalUnityReferences { get; set; }
+            public string[] optionalUnityReferences;
 
-            [JsonProperty("includePlatforms")]
-            public string[] IncludePlatforms { get; set; }
+            public string[] includePlatforms;
 
-            [JsonProperty("excludePlatforms")]
-            public string[] ExcludePlatforms { get; set; }
+            public string[] excludePlatforms;
 
-            [JsonProperty("allowUnsafeCode")]
-            public bool AllowUnsafeCode { get; set; }
+            public bool allowUnsafeCode;
 
-            [JsonProperty("overrideReferences")]
-            public bool OverrideReferences { get; set; }
+            public bool overrideReferences;
 
-            [JsonProperty("precompiledReferences")]
-            public string[] PrecompiledReferences { get; set; }
+            public string[] precompiledReferences;
 
-            [JsonProperty("autoReferenced")]
-            public bool AutoReferenced { get; set; }
+            public bool autoReferenced;
 
-            [JsonProperty("defineConstraints")]
-            public string[] DefineConstraints { get; set; }
+            public string[] defineConstraints;
 
             #endregion
 
@@ -46,12 +35,12 @@ namespace VoxelBusters.CoreLibrary.Editor
 
             public static AssemblyDefinitionData Load(string dataString)
             {
-                return JsonConvert.DeserializeObject<AssemblyDefinitionData>(dataString);
+                return JsonUtility.FromJson<AssemblyDefinitionData>(dataString);
             }
 
             public string ToJson()
             {
-                return JsonConvert.SerializeObject(this, Formatting.Indented);
+                return JsonUtility.ToJson(this);
             }
 
             #endregion

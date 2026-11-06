@@ -8,6 +8,7 @@ namespace NebulaSoft
     public static class Serializer
     {
         private static string persistentDataPath;
+        private static readonly object fileWriteGate = new object();
 
         public static void Init()
         {
@@ -59,19 +60,40 @@ namespace NebulaSoft
         /// </summary>
         /// <param name="fileName">Name of output file.</param>
         /// <param name="objectToSerialize">Reference to object that should be serialized.</param>
+        // Synchronous durable writes for purchases. Errors must reach the caller.
+        public static void SerializeChecked<T>(T value, string fileName)
+        {
+            lock (fileWriteGate)
+            {
+                string destination = Path.Combine(GetPersistentDataPath(), fileName);
+                string temporary = destination + ".pending";
+                Directory.CreateDirectory(Path.GetDirectoryName(destination));
+                try
+                {
+                    using (var stream = new FileStream(temporary, FileMode.Create, FileAccess.Write, FileShare.None))
+                    {
+                        new BinaryFormatter().Serialize(stream, value);
+                        stream.Flush(true);
+                    }
+                    if (File.Exists(destination)) File.Replace(temporary, destination, null);
+                    else File.Move(temporary, destination);
+                }
+                finally
+                {
+                    if (File.Exists(temporary)) File.Delete(temporary);
+                }
+            }
+        }
+
         public static void Serialize<T>(T objectToSerialize, string fileName)
         {
             try
             {
-                BinaryFormatter bf = new BinaryFormatter();
-                using (FileStream file = File.Open(Path.Combine(GetPersistentDataPath(), fileName), FileMode.Create))
-                {
-                    bf.Serialize(file, objectToSerialize);
-                }
+                SerializeChecked(objectToSerialize, fileName);
             }
-            catch
+            catch (Exception exception)
             {
-                // Failed to serialize file
+                Debug.LogError("[Serializer]: Failed to serialize: " + exception.Message);
             }
         }
 

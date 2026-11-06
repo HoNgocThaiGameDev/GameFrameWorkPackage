@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <DefineConstants>UNITY_ANDROID</DefineConstants>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../Assets/Project Files/Game/Scripts/Tutorial/TutorialHelper.cs" />
+    <Compile Include="UnityNamespaceStub.cs" />
+  </ItemGroup>
+</Project>

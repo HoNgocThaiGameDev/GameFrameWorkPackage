@@ -99,11 +99,17 @@ namespace Coffee.UIEffects
 
         public override bool canModifyShape => m_AllowToModifyMeshShape;
 
+#if UNITY_6000_6_OR_NEWER
+        internal override EntityId materialEffectEntityId => target
+            ? target.materialEffectEntityId : preset ? preset.GetEntityId() : GetEntityId();
+        public override uint effectId => unchecked((uint)materialEffectEntityId.GetHashCode());
+#else
         public override uint effectId => target
             ? target.effectId
             : preset
                 ? (uint)preset.GetInstanceID()
                 : (uint)GetInstanceID();
+#endif
 
 
         public override UIEffectContext context

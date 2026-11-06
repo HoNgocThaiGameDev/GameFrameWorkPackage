@@ -1,70 +1,64 @@
-﻿using System.Threading.Tasks;
+using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace NebulaSoft
 {
     public class DummyIAPWrapper : IAPWrapper
     {
+        private TweenCase pendingPurchase;
+        private bool disposed;
         public override async Task Init(IAPSettings settings)
         {
             await Task.Yield();
-
-            if (Monetization.VerboseLogging)
-                Debug.LogWarning("[IAP Manager]: Dummy mode is activated. Configure the module before uploading the game to stores!");
-
-            IAPManager.OnModuleInitialized();
+            if (!disposed) IAPManager.OnModuleInitialized();
         }
 
-        public override void BuyProduct(ProductKeyType productKeyType)
+        public override void BuyProduct(string key)
         {
-            if (!IAPManager.IsInitialized)
-            {
-                SystemMessage.ShowMessage("Network error. Please try again later");
-
-                return;
-            }
-
-            IAPItem item = IAPManager.GetIAPItem(productKeyType);
-
+            var item = IAPManager.GetIAPItemByKey(key);
             SystemMessage.ShowLoadingPanel();
             SystemMessage.ChangeLoadingMessage("Payment in progress..");
-
-            Tween.DelayedCall(1.0f, () =>
+            pendingPurchase = Tween.DelayedCall(1.0f, () =>
             {
-                if (Monetization.VerboseLogging)
-                    Debug.Log(string.Format("[IAPManager]: Purchasing - {0} is completed!", productKeyType));
-
-                IAPManager.OnPurchaseCompleted(item);
-
-                SystemMessage.ChangeLoadingMessage("Payment complete!");
-                SystemMessage.HideLoadingPanel();
+                try
+                {
+                    if (!IAPManager.TryFulfillPurchase(item, "dummy_" + Guid.NewGuid().ToString("N")))
+                        IAPManager.OnPurchaseFailed(key, PurchaseFailureReason.Unknown);
+                }
+                catch (Exception exception)
+                {
+                    Debug.LogException(exception);
+                    IAPManager.OnPurchaseFailed(key, PurchaseFailureReason.Unknown);
+                }
+                finally
+                {
+                    IAPManager.FinishPurchase();
+                    SystemMessage.HideLoadingPanel();
+                }
             }, unscaledTime: true);
         }
 
-        public override ProductData GetProductData(ProductKeyType productKeyType)
+        public override ProductData GetProductData(string key)
         {
-            IAPItem iapItem = IAPManager.GetIAPItem(productKeyType);
-            if(iapItem != null)
-            {
-                return new ProductData(iapItem.ProductType);
-            }
-
-            return null;
+            var item = IAPManager.GetIAPItemByKey(key);
+            return item != null ? new ProductData(item.ProductType) : null;
         }
-
-        public override bool IsSubscribed(ProductKeyType productKeyType)
-        {
-            return false;
-        }
-
+        public override bool IsSubscribed(string key) => false;
         public override bool IsPurchased(string id)
         {
-            return false;
+            var item = IAPManager.GetIAPItem(id);
+            return item != null && item.ProductType == ProductType.NonConsumable && item.TimesPurchased > 0;
         }
-
         public override void RestorePurchases()
         {
-            // DO NOTHING
+            IAPManager.FinishRestorePurchases();
+            IAPManager.OnPurchasesRestored();
+        }
+        public override void Dispose()
+        {
+            disposed = true;
+            pendingPurchase.KillActive();
         }
     }
 }

@@ -1,0 +1,7 @@
+{
+    "name": "NebulaSoft.Ads.Runtime",
+    "rootNamespace": "NebulaSoft.Ads",
+    "references": ["NebulaSoft.Ads.Contracts"],
+    "autoReferenced": true,
+    "noEngineReferences": true
+}

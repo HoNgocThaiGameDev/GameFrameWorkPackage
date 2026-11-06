@@ -20,9 +20,6 @@ MonoBehaviour:
   - m_name: MobileCoreServices.framework
     m_target: 4
     m_isOptional: 0
-  - m_name: StoreKit.framework
-    m_target: 4
-    m_isOptional: 0
   m_capabilities: []
   m_macros: []
   m_buildProperties: []

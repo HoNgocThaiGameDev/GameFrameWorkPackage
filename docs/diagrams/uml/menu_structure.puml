@@ -1,0 +1,41 @@
+@startuml
+!include style.iuml
+top to bottom direction
+hide empty members
+class MenuController {
+ - uiController : UIController
+ - Awake()
+ - Start()
+ {static} + LoadGame()
+ {static} + OnPlayButtonClicked()
+}
+class UIController {
+ - pages : List<UIPage>
+ - pagesLink : Dictionary<Type, UIPage>
+ + Init()
+ + InitPages()
+ {static} + ShowPage<T>()
+}
+abstract class UIPage
+class UIMainMenu {
+ - staticMapPanel : StaticMapPanel
+ + Init()
+ + PlayShowAnimation()
+}
+class StaticMapPanel {
+ - playButton : Button
+ + Init()
+}
+class Button
+MenuController --> UIController : uiController
+UIController "1" --> "0..*" UIPage : pages
+UIPage <|-- UIMainMenu
+UIMainMenu --> StaticMapPanel : staticMapPanel
+StaticMapPanel --> Button : playButton
+StaticMapPanel ..> MenuController : đăng ký OnPlayButtonClicked
+note bottom of UIController
+UI Main Canvas chứa UIController.
+Scripts Holder chứa MenuController.
+MenuController: Init rồi InitPages trong Awake.
+end note
+@enduml
