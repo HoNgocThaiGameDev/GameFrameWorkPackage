@@ -45,7 +45,7 @@ namespace NebulaSoft
 
             public override bool Validate()
             {
-                return true;
+                return animation != null;
             }
         }
 
@@ -59,12 +59,12 @@ namespace NebulaSoft
 
                 parentObject = tweenObject.gameObject;
 
-                startValue = tweenObject.GetLayerWeight(layerID);
+                if (Validate()) startValue = tweenObject.GetLayerWeight(layerID);
             }
 
             public override bool Validate()
             {
-                return parentObject != null;
+                return tweenObject != null && layerID >= 0 && layerID < tweenObject.layerCount;
             }
 
             public override void DefaultComplete()

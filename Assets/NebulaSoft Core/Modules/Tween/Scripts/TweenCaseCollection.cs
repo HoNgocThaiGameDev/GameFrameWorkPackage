@@ -11,7 +11,9 @@ namespace NebulaSoft
 
         public void AddTween(TweenCase tweenCase)
         {
-            tweenCase.OnComplete(OnTweenCaseComplete);
+            if (tweenCase == null || tweenCases.Contains(tweenCase)) return;
+            if (!tweenCase.HasInvokedCompletion && !tweenCase.IsKilling)
+                tweenCase.CompletionDelivered += OnTweenCaseComplete;
 
             tweenCases.Add(tweenCase);
         }
@@ -20,7 +22,7 @@ namespace NebulaSoft
         {
             for(int i = 0; i < tweenCases.Count; i++)
             {
-                if (!tweenCases[i].IsCompleted)
+                if (!tweenCases[i].HasInvokedCompletion)
                     return false;
             }
 
@@ -50,14 +52,10 @@ namespace NebulaSoft
 
         private void OnTweenCaseComplete()
         {
-            for (int i = 0; i < tweenCases.Count; i++)
-            {
-                if (!tweenCases[i].IsCompleted)
-                    return;
-            }
-
-            if (tweensCompleted != null)
-                tweensCompleted.Invoke();
+            if (!IsComplete()) return;
+            var callbacks = tweensCompleted;
+            tweensCompleted = null;
+            TweenCase.InvokeSubscribers(callbacks);
         }
 
         public static TweenCaseCollection operator +(TweenCaseCollection caseCollection, TweenCase tweenCase)

@@ -50,7 +50,7 @@ namespace NebulaSoft
 
             public override bool Validate()
             {
-                return true;
+                return callback != null;
             }
 
             public delegate void TweenConditionCallback(Condition tweenCase);
@@ -91,15 +91,36 @@ namespace NebulaSoft
         {
             private SimpleCallback callback;
             protected int framesOffset;
+            private int lastFrame;
+            private double lastFixedTime;
+            private readonly bool waitForNextTick;
 
             public NextFrame(SimpleCallback callback, int framesOffset)
             {
                 this.callback = callback;
-                this.framesOffset = framesOffset + 1;
+                this.framesOffset = Mathf.Max(1, framesOffset);
+                waitForNextTick = framesOffset > 0;
+                lastFrame = Time.frameCount;
+                lastFixedTime = Time.fixedTimeAsDouble;
             }
 
             public override void Invoke(float deltaTime)
             {
+                if (waitForNextTick)
+                {
+                    if (UpdateMethod == UpdateMethod.FixedUpdate)
+                    {
+                        double fixedTime = Time.fixedTimeAsDouble;
+                        if (fixedTime == lastFixedTime) return;
+                        lastFixedTime = fixedTime;
+                    }
+                    else
+                    {
+                        int frame = Time.frameCount;
+                        if (frame == lastFrame) return;
+                        lastFrame = frame;
+                    }
+                }
                 framesOffset--;
 
                 if (framesOffset <= 0)
@@ -108,7 +129,7 @@ namespace NebulaSoft
 
             public override void DefaultComplete()
             {
-                callback.Invoke();
+                callback?.Invoke();
             }
 
             public override bool Validate()
@@ -204,13 +225,13 @@ namespace NebulaSoft
 
             public override void Invoke(float deltaTime)
             {
-                if (asyncOperation.progress >= 1.0f)
+                if (asyncOperation.isDone)
                     Complete();
             }
 
             public override bool Validate()
             {
-                return true;
+                return asyncOperation != null;
             }
         }
     }

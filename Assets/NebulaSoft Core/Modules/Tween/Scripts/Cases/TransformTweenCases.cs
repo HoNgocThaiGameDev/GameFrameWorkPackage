@@ -374,10 +374,12 @@ namespace NebulaSoft
         {
             private Transform objectTransform;
             private Vector3 rotationVector;
+            private float elapsed;
 
             public RotateConstant(Transform tweenObject, Vector3 rotationVector)
             {
                 objectTransform = tweenObject;
+                parentObject = tweenObject.gameObject;
                 this.rotationVector = rotationVector;
             }
 
@@ -388,12 +390,13 @@ namespace NebulaSoft
 
             public override void DefaultComplete()
             {
-
+                Invoke(Mathf.Max(0, duration - elapsed));
             }
 
             public override void Invoke(float deltaTime)
             {
-                objectTransform.Rotate(rotationVector * Time.deltaTime);
+                objectTransform.Rotate(rotationVector * deltaTime);
+                elapsed += deltaTime;
             }
         }
 
@@ -435,7 +438,7 @@ namespace NebulaSoft
 
             public override bool Validate()
             {
-                return parentObject != null;
+                return tweenObject != null && resultValue != null;
             }
 
             public override void DefaultComplete()
@@ -548,7 +551,7 @@ namespace NebulaSoft
 
                 isQuadratic = true;
 
-                RecalculateKeyPoints();
+                if (toTransform != null) RecalculateKeyPoints();
             }
 
             private void RecalculateKeyPoints()
@@ -564,7 +567,7 @@ namespace NebulaSoft
 
             public override bool Validate()
             {
-                return parentObject != null;
+                return fromTransform != null && toTransform != null;
             }
 
             public override void DefaultComplete()
@@ -907,13 +910,6 @@ namespace NebulaSoft
             private float minValue;
             private float maxValue;
 
-            private float totalTime;
-            private float halfTime;
-
-            private float tempScaleValue;
-
-            private bool direction;
-
             private Ease.IEasingFunction negativeEaseFunction;
 
             public PingPongScale(Transform tweenObject, float minValue, float maxValue, float duration, Ease.Type positiveScaleEasing, Ease.Type negativeScaleEasing)
@@ -929,8 +925,6 @@ namespace NebulaSoft
 
                 easeFunction = Ease.GetFunction(positiveScaleEasing);
                 negativeEaseFunction = Ease.GetFunction(negativeScaleEasing);
-                totalTime = 0;
-                halfTime = duration / 2f;
             }
 
             public override bool Validate()
@@ -945,20 +939,11 @@ namespace NebulaSoft
 
             public override void Invoke(float deltaTime)
             {
-                totalTime += deltaTime;
-
-                direction = (totalTime <= halfTime);
-
-                if (direction)
-                {
-                    tempScaleValue = Mathf.LerpUnclamped(minValue, maxValue, easeFunction.Interpolate(totalTime / halfTime));
-                }
-                else
-                {
-                    tempScaleValue = Mathf.LerpUnclamped(maxValue, minValue, negativeEaseFunction.Interpolate((totalTime - halfTime) / halfTime));
-                }
-
-                tweenObject.localScale = new Vector3(tempScaleValue, tempScaleValue, tempScaleValue);
+                float phase = state * 2;
+                float scale = phase <= 1
+                    ? Mathf.LerpUnclamped(minValue, maxValue, easeFunction.Interpolate(phase))
+                    : Mathf.LerpUnclamped(maxValue, minValue, negativeEaseFunction.Interpolate(phase - 1));
+                tweenObject.localScale = Vector3.one * scale;
             }
         }
 
@@ -1096,7 +1081,7 @@ namespace NebulaSoft
         public class LookAt2D : TweenCaseFunction<Transform, Vector3>
         {
             public LookAtType type;
-            float rotationZ;
+            private readonly float angleDelta;
 
             public LookAt2D(Transform tweenObject, Vector3 resultValue, LookAtType type) : base(tweenObject, resultValue)
             {
@@ -1106,13 +1091,13 @@ namespace NebulaSoft
 
                 startValue = tweenObject.eulerAngles;
 
-                Vector3 different = (resultValue - tweenObject.position);
-                different.Normalize();
-
-                rotationZ = (Mathf.Atan2(different.y, different.x) * Mathf.Rad2Deg);
-
-                if (type == LookAtType.Up)
-                    rotationZ -= 90;
+                Vector2 direction = resultValue - tweenObject.position;
+                if (direction.sqrMagnitude > 0)
+                {
+                    float rotationZ = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    if (type == LookAtType.Up) rotationZ -= 90;
+                    angleDelta = Mathf.DeltaAngle(startValue.z, rotationZ);
+                }
             }
 
             public override bool Validate()
@@ -1122,12 +1107,12 @@ namespace NebulaSoft
 
             public override void DefaultComplete()
             {
-                tweenObject.LookAt(resultValue);
+                tweenObject.rotation = Quaternion.Euler(0, 0, startValue.z + angleDelta);
             }
 
             public override void Invoke(float deltaTime)
             {
-                tweenObject.rotation = Quaternion.Euler(0f, 0f, Mathf.LerpUnclamped(startValue.z, rotationZ, Interpolate(state)));
+                tweenObject.rotation = Quaternion.Euler(0, 0, startValue.z + angleDelta * Interpolate(state));
             }
 
             public enum LookAtType

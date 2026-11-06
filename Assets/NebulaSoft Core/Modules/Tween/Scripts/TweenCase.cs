@@ -6,8 +6,11 @@ namespace NebulaSoft
     public abstract class TweenCase
     {
         // System variables
-        public int ActiveID;
+        public int ActiveID = -1;
         public bool IsActive;
+        internal TweensHolder Holder { get; set; }
+        internal bool HasInvokedCompletion { get; private set; }
+        internal event SimpleCallback CompletionDelivered;
 
         protected float currentDelay;
         public float CurrentDelay => currentDelay;
@@ -67,11 +70,12 @@ namespace NebulaSoft
         {
             if (!isKilling)
             {
-                IsActive = false;
-
-                Tween.MarkForKilling(this);
-
                 isKilling = true;
+                IsActive = false;
+                tweenCompleted = null;
+                CompletionDelivered = null;
+                callbackData = null;
+                Holder?.RequestCompaction();
             }
 
             return this;
@@ -82,6 +86,7 @@ namespace NebulaSoft
         /// </summary>
         public TweenCase Complete()
         {
+            if (isKilling || HasInvokedCompletion) return this;
             if (isPaused)
                 isPaused = false;
 
@@ -118,7 +123,9 @@ namespace NebulaSoft
         /// </summary>
         public void Reset()
         {
+            if (isKilling || HasInvokedCompletion) return;
             state = 0;
+            isCompleted = false;
         }
 
         /// <summary>
@@ -164,6 +171,9 @@ namespace NebulaSoft
         /// </summary>
         public TweenCase SetUpdateMethod(UpdateMethod updateMethod)
         {
+            if (Holder != null) return this;
+            if (updateMethod < UpdateMethod.Update || updateMethod > UpdateMethod.LateUpdate)
+                throw new System.ArgumentOutOfRangeException(nameof(updateMethod));
             this.updateMethodIndex = (int)updateMethod;
 
             return this;
@@ -202,27 +212,35 @@ namespace NebulaSoft
         /// </summary>
         public void UpdateState(float deltaTime)
         {
-            state += Mathf.Min(1.0f, deltaTime / duration);
+            AdvanceState(deltaTime);
+        }
 
-            if (state >= 1)
+        internal bool AdvanceState(float deltaTime)
+        {
+            if (!isCompleted)
             {
-                isCompleted = true;
-            } 
-            else if(!callbackData.IsNullOrEmpty())
-            {
-                for(int i = 0; i < callbackData.Count; i++)
-                {
-                    var data = callbackData[i];
-
-                    if(state >= data.t)
-                    {
-                        data.callback?.Invoke();
-                        callbackData.RemoveAt(i);
-                        i--;
-                    }
-                }
+                state = duration > 0 ? Mathf.Clamp01(state + Mathf.Max(0, deltaTime) / duration) : 1;
+                isCompleted = state >= 1;
             }
-                
+            return InvokeReachedCallbacks();
+        }
+
+        internal bool InvokeReachedCallbacks()
+        {
+            if (callbackData == null || callbackData.Count == 0 || callbackData[0].t > state) return false;
+            int reached = 0;
+            while (reached < callbackData.Count && callbackData[reached].t <= state) reached++;
+            if (reached == 0) return false;
+
+            // Detach before invoking so callbacks can safely change the tween or register other callbacks.
+            var callbacks = callbackData.GetRange(0, reached);
+            callbackData.RemoveRange(0, reached);
+            foreach (var callback in callbacks)
+            {
+                if (isKilling) break;
+                InvokeSafely(callback.callback);
+            }
+            return true;
         }
 
         /// <summary>
@@ -239,7 +257,7 @@ namespace NebulaSoft
         /// <param name="callback">Complete function.</param>
         public TweenCase OnComplete(SimpleCallback callback)
         {
-            tweenCompleted += callback;
+            if (!isKilling && !HasInvokedCompletion) tweenCompleted += callback;
 
             return this;
         }
@@ -252,16 +270,38 @@ namespace NebulaSoft
         /// <returns></returns>
         public TweenCase OnTimeReached(float t, SimpleCallback callback)
         {
+            if (isKilling || HasInvokedCompletion || callback == null || float.IsNaN(t)) return this;
             if (callbackData == null) callbackData = new List<CallbackData>();
-
-            callbackData.Add(new CallbackData(t, callback));
+            t = Mathf.Clamp01(t);
+            int index = callbackData.Count;
+            while (index > 0 && callbackData[index - 1].t > t) index--;
+            callbackData.Insert(index, new CallbackData(t, callback));
 
             return this;
         }
 
         public void InvokeCompleteEvent()
         {
-            tweenCompleted?.Invoke();
+            if (isKilling || HasInvokedCompletion) return;
+            HasInvokedCompletion = true;
+            SimpleCallback callbacks = tweenCompleted;
+            SimpleCallback delivered = CompletionDelivered;
+            tweenCompleted = null;
+            CompletionDelivered = null;
+            InvokeSubscribers(callbacks);
+            InvokeSubscribers(delivered);
+        }
+
+        internal static void InvokeSubscribers(SimpleCallback callbacks)
+        {
+            if (callbacks == null) return;
+            foreach (SimpleCallback callback in callbacks.GetInvocationList()) InvokeSafely(callback);
+        }
+
+        private static void InvokeSafely(SimpleCallback callback)
+        {
+            try { callback(); }
+            catch (System.Exception exception) { Debug.LogException(exception); }
         }
 
         public abstract void Invoke(float deltaTime);

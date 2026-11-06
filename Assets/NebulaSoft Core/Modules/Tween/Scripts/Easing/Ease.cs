@@ -43,7 +43,7 @@ namespace NebulaSoft
             BounceInOut
         }
 
-        private static readonly IEasingFunction[] easingFunctions = new IEasingFunction[30]
+        private static readonly IEasingFunction[] easingFunctions = new IEasingFunction[]
         {
             new LinearEasingFunction(), // Linear
             new QuadInEasingFunction(), // QuadIn,
@@ -75,6 +75,7 @@ namespace NebulaSoft
             new BackInOutEasingFunction(), // BackInOut,
             new BounceInEasingFunction(), // BounceIn,
             new BounceOutEasingFunction(), // BounceOut,
+            new BounceInOutEasingFunction(), // BounceInOut,
         };
 
         private const float PI = Mathf.PI;
@@ -184,7 +185,15 @@ namespace NebulaSoft
 
         public class QuadInEasingFunction : IEasingFunction { public float Interpolate(float p) { return p * p; } }
         public class QuadOutEasingFunction : IEasingFunction { public float Interpolate(float p) { return -(p * (p - 2)); } }
-        public class QuadOutInEasingFunction : IEasingFunction { public float Interpolate(float p) { if (p < 0.5f) { return 2 * p * p; } else { return (-2 * p * p) + (4 * p) - 1; }; } }
+        public class QuadOutInEasingFunction : IEasingFunction
+        {
+            public float Interpolate(float p)
+            {
+                if (p < 0.5f) return 2 * p * (1 - p);
+                float secondHalf = p - 0.5f;
+                return 0.5f + 2 * secondHalf * secondHalf;
+            }
+        }
 
         public class CubicInEasingFunction : IEasingFunction { public float Interpolate(float p) { return p * p * p; } }
         public class CubicOutEasingFunction : IEasingFunction { public float Interpolate(float p) { float f1 = (p - 1); return f1 * f1 * f1 + 1; } }

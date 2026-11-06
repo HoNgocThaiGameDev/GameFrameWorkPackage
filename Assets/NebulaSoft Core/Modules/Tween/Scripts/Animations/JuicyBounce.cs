@@ -53,23 +53,19 @@ namespace NebulaSoft
             transform.localScale = new Vector3(Mathf.Pow(bounceScaleX.Evaluate(t), bounceDepth), Mathf.Pow(bounceScaleY.Evaluate(t), bounceDepth), Mathf.Pow(bounceScaleZ.Evaluate(t), bounceDepth));
         }
 
-        private float GetStartBounceTime(int depth = 0)
+        private float GetStartBounceTime()
         {
             var target = bounceScaleY.Evaluate(bounceValue);
-
-            var step = depth == 0 ? 0.01f : 0.01f / (10 * depth);
-
-            var error = 0.01f;
-
-            for (var pointer = 0f; pointer <= 1f; pointer += step)
+            const int sampleCount = 100;
+            const float tolerance = 0.01f;
+            for (int i = 0; i <= sampleCount; i++)
             {
-                if (Mathf.Abs(bounceScaleY.Evaluate(pointer) - target) < error)
-                {
-                    return pointer;
-                }
+                float sampleTime = (float)i / sampleCount;
+                if (Mathf.Abs(bounceScaleY.Evaluate(sampleTime) - target) < tolerance) return sampleTime;
             }
 
-            return GetStartBounceTime(depth + 1);
+            // The current time is an exact match even when the curve is too steep to sample.
+            return bounceValue;
         }
 
         public void Clear()

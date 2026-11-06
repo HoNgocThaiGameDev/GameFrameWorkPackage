@@ -161,7 +161,7 @@ namespace NebulaSoft
 
             public override void Invoke(float deltaTime)
             {
-                tweenObject.fontSize = (int)Mathf.LerpUnclamped(startValue, resultValue, Interpolate(state));
+                tweenObject.fontSize = Mathf.LerpUnclamped(startValue, resultValue, Interpolate(state));
             }
         }
     }

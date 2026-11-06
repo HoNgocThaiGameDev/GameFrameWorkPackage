@@ -51,7 +51,7 @@ namespace NebulaSoft
         
         public static bool CompleteActive(this TweenCase tweenCase)
         {
-            if (tweenCase != null && !tweenCase.IsCompleted)
+            if (tweenCase != null && tweenCase.IsActive && !tweenCase.IsCompleted)
             {
                 tweenCase.Complete();
 
@@ -90,17 +90,16 @@ namespace NebulaSoft
 
         public static TweenCase SnapToTarget(this ScrollRect scrollRect, Vector3 target, float duration, float offsetX = 0, float offsetY = 0)
         {
-            Vector2 contentPosition = scrollRect.viewport.InverseTransformPoint(scrollRect.content.position);
-            Vector2 newPosition = scrollRect.viewport.InverseTransformPoint(target);
-            newPosition = new Vector2(newPosition.x + offsetX, newPosition.y + offsetY);
-
-            if (!scrollRect.horizontal)
-                newPosition.x = contentPosition.x;
-
-            if (!scrollRect.vertical)
-                newPosition.y = contentPosition.y;
-
-            return scrollRect.content.DOAnchoredPosition(contentPosition - newPosition, duration);
+            var viewport = scrollRect.viewport != null ? scrollRect.viewport : (RectTransform)scrollRect.transform;
+            var content = scrollRect.content;
+            Vector3 targetInViewport = viewport.InverseTransformPoint(target);
+            Vector3 viewportDelta = new Vector3(-targetInViewport.x - offsetX, -targetInViewport.y - offsetY, 0);
+            Vector3 worldDelta = viewport.TransformVector(viewportDelta);
+            Vector3 parentDelta = content.parent != null ? content.parent.InverseTransformVector(worldDelta) : worldDelta;
+            Vector2 destination = content.anchoredPosition;
+            if (scrollRect.horizontal) destination.x += parentDelta.x;
+            if (scrollRect.vertical) destination.y += parentDelta.y;
+            return content.DOAnchoredPosition(destination, duration);
         }
     }
 }

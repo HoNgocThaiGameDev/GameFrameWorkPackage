@@ -10,7 +10,7 @@ namespace NebulaSoft
 
         private readonly int TWEEN_UPDATE = (int)UpdateMethod.Update;
         private readonly int TWEEN_FIXED_UPDATE = (int)UpdateMethod.FixedUpdate;
-        private readonly int TWEEN_LATE_UPDATE = (int)UpdateMethod.FixedUpdate;
+        private readonly int TWEEN_LATE_UPDATE = (int)UpdateMethod.LateUpdate;
 
         private static TweensHolder[] tweens;
         public static TweensHolder[] Tweens => tweens;
@@ -20,6 +20,8 @@ namespace NebulaSoft
 
         public void Init(int tweensUpdateCount, int tweensFixedUpdateCount, int tweensLateUpdateCount, bool systemLogs)
         {
+            if (instance != null) instance.StopAllCoroutines();
+            UnloadStatic();
             instance = this;
 
             DontDestroyOnLoad(gameObject);
@@ -34,6 +36,7 @@ namespace NebulaSoft
 
         public static void AddTween(TweenCase tween)
         {
+            if (tween == null || tween.Holder != null || tween.IsKilling) return;
             tweens[tween.UpdateMethodIndex].AddTween(tween);
 
             if (isActiveTweenCaseCollectionEnabled)
@@ -81,25 +84,25 @@ namespace NebulaSoft
 
         private void Update()
         {
-            if (tweens == null) return;
+            if (tweens == null || instance != this) return;
             tweens[TWEEN_UPDATE].Update(Time.deltaTime, Time.unscaledDeltaTime);
         }
 
         private void FixedUpdate()
         {
-            if (tweens == null) return;
+            if (tweens == null || instance != this) return;
             tweens[TWEEN_FIXED_UPDATE].Update(Time.fixedDeltaTime, Time.fixedUnscaledDeltaTime);
         }
 
         private void LateUpdate()
         {
-            if (tweens == null) return;
+            if (tweens == null || instance != this) return;
             tweens[TWEEN_LATE_UPDATE].Update(Time.deltaTime, Time.unscaledDeltaTime);
         }
 
         public static void MarkForKilling(TweenCase tween)
         {
-            tweens[tween.UpdateMethodIndex].MarkForKilling(tween);
+            tween?.Kill();
         }
 
         public static TweenCaseCollection BeginTweenCaseCollection()
@@ -195,23 +198,30 @@ namespace NebulaSoft
             if(instance != null)
                 instance.StopAllCoroutines();
 
+            if (tweens == null) return;
             foreach (TweensHolder tween in tweens)
             {
                 tween.Unload();
             }
         }
 
+        private void OnDestroy()
+        {
+            if (instance == this) UnloadStatic();
+        }
+
         private static void UnloadStatic()
         {
             instance = null;
 
-            if(!tweens.IsNullOrEmpty())
+            if (tweens != null)
             {
                 foreach (TweensHolder tween in tweens)
                 {
                     tween.Unload();
                 }
             }
+            tweens = null;
 
             activeTweenCaseCollection = null;
             isActiveTweenCaseCollectionEnabled = false;
