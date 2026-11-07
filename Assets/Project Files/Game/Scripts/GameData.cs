@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace NebulaSoft
 {
+    [StaticUnload]
     [CreateAssetMenu(fileName = "Game Data", menuName = "Data/Game Data")]
     public class GameData : ScriptableObject
     {
@@ -17,6 +18,15 @@ namespace NebulaSoft
 
         [SerializeField] int reviveIAPSeconds = 20;
         public int ReviveIAPSeconds => reviveIAPSeconds;
+
+        [Header("Puzzle Session")]
+        [SerializeField] bool rewardedReviveEnabled = true;
+        [SerializeField, Range(1, 30)] int reviveOfferSeconds = 5;
+        public int ReviveOfferSeconds => reviveOfferSeconds;
+        [SerializeField, Range(0, 5), Tooltip("Zero allows unlimited rewarded revives per attempt.")]
+        int maxRewardedRevivesPerAttempt;
+        [SerializeField] bool interstitialOnFinalFailure = true;
+        public bool InterstitialOnFinalFailure => interstitialOnFinalFailure;
 
         [Space]
         [SerializeField] int showAdsAfterLevel = 5;
@@ -53,7 +63,20 @@ namespace NebulaSoft
 
         public void Init()
         {
-            Data = this;
+            GameData runtimeData = Instantiate(this);
+            UnloadStatic();
+            Data = runtimeData;
+            Data.ApplyRemoteConfig();
+            AdsManager.InterstitialConditions += Data.ExtraInterstitialCondition;
+        }
+
+        private void ApplyRemoteConfig()
+        {
+            var puzzle = RemoteConfigController.TryGetConfig<PuzzleRemoteConfigData>(PuzzleRemoteConfigData.ConfigKey);
+            rewardedReviveEnabled = puzzle?.rewardedReviveEnabled ?? rewardedReviveEnabled;
+            reviveOfferSeconds = puzzle?.reviveOfferSeconds ?? reviveOfferSeconds;
+            maxRewardedRevivesPerAttempt = puzzle?.maxRewardedRevivesPerAttempt ?? maxRewardedRevivesPerAttempt;
+            interstitialOnFinalFailure = puzzle?.interstitialOnFinalFailure ?? interstitialOnFinalFailure;
 
             AdsRemoteConfigData adsOverrideData = RemoteConfigController.TryGetConfig<AdsRemoteConfigData>("ads");
             if(adsOverrideData != null)
@@ -93,8 +116,15 @@ namespace NebulaSoft
                 if (rewardOverrideData.streakBonusCap >= 0)
                     winStreakBonusCap = rewardOverrideData.streakBonusCap;
             }
+        }
 
-            AdsManager.InterstitialConditions += ExtraInterstitialCondition;
+        private static void UnloadStatic()
+        {
+            if (Data == null) return;
+            AdsManager.InterstitialConditions -= Data.ExtraInterstitialCondition;
+            if (Application.isPlaying) Destroy(Data);
+            else DestroyImmediate(Data);
+            Data = null;
         }
 
         public int GetRevivePrice(int attempt)
@@ -102,6 +132,12 @@ namespace NebulaSoft
             attempt = Mathf.Clamp(attempt, 0, revivePrices.Length - 1);
 
             return revivePrices[attempt];
+        }
+
+        public bool CanOfferRewardedRevive(int completedRevives)
+        {
+            return rewardedReviveEnabled &&
+                (maxRewardedRevivesPerAttempt == 0 || completedRevives < maxRewardedRevivesPerAttempt);
         }
 
         public int GetWinStreakBonus(int streak)

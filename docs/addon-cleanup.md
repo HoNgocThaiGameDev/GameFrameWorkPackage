@@ -2,6 +2,8 @@
 
 Đối chiếu cấu trúc với Flower Harvest Color Match 3D, hoàn tất ngày 2026-10-11.
 
+Đây là báo cáo lịch sử. Từ ngày 2026-11-07, UI mẫu đã chuyển về Project Files/Game/Features và Project Files/Game/UI. Cấu trúc hiện tại được mô tả tại [project-structure.md](project-structure.md); evidence bên dưới giữ đường dẫn tại thời điểm audit.
+
 ```text
 Assets/Addon/
 ├── ThirdParty/

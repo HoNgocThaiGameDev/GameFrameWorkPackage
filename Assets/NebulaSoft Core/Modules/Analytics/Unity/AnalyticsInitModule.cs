@@ -6,14 +6,21 @@ namespace NebulaSoft
     public sealed class AnalyticsInitModule : InitModule
     {
         [SerializeField] private AnalyticsSettings settings;
+        [System.NonSerialized] private AnalyticsModule runtimeModule;
         public AnalyticsSettings Settings => settings;
         public override string ModuleName => "Analytics";
         public override void CreateComponent()
         {
             if (settings == null) { Debug.LogWarning("[Analytics] Assign Analytics Settings in Project Init Settings."); return; }
-            var module = Initializer.GameObject.GetComponent<AnalyticsModule>();
-            if (module == null) module = Initializer.GameObject.AddComponent<AnalyticsModule>();
-            module.Configure(settings);
+            runtimeModule = Initializer.GameObject.GetComponent<AnalyticsModule>();
+            if (runtimeModule == null) runtimeModule = Initializer.GameObject.AddComponent<AnalyticsModule>();
+            runtimeModule.Configure(settings);
+        }
+
+        public override void Shutdown()
+        {
+            if (runtimeModule != null) runtimeModule.Shutdown();
+            runtimeModule = null;
         }
     }
 }

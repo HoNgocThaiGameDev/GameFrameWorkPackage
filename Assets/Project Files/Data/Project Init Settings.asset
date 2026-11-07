@@ -81,6 +81,7 @@ MonoBehaviour:
   m_Name: Project Init Settings
   m_EditorClassIdentifier: 
   modules:
+  - {fileID: 7401020202602}
   - {fileID: 150167048453217202}
   - {fileID: 1358063386015252027}
   - {fileID: 6377013955087300433}
@@ -95,6 +96,21 @@ MonoBehaviour:
   - {fileID: -319585252694912297}
   - {fileID: 7401020202601}
   - {fileID: 8187994974875880341}
+--- !u!114 &7401020202602
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a4d63524edb45998e429504bdcff1f6, type: 3}
+  m_Name: NebulaSoft.RemoteConfigInitModule
+  m_EditorClassIdentifier:
+  endpoint:
+  timeoutSeconds: 3
+  localConfig: {fileID: 4900000, guid: 4ec56bbcf9d4481f9daee69b7d28a7c1, type: 3}
 --- !u!114 &7401020202601
 MonoBehaviour:
   m_ObjectHideFlags: 1

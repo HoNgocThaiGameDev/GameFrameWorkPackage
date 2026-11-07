@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using NebulaSoft.Analytics;
@@ -10,15 +11,18 @@ namespace NebulaSoft
     {
         private static bool isGameActivated;
         private static bool isGameFinished;
+        private static int rewardedRevives;
         private static LevelTracker analytics;
         private LevelTracker ownedAnalytics;
         public static bool IsGameActivated => isGameActivated;
         public static LevelTracker AnalyticsSession => analytics;
+        public static event Action<int> Revived;
 
         private void Awake()
         {
             isGameActivated = false;
             isGameFinished = false;
+            rewardedRevives = 0;
             analytics = ownedAnalytics = new LevelTracker(AnalyticsController.Events, () => Time.realtimeSinceStartupAsDouble);
             UIController ui = GetComponent<UIController>();
             ui?.Init();
@@ -54,12 +58,32 @@ namespace NebulaSoft
             if (isGameFinished) return;
             isGameFinished = true;
             isGameActivated = false;
+            allowRevive = allowRevive && CanOfferRewardedRevive();
             analytics?.Fail("game_over");
             if (!allowRevive) analytics?.End(false, "game_over");
             if (uiDelay > 0f) Tween.DelayedCall(uiDelay, () => UIGameOver.Show(allowRevive, resetWinStreakOnFinalFailure));
             else UIGameOver.Show(allowRevive, resetWinStreakOnFinalFailure);
         }
-        public static void Revive(int seconds) { analytics?.Revive("continue"); isGameFinished = false; isGameActivated = true; UIController.HidePage<UIGameOver>(); }
+        internal static bool CanOfferRewardedRevive()
+        {
+            return (GameData.Data == null || GameData.Data.CanOfferRewardedRevive(rewardedRevives)) &&
+                AdsManager.IsRewardBasedVideoLoaded();
+        }
+
+        internal static void ReviveFromRewardedAd()
+        {
+            rewardedRevives++;
+            Revive(GameData.Data != null ? GameData.Data.ReviveExtraSeconds : 20);
+        }
+
+        public static void Revive(int seconds)
+        {
+            analytics?.Revive("continue");
+            isGameFinished = false;
+            isGameActivated = true;
+            UIController.HidePage<UIGameOver>();
+            Revived?.Invoke(seconds);
+        }
         public static void OnLevelCompleted() { analytics?.End(true, "completed"); ActiveSession.Current.OnLevelCompleted(); }
         public static void OnLevelFailed() => analytics?.End(false, "failed");
         public static void Replay(SimpleCallback callback = null)
@@ -80,6 +104,13 @@ namespace NebulaSoft
             ownedAnalytics?.End(false, "quit");
             if (analytics == ownedAnalytics) analytics = null;
         }
-        private static void UnloadStatic() { isGameActivated = false; isGameFinished = false; analytics = null; }
+        private static void UnloadStatic()
+        {
+            isGameActivated = false;
+            isGameFinished = false;
+            rewardedRevives = 0;
+            analytics = null;
+            Revived = null;
+        }
     }
 }

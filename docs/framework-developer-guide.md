@@ -4,11 +4,13 @@
 
 Tài liệu cho developer và technical designer. Bản framework gốc dùng InitModule, không dùng DI container. Đối chiếu README, tài liệu Ads/IAP/Save và source trong dự án ngày 11/10/2026.
 
-Unity 6000.6.8f1 | Package 1.3.0 | Init > Menu > Game
+Unity 6000.6.8f1 | Framework 1.4.0 | Init > Menu > Game
 
 Ads Kit 2.3.0 | Google Mobile Ads 11.0.0 | EDM4U 1.2.187
 
 Đọc chương 1-4 trước khi tích hợp. Mỗi chương module trình bày trách nhiệm, cấu hình, điểm khởi tạo, cách nối controller, ví dụ và giới hạn. Code trong tài liệu là mẫu tích hợp, chưa được cài vào Assets. Các kiểu có tiền tố Guide là kiểu mẫu để phân biệt với API có thật.
+
+[Sổ tay triển khai module](modules/README.md) cung cấp mục tra cứu theo từng module, kèm đường dẫn source, cách cấu hình và các ca cần kiểm tra.
 
 ## 1. Cách dùng framework từ đầu
 
@@ -129,7 +131,7 @@ Trong LoadingGraphics, nối Loading Camera vào `loadingCamera`; Canvas vào `c
 
 ### Cấu hình Project Init Settings
 
-Module đang chạy theo thứ tự: **Save -> Tween -> Audio -> Currencies -> Haptic -> Dev Panel -> Game Settings -> Lives -> Screen Settings -> Quest -> Daily Reward -> IAP -> Ads**. Danh sách ở asset quyết định thứ tự thực tế; không dựa vào vị trí folder hay tên script.
+Registry mẫu chạy theo thứ tự **Remote Config → Save → Analytics → Tween → Audio → Currencies → Haptic → Dev Panel → Game Settings → Lives → Screen Settings → Quest → Daily Reward → IAP → Ads**. Thứ tự thực tế do asset quyết định.
 
 Save chuẩn bị dữ liệu trước Currency/Lives/Quest/Daily Reward. Tween cần sẵn sàng trước animation loading/UI. Audio settings được chuẩn bị trước khi global MusicSource khởi tạo. IAP/Ads module chuẩn bị service/config; SDK monetization nối tiếp sau bước consent.
 
@@ -174,7 +176,7 @@ SDKBehavior / ISDKTaskBehavior là các component trên SDKs. MonetizationSDKBeh
 
 Nếu boot dừng trước Menu: kiểm tra null reference, task chưa IsFinished, Scene List và manual control. Nếu không có nhạc: kiểm tra Audio module, Audio settings và MusicSource. Nếu không click được UI: kiểm tra EventSystem/input module và lớp loading còn chặn raycast. Không thêm Initializer thứ hai vào Menu để chữa lỗi chưa boot.
 
-**Nguồn:** Initializer.cs, GameLoading.cs, LoadingGraphics.cs, SDKInitializer.cs trong `NebulaSoft Core/Modules/Initializer/Scripts/`; Init.unity và Project Init Settings.asset.
+**Nguồn:** Initializer.cs, GameLoading.cs, LoadingGraphics.cs, SDKInitializer.cs trong `NebulaSoft Core/Modules/Initializer/Runtime/`; Init.unity và Project Init Settings.asset.
 
 ## 3. Scene Menu: sảnh, navigation và vào game
 
@@ -397,18 +399,24 @@ Nếu Game chỉ có HUD, kiểm tra đã thêm board entry chưa. Nếu Next l�
 ```text
 Assets/
   NebulaSoft Core/
-    Modules/                 Dịch vụ và editor tooling dùng chung
-    Scripts/                 Utility, screen, particles, floating text
+    Foundation/Runtime/      Contract nền tảng, clock, callback
+    Modules/                 Dịch vụ dùng chung, tách Runtime và Editor
+    Features/                Logic Quest, DailyReward, Lives có thể tái sử dụng
+    Integration/             Composition và công cụ tích hợp nhiều assembly
+    Utilities/Runtime|Editor/ Helper dùng chung
+    Shared/                  Prefab, animation, hình ảnh của framework
+    Editor/                  Công cụ chung của framework
     Examples/                Ví dụ của core
   Project Files/
     Data/                    Database, settings, catalog của game
     Game/
       Scenes/                Init, Menu, Game
-      Scripts/               Controller, feature, UI và adapter của game
-      Prefabs/               Prefab của game
-  Addon/
-    ThirdParty/UIEffect-5.9.6/
-    UI/Fonts|Scripts|Sprites|Textures|Prefabs/
+      Scripts/               Bootstrap, controller, session của game
+      Features/              Script, prefab, art theo feature của game
+      UI/                    UI, font, sprite và popup chung của game
+      Integration/           Adapter Firebase và Ads riêng của game
+      Prefabs/               Bootstrap và prefab còn lại của game
+  Addon/ThirdParty/UIEffect-5.9.6/
   Plugins/VoxelBusters/       Ads Kit và CoreLibrary
   GoogleMobileAds/            Google Mobile Ads SDK
   ExternalDependencyManager/  Resolver native dependency
@@ -417,15 +425,17 @@ Assets/
 Packages/                    Manifest và lock dependency
 ProjectSettings/             Unity, build, platform, define
 docs/                        Hướng dẫn và source tài liệu
+tools/Documentation/         Tool dựng PDF, UML và tài liệu Word cũ
 output/pdf/                  PDF xuất cho đội phát triển
 ```
 
-Prefab, font và texture mẫu tiếp tục ở Addon, tách khỏi core. Nhóm prefab UI hiện tại: CoinSafe, DailyReward, Leaderboard, Popups, Profile, Quests và Shared. Dùng các prefab này để tham khảo layout và binding, rồi tạo prefab thuộc game mới khi cần.
+UI mẫu trước đây trong Addon/UI đã chuyển về Game. Quest, DailyReward, Lives, CoinSafe, Profile và Leaderboard gom script/prefab/art trong Game/Features theo feature. UI dùng chung giữa nhiều feature của game nằm trong Game/UI. Logic retention dùng chung vẫn ở NebulaSoft Core/Features; database cấu hình của game tiếp tục ở Project Files/Data. Xem bản đồ di chuyển và quy tắc thêm module trong [cấu trúc dự án](project-structure.md).
 
 | Thay đổi | Nơi đặt |
 | --- | --- |
 | Rule ghép, sort, merge, đường đi của item | Project Files/Game/Scripts/Gameplay của game mới |
-| HUD, popup, presenter, binding button | Scripts/UI của game mới |
+| HUD và popup chung của game | Project Files/Game/UI |
+| View, adapter tiến độ và prefab của một feature | Project Files/Game/Features/<Feature> |
 | Một service tổng quát tái sử dụng được | NebulaSoft Core/Modules/<Feature> |
 | Asset cân bằng, level, audio clip | Project Files/Data và art folder của game |
 | Adapter SDK mới hoặc migration API | Provider/adapter ở biên tích hợp |
@@ -525,7 +535,7 @@ Một feature nên giữ một nguồn state chính: lấy model save rồi thao
 
 ### Source dùng để kiểm chứng phần này
 
-Controller: `Game/Scripts/Controllers/MenuController.cs`, `GameController.cs`. UI: `Game/Scripts/UI/StaticMapPanel.cs`, `UIComplete.cs`, `UIMainMenu.cs`; core `Modules/UI/Scripts/UIController.cs`. State/session: `Game/Scripts/Level System/ActiveSession.cs`, `LevelSave.cs`, `WinStreakProgress.cs`. Currency: `Modules/Currency/Scripts/CurrencyController.cs`, `Currency.cs`, `UI/CurrencyUIPanelSimple.cs`. Persistence: `Modules/Save/Scripts/SaveController.cs`, `GlobalSave.cs`, `SavedDataContainer.cs`. Cấu hình: `Assets/Project Files/Data/Project Init Settings.asset`.
+Controller: `Game/Scripts/Controllers/MenuController.cs`, `GameController.cs`. UI: `Game/UI/Scripts/StaticMapPanel.cs`, `UIComplete.cs`, `UIMainMenu.cs`; core `Modules/UI/Runtime/UIController.cs`. State/session: `Game/Scripts/Level System/ActiveSession.cs`, `LevelSave.cs`, `WinStreakProgress.cs`. Currency: `Modules/Currency/Runtime/CurrencyController.cs`, `Currency.cs`, `UI/CurrencyUIPanelSimple.cs`. Persistence: `Modules/Save/Runtime/SaveController.cs`, `GlobalSave.cs`, `SavedDataContainer.cs`. Cấu hình: `Assets/Project Files/Data/Project Init Settings.asset`.
 
 ## 7. Scene, vòng đời và thứ tự module
 
@@ -533,7 +543,7 @@ Controller: `Game/Scripts/Controllers/MenuController.cs`, `GameController.cs`. U
 modules_sequence
 ```
 
-`Initializer.Init()` bind SystemMessage, Overlay và EventSystem, khởi tạo AnalyticsModules, rồi giữ Initializer bằng DontDestroyOnLoad. `InitModules()` chạy ProjectInitSettings, static modules và global MusicSource. `SDKInitializer` khởi tạo SDKBehavior và các ISDKTaskBehavior; sau khi task hoàn tất gọi OnUserConsentReceived. Trong Editor, SDKInitializer gọi bước consent-complete ngay; GameLoading vẫn theo dõi loading tasks.
+`Initializer.Init()` bind SystemMessage, Overlay và EventSystem, khởi tạo AnalyticsModules, rồi giữ Initializer bằng DontDestroyOnLoad. `InitModulesCoroutine()` đợi các bước `InitModule.Prepare()` trước khi chạy `InitModules()`, static modules và global MusicSource. `SDKInitializer` khởi tạo SDKBehavior và các ISDKTaskBehavior. Khi mọi task hoàn tất và không có trạng thái Failed/TimedOut, nó gọi `OnUserConsentReceived`. Xem cách xử lý timeout và task tùy chọn ở [Initializer](modules/startup.md#initializer).
 
 `GameLoading.checkNetworkConnection` có thể chặn loading khi mất kết nối. Với game offline, tắt yêu cầu này theo policy sản phẩm; không mô tả luồng hiện tại là luôn bỏ qua network. Manual loading cần gọi `GameLoading.MarkAsReadyToHide()` sau khi sẵn sàng.
 
@@ -541,19 +551,21 @@ modules_sequence
 
 | Thứ tự | Module | Công việc chính |
 | --- | --- | --- |
-| 1 | Save Controller | Load save trước các service phụ thuộc |
-| 2 | Tween | Tạo runtime tween trên Initializer |
-| 3 | Audio Controller | Khởi tạo library và pool AudioSource |
-| 4 | Currencies | Nạp định nghĩa và balance từ save |
-| 5 | Haptic | Chọn wrapper platform |
-| 6 | Dev Panel | Link settings dev panel |
-| 7 | Game Settings | GameData.Init và override đã có |
-| 8 | Lives System | Khởi tạo life state/time |
-| 9 | Screen Settings | Frame rate và sleep timeout |
-| 10 | Quest | Nạp database và progress |
-| 11 | Daily Reward | Schedule, clock, state store |
-| 12 | Monetization/IAP | Chuẩn bị catalog IAP |
-| 13 | Monetization/Ads | Chuẩn bị AdsModuleSettings |
+| 1 | Remote Config | Chuẩn bị config remote, cache và bundled defaults |
+| 2 | Save Controller | Load save trước các service phụ thuộc |
+| 3 | Analytics | Cấu hình analytics service và provider |
+| 4 | Tween | Tạo runtime tween trên Initializer |
+| 5 | Audio Controller | Khởi tạo library và pool AudioSource |
+| 6 | Currencies | Nạp định nghĩa và balance từ save |
+| 7 | Haptic | Chọn wrapper platform |
+| 8 | Dev Panel | Link settings dev panel |
+| 9 | Game Settings | GameData.Init và adapter Quest |
+| 10 | Lives System | Khởi tạo life state/time |
+| 11 | Screen Settings | Frame rate và sleep timeout |
+| 12 | Quest | Nạp database và progress |
+| 13 | Daily Reward | Schedule, clock, state store |
+| 14 | Monetization/IAP | Chuẩn bị catalog IAP |
+| 15 | Monetization/Ads | Chuẩn bị AdsModuleSettings |
 
 ProjectInitSettings chạy đúng thứ tự serialized trong Inspector. RegisterModule.Order hỗ trợ tạo danh sách ở editor, không phải bộ giải dependency runtime. Đặt module sau mọi service mà nó cần. IAP/Ads đăng ký config ở bước module, kết nối SDK theo luồng monetization sau consent.
 
@@ -618,7 +630,7 @@ Mẫu module cần quyết định rõ lifetime, reset static, save identity, va
 
 ## 9. Save: model, dirty state và controller
 
-Nguồn: `Modules/Save/Scripts/SaveController.cs`, `ISaveObject.cs`, `GlobalSave.cs`. SaveInitModule khởi tạo trước service đọc dữ liệu. Feature sở hữu model; SaveController sở hữu load/serialize/ghi và autosave.
+Nguồn: `Modules/Save/Runtime/SaveController.cs`, `ISaveObject.cs`, `GlobalSave.cs`. SaveInitModule khởi tạo trước service đọc dữ liệu. Feature sở hữu model; SaveController sở hữu load/serialize/ghi và autosave.
 
 ```uml
 save_sequence
@@ -662,11 +674,11 @@ namespace FrameworkGuide.Samples
 
 Model dùng public field hoặc SerializeField phù hợp JsonUtility; interface bắt buộc Flush(). Nếu model chỉ chứa field đã serialize thì Flush có thể rỗng. Nếu có cache runtime/dictionary được chuyển sang dữ liệu serialize, Flush phải đồng bộ trước snapshot. Không tự ghi PlayerPrefs hay tạo save file thứ hai cho cùng state.
 
-Mutation và Flush chạy main thread. Pause/quit flush đồng bộ; Init idempotent, không load lại đè state ở mỗi scene. Giữ key, enum value, serialized type và schema tương thích sau release. Native hiện dùng format BinaryFormatter cũ; WebGL dùng JSON. Tài liệu này không đổi format hoặc tự thực hiện migration.
+Mutation và Flush chạy main thread. Pause/quit flush đồng bộ; Init idempotent, không load lại đè state ở mỗi scene. Giữ key, enum value, serialized type và schema tương thích sau release. Native ghi JSON có version và đọc được BinaryFormatter legacy. Mỗi model có version/migration độc lập; Firebase đồng bộ model đã bật CloudSync. Xem [Save, version và migration](save-module.md) để thêm dữ liệu và cập nhật schema.
 
 ## 10. UI: page, popup và controller
 
-Nguồn: `Modules/UI/Scripts/UIController.cs`, `UIPage.cs`, `IPopupWindow.cs`, `IPausePopup.cs`. Page cần Canvas và GraphicRaycaster; root UIController cần danh sách page hoặc cached prefab được đăng ký đúng.
+Nguồn: `Modules/UI/Runtime/UIController.cs`, `UIPage.cs`, `IPopupWindow.cs`, `IPausePopup.cs`. Page cần Canvas và GraphicRaycaster; root UIController cần danh sách page hoặc cached prefab được đăng ký đúng.
 
 Sơ đồ sau chỉ mô tả hệ thống type của UI. Quan hệ controller với model/save và các luồng MVC nằm ở chương 6.
 
@@ -1320,7 +1332,13 @@ Game controller gọi tutorial.StartTutorial khi board sẵn sàng và FinishTut
 
 ## 24. Remote Config, profile và leaderboard
 
-RemoteConfigController.Init(json) nhận config JSON đã được nguồn cung cấp. TryGetConfig<T>(key) trả typed override khi có. GameData.Init đọc các key ads, revive và reward. Không có remote payload thì dùng local defaults; muốn override được áp dụng lúc Init phải cung cấp JSON trước consumer, hoặc thiết kế bước apply lại có kiểm soát.
+Remote Config là module tùy chọn trong **Window → NebulaSoft Core → Project Init Settings**. Template đã gán `Remote Config Defaults.json` vào **Local Config**. Có thể chỉnh profile puzzle trong file này để kiểm tra ngay ở lần khởi động kế tiếp. Nếu asset khởi tạo khác chưa có mục này, dùng **Add Module → Remote Config**.
+
+1. Đặt một JSON object ở URL HTTPS trực tiếp, chẳng hạn trên CDN. Mỗi key là một giá trị hoặc object. **Copy Example JSON** tạo payload mẫu từ các lớp `RemoteConfigData`. Chỉ giữ các key muốn áp dụng.
+2. Điền **Endpoint**, chọn **Timeout Seconds** và gán **Local Config** nếu muốn đóng gói một file JSON dự phòng. Khi để Endpoint trống, module đọc Local Config nếu đã gán.
+3. Chạy scene **Init**. Bootstrap đợi các bước `Prepare()` trước khi chạy `CreateComponent()`, nên Currency, Ads, Game Settings và Lives đọc cùng một snapshot ngay lúc khởi tạo. Nếu muốn vào game khi mất mạng, giữ tùy chọn **Check Network Connection** của `GameLoading` tắt như trong scene mẫu.
+
+Module ưu tiên snapshot HTTPS hợp lệ, rồi đến cache hợp lệ gần nhất của cùng URL, rồi Local Config. Nếu không có snapshot, mỗi tính năng dùng mặc định của nó. Mỗi lần tải thành công thay cả snapshot. Bỏ một key khỏi JSON sẽ trả tính năng về mặc định, còn field thiếu trong một object dùng giá trị của lớp dữ liệu tương ứng. Cache lưu trên thiết bị và được cập nhật sau khi nhận payload hợp lệ. Module tải một lần lúc khởi động và giới hạn payload ở 256 KiB.
 
 ```csharp
 using NebulaSoft;
@@ -1333,14 +1351,28 @@ namespace FrameworkGuide.Samples
         {
             var data = RemoteConfigController.TryGetConfig<
                 AdsRemoteConfigData>("ads");
-            return data == null ? localDefault
-                : System.Math.Max(0, data.minLevel);
+            return data?.minLevel ?? localDefault;
         }
     }
 }
 ```
 
-RemoteConfigController là parse/access layer, không tự tải Firebase Remote Config. Payload phải tương thích schema và được validate trước dùng. GameData hiện áp override vào field runtime của ScriptableObject; khi mở rộng, tránh ghi state player vào asset và xác định rõ lúc reset local default.
+Dùng `TryGetValue<T>(key, out value)` cho feature flag hoặc giá trị đơn. Với dữ liệu có cấu trúc, override `RemoteConfigData.Validate()` để bảo vệ ràng buộc của tính năng. Một key thiếu, sai kiểu hoặc không qua validation trả về trạng thái thiếu override. `GameData` áp override vào bản sao runtime của asset. Currency và giới hạn Lives đã lưu tiếp tục dùng giá trị trong save của người chơi hiện tại.
+
+Tích hợp nguồn riêng như Firebase có thể tải trong `InitModule.Prepare()` rồi gọi `RemoteConfigController.Init(json)` trước khi các consumer khởi tạo. JSON từ xa được đọc trên client, nên chỉ đặt thông số công khai trong payload.
+
+### Profile puzzle casual
+
+Nhóm `puzzle` chỉ điều khiển luồng chơi chung của template. Mỗi game tiếp tục quản lý luật bàn, số lượt, hint và dữ liệu level trong module gameplay của mình.
+
+| Key trong `puzzle` | Profile mẫu | Hành vi |
+| --- | --- | --- |
+| `rewardedReviveEnabled` | `true` | Cho phép hiện lời mời nếu luật level cho hồi sinh và quảng cáo thưởng đã sẵn sàng |
+| `reviveOfferSeconds` | `8` | Số giây thực để chọn hồi sinh. Chấp nhận từ 1 đến 30 |
+| `maxRewardedRevivesPerAttempt` | `1` | Giới hạn lượt hồi sinh thưởng đã thành công trong mỗi lần chơi. Chấp nhận từ 0 đến 5, với 0 là không giới hạn |
+| `interstitialOnFinalFailure` | `false` | Bỏ qua quảng cáo chen ngang ở màn thua để người chơi có thể thử lại ngay |
+
+Field vắng mặt trong `puzzle` dùng mặc định trong **Game Data**. Nhóm `revive` tiếp tục chứa giá và số giây được cộng. Khi hồi sinh thành công, `GameController.Revived` chuyển số giây đó cho gameplay. Level có đếm giờ có thể đăng ký sự kiện để cộng thời gian. Level tính theo lượt có thể dùng cùng sự kiện để áp dụng luật hồi sinh của mình.
 
 ### Profile và leaderboard
 
@@ -1603,6 +1635,6 @@ Không diễn giải 77/77 là toàn bộ suite. Các audit trước ghi nhận 
 
 README.md là overview. `docs/ads-module.md`, `docs/iap-module.md`, `docs/save-module.md` ghi contract và migration chi tiết; `docs/addon-cleanup.md` ghi cấu trúc Addon. Source runtime là căn cứ cho tên API và behavior. Hướng dẫn này sửa cách mô tả cũ theo source hiện tại, không tuyên bố feature chỉ có UI là engine hoàn chỉnh.
 
-File source: `docs/framework-developer-guide.md`. Script dựng PDF: `docs/tools/build_framework_pdf.py`. Nguồn UML: `docs/diagrams/uml/`; render lại bằng `docs/tools/build_framework_uml.py`. Bản UML cập nhật xuất tại `output/pdf/GameFrameWorkPackage_Developer_Guide_UML.pdf`; README liên kết tới bản này. Các PDF trước đó là bản cũ. Các đoạn C# được kiểm tra biên dịch với assembly của Unity hiện tại; việc compile mẫu không thay thế triển khai concrete board và test gameplay.
+File source: `docs/framework-developer-guide.md`. Script dựng PDF: `tools/Documentation/build_framework_pdf.py`. Nguồn UML: `docs/diagrams/uml/`; render lại bằng `tools/Documentation/build_framework_uml.py`. Bản UML cập nhật xuất tại `output/pdf/GameFrameWorkPackage_Developer_Guide_UML.pdf`; README liên kết tới bản này. Các PDF trước đó là bản cũ. Các đoạn C# được kiểm tra biên dịch với assembly của Unity hiện tại; việc compile mẫu không thay thế triển khai concrete board và test gameplay.
 
 Khi cập nhật SDK, sửa vendor/adapter/config tại biên tích hợp. Khi đổi service contract, ghi API version và migration. Giữ tài liệu và ví dụ sát source để junior nối feature qua service sẵn có.

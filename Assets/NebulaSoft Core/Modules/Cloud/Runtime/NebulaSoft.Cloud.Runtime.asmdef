@@ -1,0 +1,6 @@
+{
+  "name": "NebulaSoft.Cloud.Runtime",
+  "rootNamespace": "NebulaSoft.Cloud",
+  "autoReferenced": true,
+  "noEngineReferences": true
+}

@@ -20,9 +20,9 @@ namespace NebulaSoft
             if (settings == null) throw new ArgumentNullException(nameof(settings));
             lifetime = new CancellationTokenSource();
             configuration = settings;
-            service = AnalyticsController.Service;
+            service = AnalyticsController.ConfigureService(settings.PendingEventCapacity);
             service.SetCollectionEnabled(settings.CollectionEnabled);
-            frameworkBridge = new AnalyticsBridge(AnalyticsController.Events);
+            frameworkBridge = new AnalyticsBridge(AnalyticsController.Events, settings.AutomaticBridges);
             InitializeProvider();
         }
 
@@ -30,23 +30,18 @@ namespace NebulaSoft
         {
             if (lifetime == null || initializing || service.IsReady) return;
             var owner = lifetime;
+            var activeService = service;
             var settings = configuration;
             initializing = true;
             try
             {
-                IAnalyticsProvider provider;
-                // Editor sessions never send telemetry to a production Firebase property.
-                if (Application.isEditor || settings.Provider == AnalyticsBackend.Console)
-                    provider = new ConsoleProvider();
-                else
+                IAnalyticsProvider provider = settings.CreateProvider(Application.isEditor);
+                bool ready;
+                using (var attempt = CancellationTokenSource.CreateLinkedTokenSource(owner.Token))
                 {
-#if FIREBASE_ANALYTICS
-                    provider = new FirebaseProvider();
-#else
-                    throw new InvalidOperationException("Import FirebaseAnalytics.unitypackage, then enable FIREBASE_ANALYTICS for the build target.");
-#endif
+                    attempt.CancelAfter(TimeSpan.FromSeconds(settings.InitializationTimeoutSeconds));
+                    ready = await activeService.InitializeAsync(provider, attempt.Token);
                 }
-                bool ready = await service.InitializeAsync(provider, owner.Token);
                 if (!ready && lifetime == owner && !owner.IsCancellationRequested)
                     Debug.LogWarning("[Analytics] Provider initialization failed. Events remain in the bounded startup queue.");
             }
@@ -58,6 +53,8 @@ namespace NebulaSoft
         {
             if (!paused) InitializeProvider();
         }
+
+        public void RetryInitialization() => InitializeProvider();
 
         public void Shutdown()
         {

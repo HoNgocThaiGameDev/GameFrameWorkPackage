@@ -63,7 +63,7 @@ namespace NebulaSoft.Tests
         }
 
         [Test]
-        public void LegacyBinaryFile_LoadsAndRoundTripsWithOriginalReader()
+        public void LegacyBinaryFile_MigratesToVersionedJsonWithoutLosingData()
         {
             File.Copy(LegacyFixture, Path.Combine(directory, "save"));
             GlobalSave restored = Serializer.Deserialize<GlobalSave>("save");
@@ -77,10 +77,8 @@ namespace NebulaSoft.Tests
             Set("saveWrapper", new DefaultSaveWrapper());
             SaveController.SaveChecked();
 
-            // Same BinaryFormatter reader used before this refactor; no new envelope or key mapping.
-            GlobalSave reread;
-            using (var stream = File.OpenRead(Path.Combine(directory, "save")))
-                reread = (GlobalSave)new BinaryFormatter().Deserialize(stream);
+            Assert.That(File.ReadAllText(Path.Combine(directory, "save")), Does.StartWith("{\"format\":\"NebulaSoft.Save\""));
+            GlobalSave reread = Serializer.Deserialize<GlobalSave>("save");
             reread.Init(200);
             Assert.That(reread.GetSaveObject<SimpleIntSave>(314159).Value, Is.EqualTo(74));
             Assert.That(reread.GetSaveObject<SimpleIntSave>("currency:0").Value, Is.EqualTo(1200));

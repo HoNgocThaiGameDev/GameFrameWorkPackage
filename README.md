@@ -2,7 +2,7 @@
 
 GameFrameWorkPackage is a reusable Unity mobile-game framework for casual, puzzle, idle, merge, tap/drag, and hyper-casual projects. Shared services live in `NebulaSoft Core`; each title adds its own gameplay rules, content, UI, and scenes under `Project Files` without changing the framework layer.
 
-This repository currently targets **Unity 6000.6.8f1** and package version **1.3.0**. Its enabled build scenes are:
+This repository currently targets **Unity 6000.6.8f1** and framework version **1.4.0**. Its enabled build scenes are:
 
 1. `Assets/Project Files/Game/Scenes/Init.unity`
 2. `Assets/Project Files/Game/Scenes/Menu.unity`
@@ -13,6 +13,8 @@ This repository currently targets **Unity 6000.6.8f1** and package version **1.3
 The current template contains the application/UI shell and reusable services. Its `LevelData` is a lightweight session contract and its power-up bar is UI-only; a new game supplies its own board, input, level database and mechanics. See the Vietnamese [developer guide](docs/framework-developer-guide.md) and [PDF](output/pdf/GameFrameWorkPackage_Developer_Guide_MVC.pdf) for step-by-step onboarding, Astah-style UML diagrams, Init/Menu/Game hierarchies and flows, controller/UI/save interactions, model restoration, UI change events, module configuration and C# examples checked against the current source. Chapter 6 distinguishes scene controllers, UI routing, feature state and persistence; it also documents the current win/NEXT behavior and disabled periodic autosave.
 
 ## Quick start
+
+Use the Vietnamese [module implementation handbook](docs/modules/README.md) to look up each module's source, Unity setup, gameplay API and integration checks.
 
 1. Clone the repository and open it in Unity Hub with Unity **6000.6.8f1**.
 2. Let Unity resolve the dependencies declared in `Packages/manifest.json`.
@@ -32,23 +34,38 @@ The [Analytics module](docs/analytics-module.md) is registered in Project Init S
 ```text
 .
 ├── Assets/
-│   ├── NebulaSoft Core/        # Reusable framework services and editor tooling
+│   ├── NebulaSoft Core/
+│   │   ├── Foundation/         # Small shared contracts
+│   │   ├── Modules/            # Reusable services, Runtime/Editor per module
+│   │   ├── Features/           # Optional Quest, DailyReward, Lives logic
+│   │   ├── Integration/        # Composition and tools spanning assemblies
+│   │   ├── Utilities/          # Shared runtime/editor helpers
+│   │   ├── Shared/             # Framework prefabs, animations, images
+│   │   ├── Editor/             # Framework-wide editor tools
+│   │   └── Examples/           # Small core examples
 │   ├── Project Files/          # Reference-game and future-title data, gameplay, UI, art, and scenes
 │   │   ├── Data/               # ScriptableObject databases and game configuration
 │   │   └── Game/
 │   │       ├── Scenes/         # Init, Menu, Game
-│   │       ├── Scripts/        # Game-specific runtime and editor code
-│   │       ├── Prefabs/        # UI, blocks, effects, power-ups, environments
+│   │       ├── Scripts/        # Game bootstrap, controllers, session contracts
+│   │       ├── Features/       # Title-owned feature scripts, prefabs, and art
+│   │       ├── UI/             # Shared title UI, fonts, sprites, and popups
+│   │       ├── Integration/    # Title-specific Firebase and Ads adapters
+│   │       ├── Prefabs/        # Bootstrap, particles, and remaining game prefabs
 │   │       └── Animations|Audio|Images|Models|Materials|Textures|Shaders/
-│   ├── Addon/                  # UI sample prefabs/art and ThirdParty/UIEffect-5.9.6
+│   ├── Addon/ThirdParty/       # UIEffect-5.9.6, vendor source kept intact
 │   ├── GoogleMobileAds/        # Installed AdMob SDK and settings
 │   ├── ExternalDependencyManager/ # Native dependency resolver
 │   ├── Plugins/                # Native and third-party plugins
 │   └── Tests/Editor/           # EditMode regression tests
 ├── Packages/                   # Unity Package Manager manifest and lock file
 ├── ProjectSettings/            # Unity project and build settings
-└── docs/images/                # README diagrams and screenshots
+├── tools/                      # ModuleAudit, PlayerCompileProbe, Documentation
+├── docs/                       # Guides, diagrams, and historical audit evidence
+└── output/                     # Exported documents and audit reports
 ```
+
+See [folder ownership and migration map](docs/project-structure.md) before adding or moving a module. UI samples previously in `Assets/Addon/UI` now belong to `Project Files/Game/Features` or `Project Files/Game/UI`. Framework assets previously in `Assets/Framework` now live in `NebulaSoft Core/Shared`. Keep `.meta` files with moved assets.
 
 ### Ownership boundaries
 
@@ -92,8 +109,9 @@ The Inspector above is the project's service registry. It serializes an ordered 
 flowchart LR
     A[InitModule class] -->|RegisterModule attribute| B[Project Init Settings custom Inspector]
     B -->|Serialized as ordered subasset| C[Project Init Settings.asset]
-    D[GameLoading] --> E[Initializer.InitModules]
-    E --> F[ProjectInitSettings.Init]
+    D[GameLoading] --> E[Initializer.InitModulesCoroutine]
+    E --> P[Optional InitModule.Prepare phase]
+    P --> F[ProjectInitSettings.Init]
     F -->|For each module in list order| G[InitModule.CreateComponent]
     G --> H[Static service Init or persistent component]
     H --> I[Scene controllers and UI use the service]
@@ -101,12 +119,13 @@ flowchart LR
 
 At editor time, `[RegisterModule("Name", core, order)]` makes an `InitModule` discoverable by the custom `Project Init Settings` inspector. Modules marked `core: true` are required when a settings asset is created; their `order` determines creation priority. Non-core modules are optional entries added from the Inspector's **Add Module** menu, with one instance of each module type per settings asset.
 
-At runtime, `GameLoading` calls `Initializer.Init()`, checks connectivity, then calls `Initializer.InitModules()`. `ProjectInitSettings.Init()` walks the serialized list in its displayed order and invokes `CreateComponent()` on every non-null module. After that, static modules and global music are initialized; `SDKInitializer` then initializes SDK behaviors and queued loading tasks before the next scene loads.
+At runtime, `GameLoading` initializes the bootstrap, runs the configured connectivity check, and waits for optional `InitModule.Prepare()` work. `ProjectInitSettings.Init()` then invokes `CreateComponent()` on each module in list order. Static modules, global music, SDK behaviors and loading tasks initialize before the next scene loads.
 
 The modules shown in the screenshot currently register services as follows:
 
 | Inspector module | Serialized configuration | Runtime registration/effect |
 | --- | --- | --- |
+| **Remote Config** | Direct HTTPS endpoint, timeout and optional bundled JSON | Loads a startup snapshot during `Prepare()` so other modules can read overrides |
 | **Save Controller** | Autosave delay, clear-on-start option, WebGL key prefix | Calls `SaveController.Init(...)`; this must precede services that load player state |
 | **Tween** | Custom easing functions and update-pool capacities | Adds the persistent `Tween` component to `Initializer.GameObject`, initializes it, then registers easing functions |
 | **Audio Controller** | Audio clip library, pool size, and 3D audio defaults | Applies 3D settings and calls `AudioController.Init(...)` |
@@ -168,7 +187,7 @@ Configure **Project Init Settings → Monetization/Ads** using **AdsModuleSettin
 
 ## Reference-game modules
 
-The current reference game is under `Assets/Project Files/Game/Scripts`. Its modules demonstrate how a title composes core services; a new game can replace or extend this layer without changing `NebulaSoft Core`.
+The current reference game is under `Assets/Project Files/Game`. `Scripts` owns bootstrap/controllers, `Features` owns title-specific feature presentation, `UI` owns shared title UI, and `Integration` owns title-specific service adapters. A new game can replace or extend this layer without changing `NebulaSoft Core`.
 
 | Group | Main types and assets | How it works |
 | --- | --- | --- |
@@ -178,12 +197,14 @@ The current reference game is under `Assets/Project Files/Game/Scripts`. Its mod
 | **Lives** | `LivesSystem`, `LivesData`, `LivesSave`, `UIAddLivesPanel` | Persists lives, restores them over time and supports infinite-life rewards. Title flow chooses lock/unlock and final-failure policy |
 | **Quest and Daily Reward** | `QuestService`/`QuestDatabase`; `DailyRewardService`/`DailyRewardDatabase` | Initializes data-driven progression rewards; daily rewards enforce one claim per UTC day and reset the sequence after missed days |
 | **Store and No Ads** | `UIStore`, store elements, `UINoAdsOffer`, IAP reward assets | Presents currencies/offers and integrates with the core monetization/reward systems |
-| **Remote Config** | Ads/reward/revive data, `RemoteConfigController` | Reads supplied remote JSON by key; `GameData` applies ads, revive and reward overrides. Fetching the payload is an integration responsibility |
+| **Remote Config** | `RemoteConfigInitModule`, `RemoteConfigController` | Fetches and caches an optional startup snapshot. Consumers read typed overrides with their own fallback defaults |
 | **Firebase and profile** | Firebase handlers, profile UI, cloud sync, leaderboard, soft update | Optional cloud identity/progress, no-ads entitlement synchronization, leaderboards, and update checks; compiled safely out when `FIREBASE` is absent |
 | **Presentation and retention UI** | `UI`, `Settings`, `Tutorial`, `Feature Announcement`, `Level Map` | Renders pages/popups/HUD, settings, guided onboarding, unlock announcements, and level-map elements |
 | **Developer tooling** | `Dev Panel`, core editor tooling, `Assets/Tests/Editor` | Provides developer controls and EditMode coverage; board authoring belongs to the new title |
 
 ## Data, persistence, and configuration
+
+Native saves now use a versioned JSON envelope with legacy loading, per-model migrations and backup recovery. Add `[SaveModel("stable.id", version, CloudSync = true)]` to register new state with the existing cloud progress flow. See [save versioning and migration](docs/save-module.md). Retention runtime features are in `Assets/NebulaSoft Core/Features`; their views and gameplay adapters remain title-owned.
 
 ### Data flow
 
@@ -199,7 +220,7 @@ ScriptableObject database / settings asset
 
 Examples include retention/economy data through lives, quest, daily-reward, reward and currency databases. New titles add their own level and power-up definitions. Keep designer-editable defaults in ScriptableObjects and player-specific state in save models.
 
-`RemoteConfigController` provides an optional runtime override layer. A feature asks for a typed key with `TryGetConfig<T>()`; `GameData` reads ads, revive and reward overrides during initialization. Supply JSON before its consumers initialize, or implement a deliberate reapply step. Validate remote values and keep them compatible with local content.
+The optional Remote Config module ships in Project Init Settings with a bundled casual puzzle profile. Set a direct HTTPS URL when you have a remote source. Features read structured overrides with `TryGetConfig<T>()` or scalar flags with `TryGetValue<T>()`. [Remote Config setup and fallback behavior](docs/framework-developer-guide.md#24-remote-config-profile-và-leaderboard)
 
 Firebase is not required for local play. With `FIREBASE` enabled, the Firebase module can authenticate a player, synchronize selected progress/profile data, maintain no-ads entitlement, preload/submit leaderboards, and check soft updates. Local save remains the base progression store.
 

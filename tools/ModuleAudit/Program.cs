@@ -107,11 +107,9 @@ internal static class Program
     private static void RemoteJsonBraces()
     {
         const string input = "{\"message\":{\"text\":\"a}b\",\"value\":1}}";
-        var method = typeof(RemoteConfigController).GetMethod("ParseJsonLikeString", BindingFlags.Static | BindingFlags.NonPublic);
-        var result = (Dictionary<string, string>)method.Invoke(null, new object[] { input });
-        Check(result.ContainsKey("message"), "Parser lost the message key");
-        try { using var doc = JsonDocument.Parse(result["message"]); Check(doc.RootElement.GetProperty("text").GetString() == "a}b", "Message changed"); }
-        catch (JsonException) { throw new Exception($"Valid input JSON became invalid extracted JSON: {result["message"]}"); }
+        RemoteConfigController.Init(input);
+        Check(RemoteConfigController.TryGetValue("message", out Dictionary<string, object> result), "Parser lost the message key");
+        Check(result["text"].ToString() == "a}b", "Message changed");
     }
     private static MemoryDailyStore SetupDaily(DateTime? lastClaim = null)
     {

@@ -1,0 +1,11 @@
+{
+  "name": "NebulaSoft.Tween.Runtime",
+  "rootNamespace": "NebulaSoft",
+  "references": [
+    "NebulaSoft.Foundation",
+    "Core.UE",
+    "Unity.TextMeshPro",
+    "UnityEngine.UI"
+  ],
+  "autoReferenced": true
+}

@@ -6,20 +6,26 @@ using System.Threading.Tasks;
 namespace NebulaSoft.Analytics
 {
     /// <summary>Application-lifetime service. Call on the Unity main thread; the SDK owns transport/offline persistence.</summary>
-    public sealed class AnalyticsService : IAnalyticsService
+    public sealed class AnalyticsService : IAnalyticsService, IAnalyticsDiagnostics
     {
         private readonly Queue<AnalyticsEvent> pending = new Queue<AnalyticsEvent>();
         private readonly Dictionary<string, string> userProperties = new Dictionary<string, string>();
         private readonly CancellationTokenSource lifetime = new CancellationTokenSource();
-        private readonly int capacity;
+        private int capacity;
         private readonly Action<Exception> onError;
         private IAnalyticsProvider provider;
         private Task<bool> initialization;
         private bool disposed, hasUserId;
         private string userId;
+        private bool contextReady;
+        private long acceptedCount, sentCount, queueOverflowCount, identityDiscardCount;
+        private long collectionDiscardCount, shutdownDiscardCount, rejectedCount, sendFailureCount, initializationFailureCount;
         public bool IsReady { get; private set; }
         public bool IsCollectionEnabled { get; private set; }
         public int PendingCount => pending.Count;
+        public AnalyticsDiagnostics Diagnostics => new AnalyticsDiagnostics(pending.Count, acceptedCount,
+            sentCount, queueOverflowCount, identityDiscardCount, collectionDiscardCount,
+            shutdownDiscardCount, rejectedCount, sendFailureCount, Interlocked.Read(ref initializationFailureCount));
 
         public AnalyticsService(int pendingCapacity = 128, bool collectionEnabled = true, Action<Exception> onError = null)
         {
@@ -38,22 +44,23 @@ namespace NebulaSoft.Analytics
             provider = value;
             var completion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
             initialization = completion.Task;
-            _ = InitializeCoreAsync(cancellation, completion);
+            _ = InitializeCoreAsync(value, cancellation, completion);
             return completion.Task;
         }
 
-        private async Task InitializeCoreAsync(CancellationToken cancellation, TaskCompletionSource<bool> completion)
+        private async Task InitializeCoreAsync(IAnalyticsProvider candidate, CancellationToken cancellation, TaskCompletionSource<bool> completion)
         {
             using (var linked = CancellationTokenSource.CreateLinkedTokenSource(lifetime.Token, cancellation))
+            using (linked.Token.Register(() => FailInitialization(completion)))
             {
                 try
                 {
-                    await provider.InitializeAsync(linked.Token);
                     linked.Token.ThrowIfCancellationRequested();
-                    if (disposed) { completion.TrySetResult(false); return; }
-                    provider.SetCollectionEnabled(IsCollectionEnabled);
-                    if (hasUserId) provider.SetUserId(userId);
-                    foreach (var pair in userProperties) provider.SetUserProperty(pair.Key, pair.Value);
+                    await candidate.InitializeAsync(linked.Token);
+                    linked.Token.ThrowIfCancellationRequested();
+                    if (disposed || initialization != completion.Task) { FailInitialization(completion); return; }
+                    candidate.SetCollectionEnabled(IsCollectionEnabled);
+                    ApplyContext(candidate);
                     IsReady = true;
                     while (pending.Count > 0)
                     {
@@ -62,40 +69,88 @@ namespace NebulaSoft.Analytics
                     }
                     completion.TrySetResult(true);
                 }
-                catch (OperationCanceledException) { completion.TrySetResult(false); }
-                catch (Exception exception) { Report(exception); completion.TrySetResult(false); }
+                catch (OperationCanceledException) { FailInitialization(completion); }
+                catch (Exception exception) { FailInitialization(completion); Report(exception); }
             }
+        }
+
+        private void FailInitialization(TaskCompletionSource<bool> completion)
+        {
+            if (completion.TrySetResult(false)) Interlocked.Increment(ref initializationFailureCount);
         }
 
         public bool Track(AnalyticsEvent value)
         {
-            if (disposed || !IsCollectionEnabled || value == null) return false;
-            if (IsReady) return Send(value);
-            if (pending.Count == capacity) pending.Dequeue();
+            if (disposed || !IsCollectionEnabled || value == null)
+            {
+                rejectedCount++;
+                return false;
+            }
+            if (IsReady)
+            {
+                if (!Send(value)) return false;
+                acceptedCount++;
+                return true;
+            }
+            if (pending.Count == capacity)
+            {
+                pending.Dequeue();
+                queueOverflowCount++;
+            }
             pending.Enqueue(value);
+            acceptedCount++;
             return true;
         }
 
         private bool Send(AnalyticsEvent value)
         {
-            try { provider.LogEvent(value); return true; }
-            catch (Exception exception) { Report(exception); return false; }
+            if (!contextReady) { sendFailureCount++; return false; }
+            try
+            {
+                provider.LogEvent(value);
+                sentCount++;
+                return true;
+            }
+            catch (Exception exception) { sendFailureCount++; Report(exception); return false; }
+        }
+
+        public void ConfigureQueueCapacity(int pendingCapacity)
+        {
+            if (pendingCapacity < 1) throw new ArgumentOutOfRangeException(nameof(pendingCapacity));
+            if (disposed) return;
+            capacity = pendingCapacity;
+            while (pending.Count > capacity)
+            {
+                pending.Dequeue();
+                queueOverflowCount++;
+            }
         }
 
         public void SetCollectionEnabled(bool enabled)
         {
             if (disposed) return;
             IsCollectionEnabled = enabled;
-            if (!enabled) pending.Clear();
+            if (!enabled)
+            {
+                collectionDiscardCount += pending.Count;
+                pending.Clear();
+            }
             if (IsReady) Safely(() => provider.SetCollectionEnabled(enabled));
         }
 
         public void SetUserId(string value)
         {
             if (disposed) return;
+            if (!string.Equals(userId, value, StringComparison.Ordinal))
+            {
+                // Account boundaries discard buffered events rather than attributing them to the next user.
+                identityDiscardCount += pending.Count;
+                pending.Clear();
+                foreach (string name in new List<string>(userProperties.Keys)) userProperties[name] = null;
+            }
             userId = value;
             hasUserId = true;
-            if (IsReady) Safely(() => provider.SetUserId(value));
+            if (IsReady) RefreshContext();
         }
 
         public void SetUserProperty(string name, string value)
@@ -104,7 +159,21 @@ namespace NebulaSoft.Analytics
             AnalyticsEvent.ValidateName(name, 24);
             if (value != null && value.Length > 36) throw new ArgumentException("User property values support at most 36 characters.", nameof(value));
             userProperties[name] = value;
-            if (IsReady) Safely(() => provider.SetUserProperty(name, value));
+            if (IsReady) RefreshContext();
+        }
+
+        private void ApplyContext(IAnalyticsProvider target)
+        {
+            contextReady = false;
+            if (hasUserId) target.SetUserId(userId);
+            foreach (var pair in userProperties) target.SetUserProperty(pair.Key, pair.Value);
+            contextReady = true;
+        }
+
+        private void RefreshContext()
+        {
+            try { ApplyContext(provider); }
+            catch (Exception exception) { Report(exception); }
         }
 
         private void Safely(Action action) { try { action(); } catch (Exception exception) { Report(exception); } }
@@ -116,6 +185,7 @@ namespace NebulaSoft.Analytics
             disposed = true;
             IsReady = false;
             lifetime.Cancel();
+            shutdownDiscardCount += pending.Count;
             pending.Clear();
             userProperties.Clear();
             if (provider != null) Safely(provider.Dispose);

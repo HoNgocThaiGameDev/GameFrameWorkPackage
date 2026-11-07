@@ -1,0 +1,5 @@
+{
+  "name": "NebulaSoft.Firebase",
+  "references": ["NebulaSoft.Cloud.Runtime", "NebulaSoft.Analytics.Runtime"],
+  "autoReferenced": true
+}

@@ -10,7 +10,7 @@ import re
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE_ROOTS = ("Assets/NebulaSoft Core", "Assets/Project Files/Game/Scripts", "Assets/Tests")
+SOURCE_ROOTS = ("Assets/NebulaSoft Core", "Assets/Project Files/Game", "Assets/Tests")
 
 
 def read(path: Path) -> str:

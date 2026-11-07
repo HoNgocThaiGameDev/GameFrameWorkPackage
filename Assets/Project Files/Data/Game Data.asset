@@ -17,6 +17,10 @@ MonoBehaviour:
   revivePrices: 84030000b0040000dc050000
   reviveExtraSeconds: 20
   reviveIAPSeconds: 20
+  rewardedReviveEnabled: 1
+  reviveOfferSeconds: 8
+  maxRewardedRevivesPerAttempt: 1
+  interstitialOnFinalFailure: 0
   showAdsAfterLevel: 12
   skipReturingToMenuUntilLevel: 15
   defaultReward:

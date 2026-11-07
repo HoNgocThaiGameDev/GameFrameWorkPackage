@@ -32,8 +32,8 @@ Không có quan hệ SaveController gọi UI refresh. Autosave định kỳ đan
 Render bằng PlantUML 1.2026.8 (Java 17 đang dùng tại máy này):
 
 ```powershell
-python docs/tools/build_framework_uml.py --jar <path-to-plantuml.jar>
-python docs/tools/build_framework_pdf.py
+python tools/Documentation/build_framework_uml.py --jar <path-to-plantuml.jar>
+python tools/Documentation/build_framework_pdf.py
 ```
 
 Muốn xuất thêm PNG để xem từng hình, thêm `--png`. Python cần `reportlab`,

@@ -1,0 +1,9 @@
+{
+  "name": "NebulaSoft.Pool.Runtime",
+  "references": [
+    "NebulaSoft.Foundation",
+    "Core.UE"
+  ],
+  "includePlatforms": [],
+  "autoReferenced": true
+}

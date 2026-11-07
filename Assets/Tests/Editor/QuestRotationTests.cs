@@ -9,13 +9,13 @@ using UnityEngine;
 public sealed class QuestRotationTests
 {
     private const string DatabasePath = "Assets/Project Files/Data/Quest/Quest Database.asset";
-    private const string PanelPrefabPath = "Assets/Addon/UI/Prefabs/Quests/Panel_quest.prefab";
-    private const string QuestElementPrefabPath = "Assets/Addon/UI/Prefabs/Quests/QuestElement.prefab";
-    private const string QuestRewardPopupPrefabPath = "Assets/Addon/UI/Prefabs/Quests/QuestRewardClaimPopup.prefab";
-    private const string ClaimButtonSpritePath = "Assets/Addon/UI/Sprites/Quest/Claim_btn.png";
-    private const string ClaimedButtonSpritePath = "Assets/Addon/UI/Sprites/Quest/Claimed_btn.png";
-    private const string GoButtonSpritePath = "Assets/Framework/WhiteSprite.png";
-    private const string PatternQuestTexturePath = "Assets/Addon/UI/Textures/Quest/PatternQuest.png";
+    private const string PanelPrefabPath = "Assets/Project Files/Game/Features/Quest/Prefabs/Panel_quest.prefab";
+    private const string QuestElementPrefabPath = "Assets/Project Files/Game/Features/Quest/Prefabs/QuestElement.prefab";
+    private const string QuestRewardPopupPrefabPath = "Assets/Project Files/Game/Features/Quest/Prefabs/QuestRewardClaimPopup.prefab";
+    private const string ClaimButtonSpritePath = "Assets/Project Files/Game/Features/Quest/Art/Sprites/Claim_btn.png";
+    private const string ClaimedButtonSpritePath = "Assets/Project Files/Game/Features/Quest/Art/Sprites/Claimed_btn.png";
+    private const string GoButtonSpritePath = "Assets/NebulaSoft Core/Shared/Images/Primitives/WhiteSprite.png";
+    private const string PatternQuestTexturePath = "Assets/Project Files/Game/Features/Quest/Art/Textures/PatternQuest.png";
 
     [Test]
     public void PeriodSelections_RoundTripThroughJsonUtility()

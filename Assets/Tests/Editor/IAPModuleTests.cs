@@ -230,6 +230,64 @@ namespace NebulaSoft.Tests
         }
 
         [Test]
+        public void CurrencyReward_InvalidLaterEntryCannotPartiallyGrant_AndRetryDeduplicates()
+        {
+            WithCurrencies(() =>
+            {
+                rewards.Rewards.Clear();
+                rewards.Rewards.Add(new CurrencyReward(new[] { new CurrencyAmount("Coins", 100), new CurrencyAmount("missing", 25) }));
+                Assert.Throws<System.Collections.Generic.KeyNotFoundException>(() => IAPManager.TryFulfillPurchase(product, "batch-order"));
+                Assert.That(CurrencyController.Get("Coins"), Is.Zero);
+                rewards.Rewards.Clear();
+                rewards.Rewards.Add(new CurrencyReward(new[] { new CurrencyAmount("Coins", 100), new CurrencyAmount("Coins", 25) }));
+                Assert.That(IAPManager.TryFulfillPurchase(product, "batch-order"), Is.True);
+                Assert.That(IAPManager.TryFulfillPurchase(product, "batch-order"), Is.True);
+                var restored = Serializer.Deserialize<GlobalSave>("save"); restored.Init(0);
+                Assert.That(restored.GetSaveObject<Currency.Save>("currency:0").Amount, Is.EqualTo(125));
+            });
+        }
+
+        [Test]
+        public void CurrencyObserver_CannotPersistRewardBeforeItsTransactionCheckpoint()
+        {
+            WithCurrencies(() =>
+            {
+                rewards.Rewards.Clear();
+                rewards.Rewards.Add(new CurrencyReward(new[] { new CurrencyAmount("Coins", 100) }));
+                bool observedCommitted = false;
+                CurrencyController.GetCurrency("Coins").OnCurrencyChanged += (_, _) =>
+                {
+                    SaveController.SaveChecked();
+                    var disk = Serializer.Deserialize<GlobalSave>("save"); disk.Init(0);
+                    observedCommitted = disk.GetSaveObject<IAPManager.Save>("iapGlobalSave").FulfilledTransactionHashes.Contains("observer-order");
+                };
+                IAPManager.TryFulfillPurchase(product, "observer-order");
+                Assert.That(observedCommitted, Is.True);
+            });
+        }
+
+        private void WithCurrencies(Action action)
+        {
+            var oldState = new System.Collections.Generic.Dictionary<FieldInfo, object>();
+            foreach (var field in typeof(CurrencyController).GetFields(Flags))
+                if (!field.IsInitOnly) oldState.Add(field, field.GetValue(null));
+            var database = ScriptableObject.CreateInstance<CurrencyDatabase>();
+            try
+            {
+                CurrencyController.Shutdown();
+                typeof(CurrencyDatabase).GetField("currencies", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(database, new[] { new Currency() });
+                CurrencyController.Init(database);
+                action();
+            }
+            finally
+            {
+                CurrencyController.Shutdown();
+                foreach (var pair in oldState) pair.Key.SetValue(null, pair.Value);
+                UnityEngine.Object.DestroyImmediate(database);
+            }
+        }
+
+        [Test]
         public void DummyRestore_AlwaysClearsInProgress()
         {
             Set(typeof(IAPManager), "wrapper", new DummyIAPWrapper());
@@ -274,7 +332,7 @@ namespace NebulaSoft.Tests
             Assert.That(catalog.ValidateCatalog(), Is.Empty);
             Assert.That(catalog.StoreItems, Has.Length.EqualTo(6));
             int holders = 0;
-            foreach (string guid in AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Project Files/Game/Prefabs" }))
+            foreach (string guid in AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Project Files/Game" }))
             {
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(guid));
                 foreach (var holder in prefab.GetComponentsInChildren<IAPRewardsHolder>(true))

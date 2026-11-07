@@ -1,0 +1,11 @@
+{
+  "name": "NebulaSoft.Tween.Editor",
+  "rootNamespace": "NebulaSoft",
+  "references": [
+    "NebulaSoft.Tween.Runtime",
+    "Core.UE",
+    "Core.Inspector.Editor"
+  ],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true
+}

@@ -1,0 +1,16 @@
+{
+  "name": "NebulaSoft.Pool.Editor",
+  "references": [
+    "NebulaSoft.Pool.Runtime",
+    "Core.UE",
+    "Core.UE.Editor",
+    "Core.Inspector",
+    "Core.Inspector.Editor",
+    "Core.Settings",
+    "Core.Settings.Editor"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "autoReferenced": true
+}

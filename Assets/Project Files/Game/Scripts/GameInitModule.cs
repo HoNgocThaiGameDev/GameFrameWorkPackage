@@ -12,6 +12,7 @@ namespace NebulaSoft
         public override void CreateComponent()
         {
             gameData.Init();
+            Initializer.GameObject.GetOrSetComponent<QuestGameProgressAdapter>();
         }
     }
 }

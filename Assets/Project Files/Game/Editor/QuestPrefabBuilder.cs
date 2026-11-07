@@ -12,17 +12,17 @@ namespace NebulaSoft.EditorTools
     /// </summary>
     internal static class QuestPrefabBuilder
     {
-        private const string QuestSpriteFolder = "Assets/Addon/UI/Sprites/Quest/";
-        private const string ElementPrefabPath = "Assets/Addon/UI/Prefabs/Quests/QuestElement.prefab";
-        private const string PanelPrefabPath = "Assets/Addon/UI/Prefabs/Quests/Panel_quest.prefab";
-        private const string NavigationPrefabPath = "Assets/Addon/UI/Prefabs/Shared/LeaderboardBottomNavigation.prefab";
+        private const string QuestSpriteFolder = "Assets/Project Files/Game/Features/Quest/Art/Sprites/";
+        private const string ElementPrefabPath = "Assets/Project Files/Game/Features/Quest/Prefabs/QuestElement.prefab";
+        private const string PanelPrefabPath = "Assets/Project Files/Game/Features/Quest/Prefabs/Panel_quest.prefab";
+        private const string NavigationPrefabPath = "Assets/Project Files/Game/UI/Prefabs/Shared/LeaderboardBottomNavigation.prefab";
 
         private static TMP_FontAsset font;
 
         public static void BuildAll()
         {
-            EnsureFolder("Assets/Addon/UI/Prefabs");
-            EnsureFolder("Assets/Addon/UI/Prefabs/Quests");
+            EnsureFolder("Assets/Project Files/Game/UI/Prefabs");
+            EnsureFolder("Assets/Project Files/Game/Features/Quest/Prefabs");
 
             font = FindUIFont();
             QuestElementView elementPrefab = BuildQuestElement();

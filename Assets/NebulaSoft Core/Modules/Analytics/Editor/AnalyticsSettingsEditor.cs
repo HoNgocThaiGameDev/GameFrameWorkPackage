@@ -1,4 +1,5 @@
 using UnityEditor;
+using NebulaSoft.Integrations.Firebase;
 
 namespace NebulaSoft
 {
@@ -8,13 +9,15 @@ namespace NebulaSoft
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();
-            EditorGUILayout.HelpBox("Editor sessions use Console. Add Analytics to Project Init Settings and assign these settings. Gameplay calls AnalyticsController.Events.", MessageType.Info);
-            if (((AnalyticsSettings)target).Provider != AnalyticsBackend.Firebase) return;
-#if FIREBASE_ANALYTICS
-            EditorGUILayout.HelpBox("Firebase adapter enabled. Configure this game's Firebase app before testing an Android/iOS build.", MessageType.Info);
-#else
-            EditorGUILayout.HelpBox("Import FirebaseAnalytics.unitypackage and enable FIREBASE_ANALYTICS for Android/iOS to use Firebase in a player build. FIREBASE alone is not sufficient.", MessageType.Warning);
-#endif
+            EditorGUILayout.HelpBox("Assign a provider config asset, automatic bridges and queue capacity. Editor uses Console unless a custom provider explicitly allows Editor execution.", MessageType.Info);
+            var settings = (AnalyticsSettings)target;
+            bool firebase = settings.ProviderConfig is FirebaseAnalyticsProviderConfig ||
+                settings.ProviderConfig == null && settings.Provider == AnalyticsBackend.Firebase;
+            if (!firebase) return;
+            if (FirebaseBackendFactory.IsAnalyticsEnabled)
+                EditorGUILayout.HelpBox("Firebase adapter enabled. Configure this game's Firebase app before testing an Android/iOS build.", MessageType.Info);
+            else
+                EditorGUILayout.HelpBox(FirebaseBackendFactory.AnalyticsSetupMessage, MessageType.Warning);
         }
     }
 }

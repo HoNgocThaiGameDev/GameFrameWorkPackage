@@ -4,6 +4,7 @@ using NebulaSoft.Analytics;
 
 namespace UnityEngine
 {
+    public static class Application { public static bool isPlaying => true; }
     public class Object { public static void DontDestroyOnLoad(Object value) { } }
     public class ScriptableObject : Object { }
     public class Component : Object { }
@@ -34,9 +35,11 @@ namespace UnityEngine
     {
         // The audit never exercises the Unity JSON/native persistence boundary.
         public static string ToJson(object value) => throw new NotSupportedException("Requires Unity");
+        public static void FromJsonOverwrite(string json, object value) => throw new NotSupportedException("Requires Unity");
         public static T FromJson<T>(string value) => throw new NotSupportedException("Requires Unity");
     }
     public class SerializeField : Attribute { }
+    public class TooltipAttribute : Attribute { public TooltipAttribute(string text) { } }
     public class SerializeReference : Attribute { }
     public class MinAttribute : Attribute { public MinAttribute(float value) { } }
     public class CreateAssetMenuAttribute : Attribute { public string fileName, menuName; }
@@ -65,9 +68,10 @@ namespace NebulaSoft
     public class CurrencyData { public void Init(Currency value) { } }
     public class CurrencyRewardPreviewSettings { public void Init(Currency value) { } }
     public class CurrencyDatabase { public Currency[] Currencies; }
-    public class RemoteConfigData { }
     public class CurrencyRemoteConfigData : RemoteConfigData
     {
+        public override string Key => "currencies";
+        public Currency GetCurrencyOverride(string id) => null;
         public class Currency { public int defaultCount; }
         public Currency GetCurrencyOverride(CurrencyType type) => null;
     }

@@ -1,0 +1,9 @@
+{
+  "name": "NebulaSoft.Save.Runtime",
+  "references": [
+    "NebulaSoft.Foundation",
+    "Unity.Newtonsoft.Json"
+  ],
+  "includePlatforms": [],
+  "autoReferenced": true
+}

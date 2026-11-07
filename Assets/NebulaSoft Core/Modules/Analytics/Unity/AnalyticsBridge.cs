@@ -10,16 +10,27 @@ namespace NebulaSoft
         private readonly AnalyticsEvents events;
         private IAdsService ads;
         private string pendingPurchase;
+        private readonly AnalyticsBridgeOptions options;
+        private bool disposed;
 
-        public AnalyticsBridge(AnalyticsEvents events)
+        public AnalyticsBridge(AnalyticsEvents events) : this(events, AnalyticsBridgeOptions.All) { }
+
+        public AnalyticsBridge(AnalyticsEvents events, AnalyticsBridgeOptions options)
         {
-            this.events = events;
-            AdsManager.Configured += AttachAds;
-            IAPManager.StateChanged += OnPurchaseState;
-            IAPManager.ProductPurchaseCompleted += OnPurchaseCompleted;
-            IAPManager.ProductPurchaseFailed += OnPurchaseFailed;
-            UIController.PageOpened += OnPageOpened;
-            AttachAds();
+            this.events = events ?? throw new ArgumentNullException(nameof(events));
+            this.options = options;
+            if ((options & AnalyticsBridgeOptions.Ads) != 0)
+            {
+                AdsManager.Configured += AttachAds;
+                AttachAds();
+            }
+            if ((options & AnalyticsBridgeOptions.IAP) != 0)
+            {
+                IAPManager.StateChanged += OnPurchaseState;
+                IAPManager.ProductPurchaseCompleted += OnPurchaseCompleted;
+                IAPManager.ProductPurchaseFailed += OnPurchaseFailed;
+            }
+            if ((options & AnalyticsBridgeOptions.UI) != 0) UIController.PageOpened += OnPageOpened;
         }
 
         private void AttachAds()
@@ -31,6 +42,7 @@ namespace NebulaSoft
 
         public void OnAdEvent(AdEvent value)
         {
+            if (disposed || (options & AnalyticsBridgeOptions.Ads) == 0) return;
             string format = value.Format.ToString().ToLowerInvariant();
             switch (value.Kind)
             {
@@ -58,6 +70,8 @@ namespace NebulaSoft
 
         public void Dispose()
         {
+            if (disposed) return;
+            disposed = true;
             if (ads != null) ads.AdEvent -= OnAdEvent;
             ads = null;
             AdsManager.Configured -= AttachAds;

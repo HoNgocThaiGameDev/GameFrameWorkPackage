@@ -1,0 +1,14 @@
+{
+  "puzzle": {
+    "rewardedReviveEnabled": true,
+    "reviveOfferSeconds": 8,
+    "maxRewardedRevivesPerAttempt": 1,
+    "interstitialOnFinalFailure": false
+  },
+  "revive": {
+    "sec": 20,
+    "iapSec": 20,
+    "currency": "Coins",
+    "prices": [900, 1200, 1500]
+  }
+}
